@@ -1,45 +1,35 @@
-# Roadmap and remaining work
+# AutoQA roadmap
 
-## V0.2 current status
+## V0.3.0 delivered
 
-Local acceptance is verified: semantic functional controls, reviewed behavior contracts, positive/negative/boundary tests, retained approvals, behavioral assertions, independent-demo pass/fail/restore, richer diagnostics and snapshot reports. External discovery was attempted under unchanged security rules; its required API origin was blocked, so external functional execution remains unvalidated. This is a scope/generalization limitation, not a successful external test result. See v0.2-functional-testing.md and v02-external-validation.json.
+AutoQA is a private professional QA engineering tool supporting its owner's QA Automation Engineering services. A public source repository does not make client artifacts public. The product direction is a trustworthy local engineering engine, with no SaaS/subscription or billing plan.
 
-The next development priorities are:
+- Python 3.14, uv, Typer/Rich, Pydantic, Playwright/Pytest, Jinja2, YAML and local SQLite registry; optional OpenAI recommendations.
+- Batch A: versioned domain contracts, legacy projections, local storage boundary and separated report projections. Domain contracts are additive; compatible legacy producers/layouts remain.
+- Batch B: project-bound authorization intent, planning/review services and bounded browser/local-repository/hybrid discovery.
+- Batch C: persisted approval receipts bound to reviewed scenarios, reusable generation/execution/JUnit services, shared ApplicationEngine/InProcessAdapter and coarse scenario-step evidence.
+- Trusted template generation, AST/Ruff checks, collection-first execution, actual JUnit results, headed/headless configuration, screenshot policies, traces, diagnosis and HTML/JSON reporting.
+- Finalization: diagnostic lookup includes recorded step screenshots and historical evidence; package/import/lock version is 0.3.0.
 
-1. Design explicit per-origin read-only dependency scope, with separate navigation/resource permissions, validated DNS/pinning and redirect tests. Never add a wildcard origin or widen methods merely for one site.
-2. Add passive readiness evidence, better empty/error-state association and accessible-name computation for complex SPAs. Distinguish UI completeness from successful HTTP navigation.
-3. Improve stable scenario identities and deduplicate persistent menus without sacrificing page-specific behavior. Avoid stale exact expectations on shared mutable external data.
-4. Add multi-page declarative contracts and reviewable assertions for dynamic result properties. Retain the prohibition on unknown outcomes and arbitrary code.
-5. Strengthen process-tree cancellation and actual OS isolation before accepting untrusted executable code; Windows timeout cleanup remains limited.
-6. Verify opt-in live AI only with configured provider/model and explicit authorization; then plan authenticated staging support using least-privilege accounts.
+See [final delivery](v03-final-delivery.md), [release audit](v03-release-audit.md), [finalization verification](v03-release-finalization.md) and [CLI reference](cli-reference.md). The CLI exposes init, demo, explore, plan, generate, run, diagnose, report and integrate. Integrate only writes a local reviewable GitHub Actions workflow.
 
-The original V0.1 roadmap below is historical context. Its search/form contract step has now been delivered for supported controlled workflows; advanced capabilities remain deferred.
+## Current limits
 
-## Historical V0.1 roadmap
+AuthorizationContext is caller intent, not authenticated identity or role enforcement. Approval receipts/manifests depend on trusted local writers; they are not signed hostile-filesystem protection. Storage is single-writer and approval updates are not a multi-file transaction. Execution is not an OS sandbox; Windows descendant-process timeout cleanup remains limited.
 
-## Verified foundation and vertical slice
+Evidence wraps each generated scenario in one coarse step rather than individual Playwright actions. Skipped/interrupted step semantics and sensitivity annotations need improvement. Raw logs, JUnit, screenshots and traces may expose client data and require review before sharing. Historical runs have NOT_RECORDED steps.
 
-- Python 3.14 package, uv lock, Typer/Rich CLI, isolated workspaces and owned local demo.
-- Bounded read-only UI discovery with semantic observations, relationships and screenshots.
-- Evidence-grounded test matrix, selected persisted approvals, trusted Python heading/navigation templates.
-- Real execution, JUnit/JSON outcomes, traces/screenshots, conservative diagnosis and escaped reports.
-- Bounded local repository inspection; manual source cases and inferred hybrid path matching.
-- Local CI workflow generation with verified official action revisions and syntax tests. Hosted CI remains unverified.
-- Optional official OpenAI SDK adapter with structured output validation, mocked tests and review-only recommendations. Live API access remains unverified.
+External functional execution remains unvalidated after the documented dependency-origin block; scope restrictions were retained. Hosted generated CI and live AI provider access remain unverified. Authentication, remote cloning, API test generation, scheduling, self-healing, arbitrary model-generated executable code and multi-user operation are not implemented.
 
-## Exact next implementation step
+## V0.4 development direction (not implemented)
 
-Add an explicit reviewed scenario contract for the included demo's product search and required/email form validation. Define test inputs and expected results with the QA engineer, render semantic-locator templates, and add real browser pass/failure tests. Preserve the prohibition on automatically submitting arbitrary discovered forms. This extends meaningful coverage beyond heading and navigation regressions.
+1. Define richer typed executable step contracts, per-action evidence and explicit missing/skipped/interrupted outcomes.
+2. Add sensitivity annotations, artifact redaction/retention policies and reviewable evidence controls.
+3. Design authenticated interface adapters with least-privilege project authorization; keep interfaces separate from engine logic.
+4. Add revision/concurrency control and durable approval history before multi-user exposure.
+5. Strengthen process cancellation and OS isolation, then validate supported execution platforms.
+6. Improve stable scenario identities, accessible-name/readiness evidence and multi-page declarative contracts.
+7. Design explicit per-origin dependency permissions with DNS/redirect validation before expanding SPA scope; no wildcard permissions.
+8. Validate hosted CI, optional live AI and authenticated staging only under explicit authorization and client data policy.
 
-## Next phases
-
-1. Enforce and test robust browser/process cancellation and network containment across Windows and Linux.
-2. Add authenticated staging sessions using limited test accounts, secret redaction and uncommitted storage state; implement auth configure only once it works.
-3. Expand framework-aware static analysis, deduplication and stable scenario identities; source path matching is currently heuristic.
-4. Exercise generated CI in an explicitly authorized QA repository, including fail paths and artifacts.
-5. Validate optional AI with a user-configured model/key and client data policy. Improve diagnostics while keeping claims uncertain and code execution restricted.
-6. Design actual OS sandboxing before accepting any executable model-generated or client-authored test code.
-7. Add reviewable maintenance proposals and audit trails; never weaken assertions automatically.
-8. Later: authorized GitHub access, API testing, scheduled execution, SaaS/web dashboard, organizations, integrations and billing.
-
-Not implemented: remote cloning, arbitrary remote repositories, active authentication, self-healing, maintenance command, scheduler, AI code execution/generation, API tests, business-requirements coverage measurement, full accessibility snapshots, advanced component/dataflow analysis, source test-coverage measurement, multi-user locking or hosted deployment. No placeholder commands are exposed for these capabilities.
+FastAPI, React, MCP and cloud identity are possible future interface concerns, not dependencies or delivered capabilities of V0.3. No V0.4 implementation is part of this release.

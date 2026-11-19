@@ -126,3 +126,44 @@ separate integration branch and validate the combined tree before seeking approv
 do not reset, discard, force-push or cherry-pick only Batch C. No push, PR, merge or
 `v0.3.0` tag is authorized by this local finalization. Publishing/tagging requires a
 separate explicit instruction.
+
+## GitHub review preparation (2026-11-19)
+
+The subsequent publishing task explicitly authorizes pushing only `feat/v03-batch-c`
+and opening a PR against `main`; it does not authorize merging, tagging or changing
+visibility. The preceding local-main merge procedure is historical and is not executed
+for this review publication.
+
+Starting HEAD was exactly `f8851220281433b6ec504d7280c206aad059cf47`, with a clean tree.
+A successful fresh `git fetch origin` retained `origin/main` at `1853c35`; it is an
+ancestor of HEAD (0 remote-only / 13 release commits before documentation updates).
+The complete Batch A/B/C linear ancestry is preserved. Origin matches the specified
+repository. The proposed main-to-release diff and its 41 changed files were inspected.
+
+README and roadmap now describe the professional-service purpose, actual V0.3 stack,
+modular boundaries, real CLI/configuration, receipts, generation/execution, evidence,
+security limits and future V0.4 work. SaaS/subscription roadmap claims were removed.
+
+Fresh review-preparation checks:
+
+- Offline non-browser regression: **179 passed, 14 deselected in 46.99s**; live AI module
+  explicitly ignored. Sandbox temporary-directory errors required an authorized rerun.
+- Ruff check and format: passed (43 files already formatted).
+- `uv lock --check --offline`: passed, 37 packages. Cache permissions required escalation.
+- Root/module help and all nine command help pages: passed.
+- `autoqa`, application and engine imports: passed. Existing editable install metadata
+  was 0.2.0; `uv sync --locked --offline --extra ai` rebuilt the local project as 0.3.0.
+  Package/import/installed metadata/lock now all match 0.3.0; lock resolutions unchanged.
+- Frozen fixtures: no diff against main or the verified release commit; archive SHA256
+  values match the baseline. The regression verifies archive members and their hashes.
+- Tracked text and all 16 decompressed fixture members: no common private-key,
+  GitHub/OpenAI token or AWS access-key pattern hits. No project/build/cache directory
+  is tracked. Frozen demo archives and historical XML are intentional evidence; their
+  existing workstation/path provenance remains. No client evidence was identified.
+  This scoped pattern/content review is not a forensic audit of all Git history.
+- No browser suite was repeated: this task changes documentation only; existing real
+  headed/headless/failure evidence above remains historical, separately identified.
+- `git diff --check`: passed. New validation artifacts remain ignored.
+
+Known technical limits in the audit remain applicable. Publication state and final
+commit/PR identifiers are reported after remote verification, outside this commit.
