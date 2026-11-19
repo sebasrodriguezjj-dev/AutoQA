@@ -1,7 +1,7 @@
 """Reporting orchestration; preserves public entry points and write side effects."""
 
 from autoqa.core import Discovery, Project, TestCase, load_json
-from autoqa.diagnostics import project_diagnostics
+from autoqa.diagnostics import diagnostic_evidence_references, project_diagnostics
 from autoqa.report_projection import project_report
 from autoqa.report_rendering import render_html
 
@@ -13,13 +13,9 @@ def diagnose(project: Project) -> list[dict]:
         cases = {c.id: c.model_dump() for c in project.cases()}
     available = set()
     for record in result["records"]:
-        for suffix in (".png", ".zip"):
-            reference = result["artifact_dir"] + "/" + record["name"] + suffix
+        for reference in diagnostic_evidence_references(result, record):
             if project.storage.path(reference).is_file():
                 available.add(reference)
-    log = result["artifact_dir"] + "/pytest.log"
-    if project.storage.path(log).is_file():
-        available.add(log)
     findings = project_diagnostics(result, cases, available)
     project.storage.write_json(
         "reports/diagnosis.json", {"run_id": result["run_id"], "findings": findings}

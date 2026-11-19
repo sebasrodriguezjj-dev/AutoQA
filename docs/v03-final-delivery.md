@@ -1,5 +1,11 @@
 # AutoQA V0.3 final delivery
 
+Release finalization on 2026-11-19 aligns the package to **0.3.0** and corrects diagnostic
+lookup of recorded step screenshots while retaining legacy screenshot/trace lookup.
+See [release finalization](./v03-release-finalization.md) for fresh test/build evidence
+and the proposed integration procedure, and [release audit](./v03-release-audit.md)
+for security and compatibility limits. Earlier batch verification below is historical.
+
 ## Outcome
 
 V0.3 Batch C is complete on the local `feat/v03-batch-c` branch. No push, merge or
@@ -112,8 +118,8 @@ and process exit codes.
 | `119dfad` | Stage 7 shared application engine |
 
 The branch was created from the verified Batch B HEAD `e55b824`; Stage 4 `d6e2614` and
-Stage 5 `8e6dc67` are ancestors. This delivery document is the final local commit for
-V0.3.
+Stage 5 `8e6dc67` are ancestors. Commit `7d2d599` recorded the original Batch C delivery;
+the subsequent local release-finalization commit includes the audit and release fixes.
 
 ## Known limitations and V0.4 readiness
 
@@ -122,8 +128,8 @@ Evidence is currently one generated scenario step around the trusted test body r
 than fine-grained instrumentation of every Playwright action. Sensitive-step metadata
 needs richer domain-level sensitivity annotations before broad headed artifact sharing.
 Storage remains single-writer. Browser evidence is potentially sensitive and requires
-operator review before distribution. The package version remains the existing compatible
-`0.2.0` metadata value pending an explicit release-version decision.
+operator review before distribution. Package metadata is now `0.3.0`; historical fixtures
+and the compatible generated-manifest wire version remain unchanged.
 
 V0.3 is ready for V0.4 work on richer typed step contracts, authenticated interface
 adapters, concurrency/revision control and finer-grained evidence policies. FastAPI,

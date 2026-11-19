@@ -2,6 +2,8 @@
 
 from dataclasses import dataclass
 
+from autoqa.domain import artifact_reference
+
 
 @dataclass(frozen=True)
 class Classification:
@@ -74,6 +76,32 @@ def classify_failure(record: dict, case: dict) -> Classification:
     return Classification(category, advice, failure_class)
 
 
+def diagnostic_evidence_references(result: dict, record: dict) -> list[str]:
+    """Project legacy and recorded step evidence within this run and test only."""
+    root = artifact_reference(result["artifact_dir"])
+    references = [
+        root + "/pytest.log",
+        root + "/" + record["name"] + ".zip",
+        root + "/" + record["name"] + ".png",
+    ]
+    for step in result.get("step_results", []):
+        if (
+            step.get("test_id") != record["id"]
+            or step.get("run_id", result["run_id"]) != result["run_id"]
+        ):
+            continue
+        for name in step.get("evidence", []):
+            # Generated step references are run-local filenames, never project paths.
+            if not isinstance(name, str) or "/" in name or not name.endswith((".png", ".zip")):
+                continue
+            try:
+                artifact_reference(name)
+            except ValueError:
+                continue
+            references.append(root + "/" + name)
+    return list(dict.fromkeys(references))
+
+
 def project_diagnostics(result: dict, cases: dict, available_artifacts: set[str]) -> list[dict]:
     findings = []
     for record in result["records"]:
@@ -92,8 +120,9 @@ def project_diagnostics(result: dict, cases: dict, available_artifacts: set[str]
                 "category": category,
                 "observed_error": record["error"],
                 "evidence": [
-                    result["artifact_dir"] + "/pytest.log",
-                    result["artifact_dir"] + "/" + record["name"] + ".zip",
+                    path
+                    for path in diagnostic_evidence_references(result, record)
+                    if path in available_artifacts
                 ],
                 "possible_cause": category + "; root cause is not established",
                 "confidence": "low",
@@ -104,13 +133,4 @@ def project_diagnostics(result: dict, cases: dict, available_artifacts: set[str]
                 "observed_behavior": record["error"] or record["status"],
             }
         )
-    for finding, record in zip(
-        findings,
-        [r for r in result["records"] if r["status"] in {"FAILED", "ERROR", "NOT_EXECUTED"}],
-        strict=True,
-    ):
-        screenshot = result["artifact_dir"] + "/" + record["name"] + ".png"
-        if screenshot in available_artifacts:
-            finding["evidence"].append(screenshot)
-        finding["evidence"] = [path for path in finding["evidence"] if path in available_artifacts]
     return findings

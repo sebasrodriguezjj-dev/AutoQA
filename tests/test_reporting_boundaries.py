@@ -8,7 +8,7 @@ from autoqa.core import Discovery, save_json
 from autoqa.diagnostics import classify_failure, project_diagnostics
 from autoqa.report_projection import historical_step_evidence, project_report
 from autoqa.report_rendering import render_html
-from autoqa.reporting import report
+from autoqa.reporting import diagnose, report
 
 
 @pytest.mark.parametrize(
@@ -82,3 +82,70 @@ def test_report_rejects_escaping_run_artifacts(project):
     with pytest.raises(ValueError, match="project-relative"):
         report(project, "json")
     assert not (project.root / "reports/qa-report.json").exists()
+
+
+@pytest.mark.parametrize("screenshot", ["test_TC_001-step-1.png", "test_TC_001.png"])
+def test_diagnosis_resolves_current_and_legacy_screenshots(project, screenshot):
+    run = {
+        "run_id": "current",
+        "artifact_dir": "artifacts/current",
+        "records": [{"id": "TC-001", "name": "test_TC_001", "status": "FAILED", "error": "assert"}],
+    }
+    if "step" in screenshot:
+        run["step_results"] = [{"test_id": "TC-001", "evidence": [screenshot, "test_TC_001.zip"]}]
+    for name in (screenshot, "test_TC_001.zip", "pytest.log"):
+        project.storage.write_text("artifacts/current/" + name, "evidence")
+    project.storage.write_json("reports/latest-run.json", run)
+    expected = [
+        "artifacts/current/pytest.log",
+        "artifacts/current/test_TC_001.zip",
+        "artifacts/current/" + screenshot,
+    ]
+    assert diagnose(project)[0]["evidence"] == expected
+    persisted = project.storage.read_json("reports/diagnosis.json")
+    assert persisted["run_id"] == "current"
+    assert persisted["findings"][0]["evidence"] == expected
+
+
+def test_diagnosis_omits_missing_step_and_legacy_evidence(project):
+    project.storage.write_json(
+        "reports/latest-run.json",
+        {
+            "run_id": "current",
+            "artifact_dir": "artifacts/current",
+            "records": [
+                {"id": "TC-001", "name": "test_TC_001", "status": "FAILED", "error": "assert"}
+            ],
+            "step_results": [{"test_id": "TC-001", "evidence": ["test_TC_001-step-1.png"]}],
+        },
+    )
+    assert diagnose(project)[0]["evidence"] == []
+
+
+def test_diagnosis_binds_step_evidence_to_current_run_and_test(project):
+    run = {
+        "run_id": "current",
+        "artifact_dir": "artifacts/current",
+        "records": [
+            {"id": "TC-001", "name": "test_TC_001", "status": "FAILED", "error": "assert"},
+            {"id": "TC-002", "name": "test_TC_002", "status": "FAILED", "error": "assert"},
+        ],
+        "step_results": [
+            {"test_id": "TC-001", "evidence": ["test_TC_001-step-1.png"]},
+            {"test_id": "TC-002", "evidence": ["test_TC_002-step-1.png"]},
+            {"test_id": "TC-003", "evidence": ["unrelated.png"]},
+            {"test_id": "TC-001", "run_id": "old", "evidence": ["stale.png"]},
+            {"test_id": "TC-001", "evidence": ["../old/old.png", "/outside.png"]},
+            {"test_id": "TC-001", "evidence": ["only-in-old-run.png"]},
+        ],
+    }
+    for name in ("test_TC_001-step-1.png", "test_TC_002-step-1.png", "unrelated.png", "stale.png"):
+        project.storage.write_text("artifacts/current/" + name, "evidence")
+    for name in ("old.png", "only-in-old-run.png"):
+        project.storage.write_text("artifacts/old/" + name, "historical evidence")
+    project.storage.write_json("reports/latest-run.json", run)
+    findings = diagnose(project)
+    assert [(f["test_id"], f["evidence"]) for f in findings] == [
+        ("TC-001", ["artifacts/current/test_TC_001-step-1.png"]),
+        ("TC-002", ["artifacts/current/test_TC_002-step-1.png"]),
+    ]
