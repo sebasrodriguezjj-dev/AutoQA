@@ -13,7 +13,7 @@ disposable local projects. Every command must succeed; test failures fail the jo
 uv sync --locked
 uv run ruff check src tests
 uv run ruff format --check src tests
-uv run pytest tests -m "not browser" --ignore=tests/test_live_ai.py -q
+uv run python -m pytest tests -m "not browser" --ignore=tests/test_live_ai.py -q
 ```
 
 ## Manual project execution

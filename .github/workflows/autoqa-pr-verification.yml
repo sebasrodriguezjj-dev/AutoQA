@@ -19,4 +19,4 @@ jobs:
       - run: uv run ruff check src tests
       - run: uv run ruff format --check src tests
       - name: Non-browser regression (no live AI)
-        run: uv run pytest tests -m "not browser" --ignore=tests/test_live_ai.py -q
+        run: uv run python -m pytest tests -m "not browser" --ignore=tests/test_live_ai.py -q

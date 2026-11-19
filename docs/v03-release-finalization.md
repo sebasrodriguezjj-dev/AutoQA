@@ -188,3 +188,12 @@ lint/format, YAML parsing, shell syntax checks and diff whitespace checks passed
 The preflight was exercised in an empty temporary checkout: both empty URL and missing
 project config returned exit 1 with explicit errors. Sandbox restrictions required
 approved validation reruns. Hosted PR results are reported after publishing this commit.
+
+The first hosted code-verification run (44594720078, commit d97c501) passed setup,
+locked sync and Ruff, then failed collection with `ModuleNotFoundError: examples`
+from `tests/test_functional.py`. The console-script pytest entry point did not add the
+repository root to import search paths on the clean Linux runner. The PR workflow now
+uses `uv run python -m pytest`, matching the successful local module invocation and
+including the repository root. No tests are excluded beyond browser/live AI selection,
+and collection errors remain fatal. Hosted results of this correction are reported
+separately; the earlier failure remains visible in Actions history.
