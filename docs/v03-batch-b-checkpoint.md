@@ -1,28 +1,9 @@
 ﻿# Batch B checkpoint
 
-Branch: `feat/v03-batch-b`, created from verified Batch A delivery commit
-`c5e71f49212833853559a4a14083d4cc5d23e43c`. Batch A stage commits
-`b7566a6`, `5bcba16`, and `545a245` are ancestors. Working tree was clean
-before this checkpoint; origin is `https://github.com/sebasrodriguezjj-dev/AutoQA.git`.
+Branch `feat/v03-batch-b`; Batch A delivery base `c5e71f49212833853559a4a14083d4cc5d23e43c`.
 
-Stages 4 and 5 have not been implemented or verified. No production changes,
-tests, browser runs, live AI calls, pushes, or merges were performed in Batch B.
+Stage 4: `d6e261453cd59f29798ed49555edbb3deb018d93`. Targeted gate: 80 passed, 4 deselected; Ruff passed. Protected direct planning, review, generation and execution calls require explicit project-bound operation context.
 
-Inspection found that authorization for exploration and generation is currently
-checked in the CLI, while `planning.plan`, `planning.approve`, `planning.reject`,
-`testing.generate`, and discovery functions are callable directly. Existing
-pipeline and functional tests use those direct functions. The next implementation
-must address all entry points, including compatibility facades, without silently
-leaving an authorization bypass. Preserve legacy case signatures and existing
-artifact formats, and run the mandatory Stage 4 gate before beginning Stage 5.
+Stage 5: `8e6dc67835519c63210ce1e38f233b487fcd5be4`. Targeted non-browser gate: 97 passed, 10 deselected. Owned browser selection: 10 passed, 38 deselected. Service tests: 3 passed including a real-browser hybrid test. Ruff passed.
 
-The initial combined inspection command failed at PowerShell parsing and made no
-changes. Subsequent inspection succeeded. No Batch B stage commit exists.
-
-Resume progress: added an initial project- and operation-bound authorization context
-in `src/autoqa/authorization.py`, with a focused unit test in
-`tests/test_authorization.py`. The focused test passed (1 passed); Ruff lint and
-format checks passed after formatting. This is scaffolding only: no existing
-entry point invokes the guard, so authorization bypasses remain. Stages 4 and 5
-are incomplete and no stage gate or commit has been made. Do not treat this
-context as an authentication mechanism or as an enforced security boundary.
+Final non-browser regression: 172 passed, 13 browser tests deselected, no failures or skips; live AI module excluded. Two functional browser cases were not run. Frozen fixtures and dependencies unchanged. See [delivery](./v03-batch-b-delivery.md) for exact limitations, compatibility transition and commands. No push, merge or PR was performed. Local authorization contexts assert caller intent and are not authenticated identities; pre-generation legacy approvals are not cryptographically bound to their prior content.
