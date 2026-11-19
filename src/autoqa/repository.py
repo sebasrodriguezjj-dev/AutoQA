@@ -6,6 +6,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
+from autoqa.authorization import AuthorizationContext, require_authorization
 from autoqa.core import Discovery, Project, Workflow, load_json, save_json
 
 SKIP = {
@@ -39,7 +40,10 @@ ROUTES = re.compile(
 )
 
 
-def analyze(project: Project, repository: Path) -> dict:
+def analyze(
+    project: Project, repository: Path, *, authorization: AuthorizationContext | None = None
+) -> dict:
+    require_authorization(authorization, project.root, "discover")
     root = repository.resolve(strict=True)
     if not root.is_dir():
         raise ValueError(
@@ -192,7 +196,10 @@ def analyze(project: Project, repository: Path) -> dict:
     return findings
 
 
-def source_discovery(project: Project, findings: dict) -> None:
+def source_discovery(
+    project: Project, findings: dict, *, authorization: AuthorizationContext | None = None
+) -> None:
+    require_authorization(authorization, project.root, "discover")
     """Replace stale UI evidence when entering repository-only analysis mode."""
     workflows = [
         Workflow(
@@ -216,7 +223,10 @@ def source_discovery(project: Project, findings: dict) -> None:
     )
 
 
-def correlate(project: Project, discovery: Discovery) -> dict:
+def correlate(
+    project: Project, discovery: Discovery, *, authorization: AuthorizationContext | None = None
+) -> dict:
+    require_authorization(authorization, project.root, "discover")
     from urllib.parse import urlsplit
 
     findings = load_json(project.root / "discovery/repository.json")

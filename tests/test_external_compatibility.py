@@ -13,6 +13,7 @@ import yaml
 from playwright.sync_api import Error, sync_playwright
 from pydantic import ValidationError
 
+from autoqa.authorization import AuthorizationContext
 from autoqa.core import APIResourceRule, Config
 from autoqa.exploration import explore
 from autoqa.readiness import observe_readiness
@@ -357,7 +358,11 @@ def test_exploration_persists_readiness_without_fixed_delay(project, local_resou
     project.config.max_pages = 1
     project.config.request_interval_ms = 0
     project.config.spa_quiet_window_ms = 50
-    discovery = explore(project, app + "/delayed")
+    discovery = explore(
+        project,
+        app + "/delayed",
+        authorization=AuthorizationContext(project.root, frozenset({"discover"})),
+    )
     assert discovery.pages[0].headings == ["Loaded content"]
     assert discovery.pages[0].readiness["status"] == "CONTENT_STABLE"
     assert not discovery.errors

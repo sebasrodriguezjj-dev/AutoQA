@@ -27,6 +27,10 @@ plan = _authorized(plan, "plan")
 approve = _authorized(approve, "review")
 generate = _authorized(generate, "generate")
 run = _authorized(run, "execute")
+explore = _authorized(explore, "discover")
+analyze = _authorized(analyze, "discover")
+correlate = _authorized(correlate, "discover")
+source_discovery = _authorized(source_discovery, "discover")
 
 
 def evidence(project):

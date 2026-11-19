@@ -68,41 +68,33 @@ def explore(
     allow_localhost: bool = False,
 ):
     """Explore an authorized URL and/or statically inspect a local repository."""
-    from autoqa.exploration import explore as discover
-    from autoqa.repository import analyze, correlate, source_discovery
+    from autoqa.discovery_service import DiscoveryService
 
     selected = select_project(project)
     if not url and not repo:
         raise ValueError("Provide --url and/or --repo.")
     if not authorized:
         raise ValueError("Confirm your testing authorization using --authorized.")
-    if selected.config.auth_reference:
-        raise ValueError("Authenticated exploration is not implemented in v0.1.")
-    if allow_localhost:
-        selected.config.allow_localhost = True
-    selected.config.mode = "hybrid" if url and repo else "ui" if url else "repository"
-    if repo:
-        with console.status("Inspecting repository without executing its code..."):
-            findings = analyze(selected, repo)
+    service = DiscoveryService(
+        selected, AuthorizationContext(selected.root, frozenset({"discover"}))
+    )
+    result = service.discover(url=url, repo=repo, allow_localhost=allow_localhost)
+    if result.findings is not None:
+        findings = result.findings
         console.print(
             f"Inspected {findings['files_scanned']} files; {len(findings['routes'])} route candidates (SOURCE evidence)."
         )
-        if not url:
-            source_discovery(selected, findings)
-    if url:
-        with console.status("Validating scope and discovering visible UI..."):
-            discovery = discover(selected, url)
+    if result.discovery is not None:
+        discovery = result.discovery
         console.print(
             f"Pages: {len(discovery.pages)}; workflows: {len(discovery.workflows)}; elements: {sum(len(p.elements) for p in discovery.pages)}; errors: {len(discovery.errors)}"
         )
-        if not discovery.pages:
-            raise ValueError("No pages were observed. Inspect discovery/summary.md.")
-        if repo:
-            matched = correlate(selected, discovery)
-            console.print(
-                f"Matched {len(matched['matches'])} browser paths to source route candidates."
-            )
-    selected.save_config()
+    if result.discovery is not None and not result.discovery.pages:
+        raise ValueError("No pages were observed. Inspect discovery/summary.md.")
+    if result.correlation is not None:
+        console.print(
+            f"Matched {len(result.correlation['matches'])} browser paths to source route candidates."
+        )
     console.print(
         "Evidence saved in discovery/. Next: autoqa plan (offline deterministic planning)."
     )

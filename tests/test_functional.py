@@ -30,6 +30,7 @@ approve = _authorized(approve, "review")
 generate = _authorized(generate, "generate")
 run = _authorized(run, "execute")
 reject = _authorized(reject, "review")
+explore = _authorized(explore, "discover")
 
 
 @pytest.fixture

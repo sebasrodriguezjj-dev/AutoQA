@@ -6,6 +6,7 @@ from urllib.parse import urljoin
 
 from playwright.sync_api import Error, sync_playwright
 
+from autoqa.authorization import AuthorizationContext, require_authorization
 from autoqa.core import Discovery, EvidenceReference, PageEvidence, Project, Workflow, save_json
 from autoqa.observation import functional_kinds, observe_elements
 from autoqa.readiness import observe_readiness
@@ -69,7 +70,10 @@ def extract_workflows(discovery: Discovery) -> list[Workflow]:
     return workflows
 
 
-def explore(project: Project, url: str) -> Discovery:
+def explore(
+    project: Project, url: str, *, authorization: AuthorizationContext | None = None
+) -> Discovery:
+    require_authorization(authorization, project.root, "discover")
     config = project.config
     scope = Scope(url, config)
     discovery = Discovery()
