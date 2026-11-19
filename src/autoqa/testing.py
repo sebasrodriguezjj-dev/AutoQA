@@ -14,7 +14,7 @@ from urllib.parse import urlsplit
 
 from autoqa.authorization import AuthorizationContext, require_authorization
 from autoqa.core import Project, load_json, save_json
-from autoqa.planning import case_signature
+from autoqa.planning import case_signature, verify_approval_binding
 from autoqa.security import Scope
 
 
@@ -166,12 +166,15 @@ def generate(project: Project, *, authorization: AuthorizationContext | None = N
             raise ValueError(
                 f"Preserve modified/unmanaged file {path.name}; move it out before regenerating."
             )
+    for case in cases:
+        verify_approval_binding(project, case)
     for name, content in files.items():
         (root / name).write_text(content, encoding="utf-8")
     save_json(
         root / "manifest.json",
         {
             "version": "0.2.0",
+            "approval_binding": "required",
             "files": {name: digest(content) for name, content in files.items()},
             "cases": {c.id: case_signature(c) for c in cases},
         },
@@ -227,6 +230,9 @@ def run(project: Project, *, authorization: AuthorizationContext | None = None) 
             or case_signature(current[test_id]) != signature
         ):
             raise ValueError("Approvals changed; regenerate the suite.")
+    if manifest.get("approval_binding") == "required":
+        for test_id in manifest["cases"]:
+            verify_approval_binding(project, current[test_id])
     base = os.environ.get("AUTOQA_BASE_URL", project.config.application_url)
     Scope(base, project.config)
     run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8]

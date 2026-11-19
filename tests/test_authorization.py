@@ -48,6 +48,9 @@ def test_service_review_persists_and_replanning_detects_drift(project):
         depth=0,
     )
     project.storage.write_json("discovery/workflow-map.json", Discovery(pages=[page]).model_dump())
+    project.config.application_url = page.url
+    project.config.allow_localhost = True
+    project.save_config()
     context = AuthorizationContext(project.root, frozenset({"plan", "review"}))
     service = PlanningService(project, context)
     original = service.plan()[0]
@@ -63,3 +66,46 @@ def test_service_review_persists_and_replanning_detects_drift(project):
     page.headings = ["After"]
     project.storage.write_json("discovery/workflow-map.json", Discovery(pages=[page]).model_dump())
     assert service.plan()[0].review_status == "pending"
+
+
+def test_approval_receipt_binds_reviewed_signature_and_requires_reapproval(project):
+    from autoqa.core import Discovery, PageEvidence
+    from autoqa.planning import case_signature
+    from autoqa.testing import generate
+
+    page = PageEvidence(
+        url="http://127.0.0.1:8000/",
+        title="Example",
+        headings=["Before"],
+        elements=[],
+        screenshot="screenshots/example.png",
+        depth=0,
+    )
+    project.storage.write_json("discovery/workflow-map.json", Discovery(pages=[page]).model_dump())
+    project.config.application_url = page.url
+    project.config.allow_localhost = True
+    project.save_config()
+    context = AuthorizationContext(project.root, frozenset({"plan", "review", "generate"}))
+    from autoqa.planning_service import PlanningService
+
+    service = PlanningService(project, context)
+    case = service.plan()[0]
+    service.approve([case.id])
+    receipt_path = project.root / "test-cases/approval-receipts.json"
+    receipt = project.storage.read_json("test-cases/approval-receipts.json")[case.id]
+    assert receipt["scenario_signature"] == case_signature(case)
+    assert receipt["case_revision"] == case_signature(case)
+
+    receipt_path.unlink()
+    with pytest.raises(ValueError, match="no approval receipt"):
+        generate(project, authorization=context)
+
+    service.approve([case.id])
+    receipt = project.storage.read_json("test-cases/approval-receipts.json")
+    receipt[case.id]["scenario_signature"] = "wrong"
+    project.storage.write_json("test-cases/approval-receipts.json", receipt)
+    with pytest.raises(ValueError, match="Approval binding changed"):
+        generate(project, authorization=context)
+
+    service.approve([case.id])
+    assert generate(project, authorization=context) == [case.id]

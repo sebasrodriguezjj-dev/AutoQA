@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -24,6 +25,43 @@ def save_cases(
     """Persist reviewed cases only with explicit review authorization."""
     require_authorization(authorization, project.root, "review")
     _save_cases(project, cases)
+
+
+def _approval_receipts(project: Project) -> dict:
+    path = project.root / "test-cases/approval-receipts.json"
+    if not path.exists():
+        return {}
+    value = project.storage.read_json("test-cases/approval-receipts.json")
+    if not isinstance(value, dict):
+        raise ValueError("Approval receipt store is invalid.")
+    return value
+
+
+def approval_receipt(project: Project, case: TestCase) -> dict | None:
+    """Return the separately persisted approval receipt for a case, if present."""
+    return _approval_receipts(project).get(case.id)
+
+
+def verify_approval_binding(project: Project, case: TestCase) -> None:
+    """Require an approval receipt bound to the current reviewed scenario."""
+    receipt = approval_receipt(project, case)
+    if receipt is None:
+        raise ValueError(
+            f"Legacy approved scenario {case.id} has no approval receipt; explicit reapproval is required."
+        )
+    if not isinstance(receipt, dict) or receipt.get("schema") != "autoqa.approval-receipt.v1":
+        raise ValueError(f"Invalid approval receipt for {case.id}.")
+    expected = case_signature(case)
+    if (
+        receipt.get("case_id") != case.id
+        or receipt.get("status") != "approved"
+        or receipt.get("scenario_signature") != expected
+        or receipt.get("case_revision") != expected
+        or not isinstance(receipt.get("approved_at"), str)
+    ):
+        raise ValueError(
+            f"Approval binding changed for {case.id}; explicit reapproval is required."
+        )
 
 
 def _save_cases(project: Project, cases: list[TestCase]) -> None:
@@ -256,5 +294,19 @@ def approve(
         if case.id in ids:
             case.review_status = "approved"
     _save_cases(project, cases)
+    receipts = _approval_receipts(project)
+    for case in cases:
+        if case.id in ids:
+            signature = case_signature(case)
+            receipts[case.id] = {
+                "schema": "autoqa.approval-receipt.v1",
+                "case_id": case.id,
+                "scenario_signature": signature,
+                "case_revision": signature,
+                "approved_at": datetime.now(UTC).isoformat(),
+                "source": "manual-review",
+                "status": "approved",
+            }
+    project.storage.write_json("test-cases/approval-receipts.json", receipts)
     project.audit(f"Approved scenarios: {', '.join(ids)}")
     return cases
