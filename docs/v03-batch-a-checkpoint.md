@@ -14,4 +14,13 @@ Gate: 112 passed, one privilege-dependent link test skipped, four browser tests 
 Replaced privilege-dependent setup with deterministic link/junction branch checks; targeted
 rerun: 12 passed, no skips. Ruff passed across production source and new tests.
 
-Stage 3: pending.
+Stage 2 commit: `5bcba16d6a7f6951692a8093838802a2c2f4c79b`.
+
+Stage 3: pure classification and report projections, typed reporting results, separate HTML
+renderer and storage-backed orchestration implemented. Gate: 87 passed, four browser tests
+deselected. Final combined gate: 167 passed, 12 browser cases deselected, live-AI module
+explicitly ignored. Ruff check and format check passed across all source and tests (35 files).
+No editor diagnostics in the seven new/changed production modules checked.
+
+Original project artifacts, frozen fixtures and dependency metadata have no diff from base.
+No push, merge, PR, browser execution, live AI or external website execution performed.
