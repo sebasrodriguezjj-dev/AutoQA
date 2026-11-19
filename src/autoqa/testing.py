@@ -12,6 +12,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from autoqa.authorization import AuthorizationContext, require_authorization
 from autoqa.core import Project, load_json, save_json
 from autoqa.planning import case_signature
 from autoqa.security import Scope
@@ -98,7 +99,8 @@ def digest(text: str) -> str:
     return hashlib.sha256(text.encode()).hexdigest()
 
 
-def generate(project: Project) -> list[str]:
+def generate(project: Project, *, authorization: AuthorizationContext | None = None) -> list[str]:
+    require_authorization(authorization, project.root, "generate")
     cases = [c for c in project.cases() if c.review_status == "approved" and c.feasible]
     if not cases:
         raise ValueError(
@@ -202,7 +204,8 @@ def parse_junit(path: Path) -> list[dict]:
     return records
 
 
-def run(project: Project) -> dict:
+def run(project: Project, *, authorization: AuthorizationContext | None = None) -> dict:
+    require_authorization(authorization, project.root, "execute")
     root = project.root / "automation"
     manifest = load_json(root / "manifest.json")
     if set(manifest["files"]) != {"conftest.py", "test_observed.py"}:

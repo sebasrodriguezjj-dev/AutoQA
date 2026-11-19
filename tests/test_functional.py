@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from autoqa.authorization import AuthorizationContext
 from autoqa.core import Project, load_json, save_json
 from autoqa.exploration import explore
 from autoqa.functional import BehaviorContract, validate_contract
@@ -14,6 +15,21 @@ from autoqa.planning import approve, plan, reject
 from autoqa.reporting import diagnose, report
 from autoqa.testing import generate, run
 from examples.independent_contracts import reviewed_contracts
+
+
+def _authorized(function, operation):
+    def call(project, *args, **kwargs):
+        context = AuthorizationContext(project.root, frozenset({operation}))
+        return function(project, *args, authorization=context, **kwargs)
+
+    return call
+
+
+plan = _authorized(plan, "plan")
+approve = _authorized(approve, "review")
+generate = _authorized(generate, "generate")
+run = _authorized(run, "execute")
+reject = _authorized(reject, "review")
 
 
 @pytest.fixture

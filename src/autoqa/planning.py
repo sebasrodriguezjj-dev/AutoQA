@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from autoqa.authorization import AuthorizationContext, require_authorization
 from autoqa.core import Project, TestCase, save_json
 from autoqa.security import Scope
 
@@ -17,8 +18,16 @@ def case_signature(case: TestCase) -> str:
     return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
 
 
-def save_cases(project: Project, cases: list[TestCase]) -> None:
-    save_json(project.root / "test-cases/test-matrix.json", [case.model_dump() for case in cases])
+def save_cases(
+    project: Project, cases: list[TestCase], *, authorization: AuthorizationContext | None = None
+) -> None:
+    """Persist reviewed cases only with explicit review authorization."""
+    require_authorization(authorization, project.root, "review")
+    _save_cases(project, cases)
+
+
+def _save_cases(project: Project, cases: list[TestCase]) -> None:
+    project.storage.write_json("test-cases/test-matrix.json", [case.model_dump() for case in cases])
     lines = [
         "# Test matrix",
         "",
@@ -37,10 +46,16 @@ def save_cases(project: Project, cases: list[TestCase]) -> None:
         lines += [f"Expected: {case.expected}", f"Evidence: {', '.join(case.evidence)}", ""]
         if case.test_data:
             lines += [f"Test data: {json.dumps(case.test_data, ensure_ascii=False)}", ""]
-    (project.root / "test-cases/test-matrix.md").write_text("\n".join(lines), encoding="utf-8")
+    project.storage.write_text("test-cases/test-matrix.md", "\n".join(lines))
 
 
-def plan(project: Project, requirements: Path | None = None) -> list[TestCase]:
+def plan(
+    project: Project,
+    requirements: Path | None = None,
+    *,
+    authorization: AuthorizationContext | None = None,
+) -> list[TestCase]:
+    require_authorization(authorization, project.root, "plan")
     discovery = project.discovery()
     cases: list[TestCase] = []
     seen = set()
@@ -209,24 +224,30 @@ def plan(project: Project, requirements: Path | None = None) -> list[TestCase]:
             ]
             discovery.evidence_records.append(reference)
         save_json(project.root / "discovery/workflow-map.json", discovery.model_dump())
-    save_cases(project, cases)
+    _save_cases(project, cases)
     project.audit(f"Planned {len(cases)} scenarios (offline deterministic mode)")
     return cases
 
 
-def reject(project: Project, ids: list[str]) -> list[TestCase]:
+def reject(
+    project: Project, ids: list[str], *, authorization: AuthorizationContext | None = None
+) -> list[TestCase]:
+    require_authorization(authorization, project.root, "review")
     cases = project.cases()
     if set(ids) - {c.id for c in cases}:
         raise ValueError("Unknown test IDs.")
     for case in cases:
         if case.id in ids:
             case.review_status = "rejected"
-    save_cases(project, cases)
+    _save_cases(project, cases)
     project.audit(f"Rejected scenarios: {', '.join(ids)}")
     return cases
 
 
-def approve(project: Project, ids: list[str]) -> list[TestCase]:
+def approve(
+    project: Project, ids: list[str], *, authorization: AuthorizationContext | None = None
+) -> list[TestCase]:
+    require_authorization(authorization, project.root, "review")
     cases = project.cases()
     unknown = set(ids) - {case.id for case in cases}
     if unknown:
@@ -234,6 +255,6 @@ def approve(project: Project, ids: list[str]) -> list[TestCase]:
     for case in cases:
         if case.id in ids:
             case.review_status = "approved"
-    save_cases(project, cases)
+    _save_cases(project, cases)
     project.audit(f"Approved scenarios: {', '.join(ids)}")
     return cases

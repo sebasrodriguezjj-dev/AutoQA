@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 from playwright.sync_api import Error, sync_playwright
 
+from autoqa.authorization import AuthorizationContext
 from autoqa.core import Discovery, Element, PageEvidence, save_json
 from autoqa.exploration import explore, extract_workflows
 from autoqa.planning import approve, plan, save_cases
@@ -12,6 +13,20 @@ from autoqa.reporting import diagnose, report
 from autoqa.repository import analyze, correlate, source_discovery
 from autoqa.security import Scope
 from autoqa.testing import generate, parse_junit, run
+
+
+def _authorized(function, operation):
+    def call(project, *args, **kwargs):
+        context = AuthorizationContext(project.root, frozenset({operation}))
+        return function(project, *args, authorization=context, **kwargs)
+
+    return call
+
+
+plan = _authorized(plan, "plan")
+approve = _authorized(approve, "review")
+generate = _authorized(generate, "generate")
+run = _authorized(run, "execute")
 
 
 def evidence(project):
@@ -60,7 +75,9 @@ def test_generation_integrity_and_approval_binding(project):
     assert "get_by_role" in generated.read_text()
     cases = project.cases()
     cases[0].expected = "Different requirement"
-    save_cases(project, cases)
+    save_cases(
+        project, cases, authorization=AuthorizationContext(project.root, frozenset({"review"}))
+    )
     with pytest.raises(ValueError, match="Approvals changed"):
         run(project)
     generated.write_text("raise RuntimeError('do not run')")

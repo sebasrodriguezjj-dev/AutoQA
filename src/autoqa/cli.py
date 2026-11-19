@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.table import Table
 
 from autoqa import __version__
+from autoqa.authorization import AuthorizationContext
 from autoqa.core import initialize, select_project
 
 app = typer.Typer(
@@ -121,21 +122,22 @@ def plan(
     ),
 ):
     """Build a test matrix or approve selected IDs after reviewing it."""
-    from autoqa.planning import approve as approve_cases
-    from autoqa.planning import plan as create_plan
-    from autoqa.planning import reject as reject_cases
+    from autoqa.planning_service import PlanningService
 
     selected = select_project(project)
     if sum(bool(x) for x in (approve, reject, requirements)) > 1:
         raise ValueError("Import requirements, approve, or reject in separate commands.")
     if ai and (approve or reject):
         raise ValueError("Request AI suggestions separately from approving scenarios.")
+    service = PlanningService(
+        selected, AuthorizationContext(selected.root, frozenset({"plan", "review"}))
+    )
     cases = (
-        approve_cases(selected, approve)
+        service.approve(approve)
         if approve
-        else reject_cases(selected, reject)
+        else service.reject(reject)
         if reject
-        else create_plan(selected, requirements)
+        else service.plan(requirements)
     )
     table = Table("ID", "Scenario", "Automatable", "Review")
     for case in cases:
@@ -159,7 +161,10 @@ def generate(project: Path | None = None, approved: bool = False):
 
     if not approved:
         raise ValueError("Use --approved; only reviewed scenarios can become tests.")
-    ids = generate_tests(select_project(project))
+    selected = select_project(project)
+    ids = generate_tests(
+        selected, authorization=AuthorizationContext(selected.root, frozenset({"generate"}))
+    )
     console.print(f"Generated {len(ids)} tests in automation/.")
 
 
@@ -170,7 +175,10 @@ def run(project: Path | None = None):
     from autoqa.testing import run as execute
 
     with console.status("Running approved Playwright tests..."):
-        result = execute(select_project(project))
+        selected = select_project(project)
+        result = execute(
+            selected, authorization=AuthorizationContext(selected.root, frozenset({"execute"}))
+        )
     console.print(
         f"Run {result['run_id']}: exit {result['exit_code']}. Results: reports/latest-run.json"
     )
