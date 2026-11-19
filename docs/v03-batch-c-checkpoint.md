@@ -41,3 +41,14 @@ step history.
 Verification: the complete non-browser regression passed with 173 tests and 13 browser
 cases deselected. Owned real Chromium headless vertical and failure/report slices passed
 with step-result assertions. Ruff check and format verification passed.
+
+## Stage 7 — shared application engine
+
+`ApplicationEngine` and `InProcessAdapter` expose project context, discovery,
+planning/review, generation, execution, diagnostics and reporting without importing CLI
+presentation code. CLI generation, execution, diagnosis and reporting now delegate to
+the same application services. Authorization, approval receipts, manifest checks and
+scope validation remain below the interface boundary.
+
+Verification: 175 non-browser tests passed and 13 browser cases were deselected; Ruff
+check, format verification and diff checks passed.

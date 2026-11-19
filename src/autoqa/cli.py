@@ -149,14 +149,14 @@ def plan(
 @handled
 def generate(project: Path | None = None, approved: bool = False):
     """Generate executable tests exclusively from approved observations."""
-    from autoqa.testing import generate as generate_tests
+    from autoqa.engine import GenerationService
 
     if not approved:
         raise ValueError("Use --approved; only reviewed scenarios can become tests.")
     selected = select_project(project)
-    ids = generate_tests(
-        selected, authorization=AuthorizationContext(selected.root, frozenset({"generate"}))
-    )
+    ids = GenerationService(
+        selected, AuthorizationContext(selected.root, frozenset({"generate"}))
+    ).generate()
     console.print(f"Generated {len(ids)} tests in automation/.")
 
 
@@ -182,9 +182,9 @@ def run(project: Path | None = None):
 @handled
 def diagnose(project: Path | None = None):
     """Classify actual failures with explicit uncertainty."""
-    from autoqa.reporting import diagnose as analyze
+    from autoqa.application import ApplicationEngine
 
-    findings = analyze(select_project(project))
+    findings = ApplicationEngine(select_project(project)).diagnose()
     console.print(f"Recorded {len(findings)} failure diagnoses in reports/diagnosis.json.")
 
 
@@ -192,9 +192,9 @@ def diagnose(project: Path | None = None):
 @handled
 def report(project: Path | None = None, format: str = "html"):
     """Render an escaped HTML or JSON report from actual project records."""
-    from autoqa.reporting import report as render
+    from autoqa.application import ApplicationEngine
 
-    console.print(render(select_project(project), format))
+    console.print(ApplicationEngine(select_project(project)).report(format))
 
 
 @app.command()
