@@ -164,13 +164,13 @@ def generate(project: Path | None = None, approved: bool = False):
 @handled
 def run(project: Path | None = None):
     """Execute the approved template suite and retain real results."""
-    from autoqa.testing import run as execute
+    from autoqa.engine import ExecutionService
 
     with console.status("Running approved Playwright tests..."):
         selected = select_project(project)
-        result = execute(
-            selected, authorization=AuthorizationContext(selected.root, frozenset({"execute"}))
-        )
+        result = ExecutionService(
+            selected, AuthorizationContext(selected.root, frozenset({"execute"}))
+        ).run()
     console.print(
         f"Run {result['run_id']}: exit {result['exit_code']}. Results: reports/latest-run.json"
     )

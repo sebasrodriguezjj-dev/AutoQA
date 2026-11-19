@@ -2,9 +2,10 @@
 
 from pathlib import Path
 
-from autoqa import planning, testing
+from autoqa import planning
 from autoqa.authorization import AuthorizationContext
 from autoqa.core import Project, TestCase
+from autoqa.engine import GenerationService
 
 
 class PlanningService:
@@ -26,4 +27,4 @@ class PlanningService:
         return planning.case_signature(case) == signature
 
     def generate(self) -> list[str]:
-        return testing.generate(self.project, authorization=self.authorization)
+        return GenerationService(self.project, self.authorization).generate()

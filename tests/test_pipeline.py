@@ -223,6 +223,11 @@ def test_real_browser_vertical_slice(project, demo_server):
     assert len(result["records"]) == 4
     assert all(r["status"] == "PASSED" for r in result["records"])
     assert len(list((project.root / result["artifact_dir"]).glob("*.zip"))) == 4
+    assert len(result["step_results"]) == 4
+    assert all(step["status"] == "PASSED" for step in result["step_results"])
+    assert all(
+        any(ref.endswith(".zip") for ref in step["evidence"]) for step in result["step_results"]
+    )
     assert diagnose(project) == []
     assert Path(report(project, "html")).is_file()
 
@@ -240,6 +245,8 @@ def test_real_failure_and_report(project, demo_server):
     result = run(project)
     assert result["exit_code"] == 1
     assert result["records"][0]["status"] == "FAILED"
+    assert result["step_results"][0]["status"] == "FAILED"
+    assert any(ref.endswith(".png") for ref in result["step_results"][0]["evidence"])
     assert diagnose(project)[0]["human_review_required"]
     assert "FAILED: 1" in Path(report(project, "html")).read_text()
 

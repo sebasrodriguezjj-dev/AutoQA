@@ -97,6 +97,9 @@ class Config(BaseModel):
     navigation_timeout_ms: int = Field(default=15000, ge=100, le=60000)
     overall_timeout_seconds: int = Field(default=120, ge=1, le=600)
     headless: bool = True
+    slow_mo_ms: int = Field(default=0, ge=0, le=2000)
+    screenshot_policy: Literal["every_step", "failures_only", "disabled"] = "failures_only"
+    trace_enabled: bool = True
     auth_reference: str | None = None
     ai_provider: Literal["offline", "openai"] = "offline"
     ai_model: str | None = None

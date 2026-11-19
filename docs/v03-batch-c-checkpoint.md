@@ -25,3 +25,19 @@ check and format verification passed.
 Stage 6.1 will extract generation, validation, collection, execution, JUnit ingestion,
 diagnostics and run persistence behind reusable services while preserving the existing
 CLI and generated-suite formats.
+
+## Stage 6.1/6.2 — execution and evidence
+
+Reusable `GenerationService`, `ExecutionService` and `JUnitIngestionService` now sit
+below the CLI and planning service. The existing `testing` functions remain compatible
+facades and retain manifest, collection, subprocess and JUnit semantics.
+
+New generated runs support headless/headed configuration, bounded slow motion, trace
+capture and `every_step`, `failures_only` or `disabled` screenshot policies. The generated
+fixture records structured step metadata and separates evidence-capture errors from the
+scenario assertion outcome. Legacy run snapshots remain unchanged and expose no invented
+step history.
+
+Verification: the complete non-browser regression passed with 173 tests and 13 browser
+cases deselected. Owned real Chromium headless vertical and failure/report slices passed
+with step-result assertions. Ruff check and format verification passed.
