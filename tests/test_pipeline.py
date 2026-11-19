@@ -252,6 +252,21 @@ def test_real_failure_and_report(project, demo_server):
 
 
 @pytest.mark.browser
+def test_real_headed_browser_execution(project, demo_server):
+    base, _ = demo_server
+    project.config.allow_localhost = True
+    project.config.headless = False
+    project.config.max_pages = 1
+    explore(project, base)
+    cases = plan(project)
+    approve(project, [cases[0].id])
+    generate(project)
+    result = run(project)
+    assert result["exit_code"] == 0
+    assert result["step_results"][0]["status"] == "PASSED"
+
+
+@pytest.mark.browser
 def test_real_browser_scope_redirect_and_write_blocking(project, demo_server):
     base, handler = demo_server
     project.config.allow_localhost = True
