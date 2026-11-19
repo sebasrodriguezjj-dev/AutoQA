@@ -1,0 +1,15 @@
+{
+  "playwright": "1.65.2",
+  "pytest": "9.2.0",
+  "pytest-playwright": "0.10.0",
+  "typer": "0.29.1",
+  "rich": "15.0.0",
+  "pydantic": "2.14.3",
+  "pyyaml": "6.0.3",
+  "jinja2": "3.1.6",
+  "ruff": "0.17.5",
+  "uv": "0.13.9",
+  "openai_optional": "3.54.0",
+  "python_verified": "3.14.3",
+  "chromium_verified": "159.0.8154.6 (Playwright revision 1255)"
+}

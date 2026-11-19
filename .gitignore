@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.env
+projects/
+.autoqa/
+dist/
+*.egg-info/
+*storage-state*.json
+auth-state*.json
+.test-work/
+.uv-cache/

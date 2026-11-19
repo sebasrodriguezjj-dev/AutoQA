@@ -1,0 +1,99 @@
+{
+  "status": "AWAITING_HUMAN_ALLOWLIST_REVIEW",
+  "historical_source": "projects\\toolshop-v02\\discovery\\workflow-map.json",
+  "historical_blocked_requests": [
+    {
+      "origin": "https://static.cloudflareinsights.com",
+      "method": "GET",
+      "count": 8,
+      "path": null,
+      "specific_reason": null
+    },
+    {
+      "origin": "https://api.practicesoftwaretesting.com",
+      "method": "GET",
+      "count": 28,
+      "path": null,
+      "specific_reason": null
+    },
+    {
+      "origin": "https://practicesoftwaretesting.com",
+      "method": "GET",
+      "count": 8,
+      "path": null,
+      "specific_reason": null
+    },
+    {
+      "origin": "https://api.practicesoftwaretesting.com",
+      "method": "QUERY",
+      "count": 10,
+      "path": null,
+      "specific_reason": null
+    }
+  ],
+  "historical_gap": "V0.2 stored only origin, method and a generic reason; exact paths and first failing predicates cannot be recovered.",
+  "proposal": "docs/v021-api-allowlist.proposed.yaml",
+  "proposal_applied": false,
+  "active_allowed_domains": [
+    "practicesoftwaretesting.com"
+  ],
+  "existing_project_limits": {
+    "max_pages": 8,
+    "max_depth": 2,
+    "request_interval_ms": 500,
+    "overall_timeout_seconds": 120,
+    "allow_localhost": false,
+    "excluded_paths": [
+      "/account",
+      "/admin",
+      "/auth",
+      "/checkout"
+    ]
+  },
+  "targeted_tests": {
+    "tests": "48",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "12.200"
+  },
+  "targeted_test_result": "PASSED",
+  "test_selection": [
+    "tests/test_external_compatibility.py",
+    "tests/test_core.py::test_unsafe_urls",
+    "tests/test_core.py::test_local_scope_and_origin",
+    "tests/test_core.py::test_dns_private_rebinding_rejected",
+    "tests/test_core.py::test_explicit_scope_path_exclusions",
+    "tests/test_pipeline.py::test_real_browser_scope_redirect_and_write_blocking"
+  ],
+  "historical_independent_results_preserved": {
+    "healthy": {
+      "PASSED": 9
+    },
+    "regression": {
+      "PASSED": 7,
+      "FAILED": 2
+    },
+    "restored": {
+      "PASSED": 9
+    }
+  },
+  "independent_acceptance_rerun": false,
+  "external_exploration_or_tests_rerun": false,
+  "external_documentation_read_only": [
+    "https://api.practicesoftwaretesting.com/docs?api-docs.json",
+    "https://playwright.dev/python/docs/api/class-page#page-route",
+    "https://chromedevtools.github.io/devtools-protocol/tot/Fetch/"
+  ],
+  "dependencies_updated": false,
+  "project_rebuilt": false,
+  "existing_artifact_hashes_at_review_completion": {
+    "pyproject.toml": "aa798c195d47fb67d7b71c538da5fa412329e82b58850a67dd41ffb06808e909",
+    "uv.lock": "b581d512c84a9c2af8227033ce05062f7960787dfcd071aba277fc2b8bafc888",
+    "projects/toolshop-v02/config.yaml": "e4d1023d236b107e44cf12ac291f124ae4c04fdc24557643b84375fbbcf64c7e",
+    "projects/toolshop-v02/discovery/workflow-map.json": "d9e058d325d8f7956b25eee224ae379218cee2ec052b959d9fa8812d3991a59a",
+    "docs/v02-benchmarks.json": "9441b5952c98deb852393a49925e9dcaf706ed1b7b25eb5d58ba427f8ef7acef",
+    "projects/independent-v02/automation/manifest.json": "b79cea5b62b6115d2e33237338b79976c53a743e78b886631a3bc97dfd379651",
+    "projects/independent-v02/reports/latest-run.json": "0425eae1afe6be0afea4ed31e5ec2a119badb8a80bf0dd845d57db636201033e"
+  }
+}

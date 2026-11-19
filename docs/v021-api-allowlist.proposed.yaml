@@ -1,0 +1,29 @@
+# PROPOSAL ONLY. Not merged into any project configuration.
+# Resource requests only: fetch/xhr; no navigation, redirects, auth, bodies or writes.
+# Literal paths, HTTPS port 443. No query keys/values approved in this first phase.
+# These endpoints are documented candidates, NOT recovered historical blocked paths.
+api_resources:
+  - origin: https://api.practicesoftwaretesting.com
+    path: /products
+    methods: [GET]
+    query: {}
+    enabled: false
+    approval_reference: "PENDING human review; no authorization granted"
+  - origin: https://api.practicesoftwaretesting.com
+    path: /brands
+    methods: [GET]
+    query: {}
+    enabled: false
+    approval_reference: "PENDING human review; no authorization granted"
+  - origin: https://api.practicesoftwaretesting.com
+    path: /categories
+    methods: [GET]
+    query: {}
+    enabled: false
+    approval_reference: "PENDING human review; no authorization granted"
+  - origin: https://api.practicesoftwaretesting.com
+    path: /categories/tree
+    methods: [GET]
+    query: {}
+    enabled: false
+    approval_reference: "PENDING human review; no authorization granted"

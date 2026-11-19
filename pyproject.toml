@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "autoqa-agent"
+version = "0.2.0"
+description = "Private, evidence-driven QA automation CLI"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+  "playwright", "pytest", "pytest-playwright", "typer", "rich",
+  "pydantic>=2,<3", "pyyaml", "jinja2",
+]
+
+[project.scripts]
+autoqa = "autoqa.cli:app"
+
+[project.optional-dependencies]
+ai = ["openai"]
+
+[dependency-groups]
+dev = ["ruff"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/autoqa"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["browser: real Chromium integration tests"]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+extend-exclude = ["projects", ".test-work"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"] # Long embedded JS/HTML and generated source strings.
+
+[tool.ruff.lint.per-file-ignores]
+"src/autoqa/cli.py" = ["B008"] # Typer option declarations.

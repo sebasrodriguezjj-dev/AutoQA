@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-18",
+  "target": "https://practicesoftwaretesting.com/",
+  "status": "LIMITED_BY_EXISTING_SCOPE_POLICY",
+  "pages_discovered": 8,
+  "workflows_discovered": 24,
+  "semantic_elements": 401,
+  "controls_discovered": 203,
+  "proposed": 22,
+  "approved": 0,
+  "generated": 0,
+  "executed": 0,
+  "passed": 0,
+  "failed": 0,
+  "skipped": 0,
+  "execution_errors": 0,
+  "execution_state": "NOT_EXECUTED",
+  "blocked_origins": {
+    "https://static.cloudflareinsights.com": 8,
+    "https://api.practicesoftwaretesting.com": 38,
+    "https://practicesoftwaretesting.com": 8
+  },
+  "workflow_kinds": {
+    "observation": 13,
+    "form": 5,
+    "sorting": 5,
+    "search": 1
+  },
+  "reason": "Separate API-origin requests blocked by unchanged same-origin policy. Observations establish controls but no reliable product/search outcomes. No unverified requirements or tests were fabricated. Generation refused without approved feasible scenarios.",
+  "robots_exclusions": [
+    "/account",
+    "/admin",
+    "/auth",
+    "/checkout"
+  ],
+  "limits": {
+    "max_pages": 8,
+    "max_depth": 2,
+    "request_interval_ms": 500
+  },
+  "report": "projects/toolshop-v02/reports/qa-report.html"
+}
