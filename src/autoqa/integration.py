@@ -33,7 +33,6 @@ def integrate(project: Project) -> str:
     workflow = """name: AutoQA approved UI suite
 on:
   workflow_dispatch:
-  pull_request:
 permissions:
   contents: read
 jobs:
@@ -47,6 +46,14 @@ jobs:
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
           version: "0.13.9"
+      - name: Require provisioned project and authorized target
+        env:
+          AUTOQA_BASE_URL: ${{ vars.AUTOQA_BASE_URL }}
+        run: |
+          test -n "$AUTOQA_BASE_URL" || { echo "::error::Configure AUTOQA_BASE_URL before dispatch"; exit 1; }
+          for file in config.yaml discovery/workflow-map.json test-cases/test-matrix.json automation/manifest.json automation/conftest.py automation/test_observed.py; do
+            test -f "PROJECT_PATH/$file" || { echo "::error::Missing provisioned project file: $file"; exit 1; }
+          done
       - run: uv sync --locked
       - run: uv run playwright install --with-deps chromium
       - name: Run approved tests against the configured staging application

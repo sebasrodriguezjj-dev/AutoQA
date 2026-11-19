@@ -167,3 +167,24 @@ Fresh review-preparation checks:
 
 Known technical limits in the audit remain applicable. Publication state and final
 commit/PR identifiers are reported after remote verification, outside this commit.
+## PR CI correction (2026-11-19)
+
+The initial GitHub Actions failure came from the approved demo/client workflow running
+on PRs without the ignored `projects/demo-project` workspace or a configured
+`AUTOQA_BASE_URL`. It is not evidence of a core-engine regression.
+
+The checked-in demo workflow and CI generator now expose manual dispatch only, with
+explicit failure for missing project files or target URL. No private workspace is staged
+or fabricated. Provisioning, target scope and approval prerequisites are documented in
+[CI instructions](ci.md). Manual client execution remains unverified.
+
+A separate PR workflow verifies Python 3.14 with locked dependencies, Ruff lint/format
+and non-browser regression, explicitly ignoring the live AI module. It uses no client
+secrets or external application targets. No failure is suppressed.
+
+Local validation: 179 non-browser tests passed (14 browser tests deselected, 23.53s),
+then all 5 focused AI/CI tests passed after adding workflow-separation coverage. Ruff
+lint/format, YAML parsing, shell syntax checks and diff whitespace checks passed.
+The preflight was exercised in an empty temporary checkout: both empty URL and missing
+project config returned exit 1 with explicit errors. Sandbox restrictions required
+approved validation reruns. Hosted PR results are reported after publishing this commit.
