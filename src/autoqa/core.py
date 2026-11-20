@@ -1,8 +1,6 @@
 """Validated contracts, isolated project storage and local metadata."""
 
-import json
 import re
-import sqlite3
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
@@ -10,6 +8,18 @@ from urllib.parse import urlsplit
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from autoqa.storage import (
+    LocalProjectStorage,
+    register_project,
+    selected_root,
+)
+from autoqa.storage import (
+    load_json as load_json,
+)
+from autoqa.storage import (
+    save_json as save_json,
+)
 
 
 class APIResourceRule(BaseModel):
@@ -87,6 +97,9 @@ class Config(BaseModel):
     navigation_timeout_ms: int = Field(default=15000, ge=100, le=60000)
     overall_timeout_seconds: int = Field(default=120, ge=1, le=600)
     headless: bool = True
+    slow_mo_ms: int = Field(default=0, ge=0, le=2000)
+    screenshot_policy: Literal["every_step", "failures_only", "disabled"] = "failures_only"
+    trace_enabled: bool = True
     auth_reference: str | None = None
     ai_provider: Literal["offline", "openai"] = "offline"
     ai_model: str | None = None
@@ -199,27 +212,14 @@ class TestCase(BaseModel):
     contract: dict | None = None
 
 
-def save_json(path: Path, value: object) -> None:
-    """Replace JSON atomically so interrupted writes do not corrupt records."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(value, indent=2, ensure_ascii=False), encoding="utf-8")
-    temporary.replace(path)
-
-
-def load_json(path: Path) -> object:
-    if not path.is_file():
-        raise ValueError(f"Missing {path.name}; run the preceding workflow command first.")
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
 class Project:
     def __init__(self, root: Path):
         self.root = root.resolve()
+        self.storage = LocalProjectStorage(self.root)
         config_path = self.root / "config.yaml"
         if not config_path.is_file():
             raise ValueError(f"No AutoQA project at {self.root}. Use init or --project PATH.")
-        self.config = Config.model_validate(yaml.safe_load(config_path.read_text(encoding="utf-8")))
+        self.config = Config.model_validate(self.storage.read_config())
         for folder in (
             "discovery",
             "test-cases",
@@ -233,22 +233,19 @@ class Project:
                 raise ValueError(f"Project artifact directory cannot be a link: {folder}")
 
     def save_config(self) -> None:
-        (self.root / "config.yaml").write_text(
-            yaml.safe_dump(self.config.model_dump(), sort_keys=False), encoding="utf-8"
-        )
+        self.storage.write_config(self.config.model_dump())
 
     def audit(self, event: str) -> None:
-        with (self.root / "logs" / "events.jsonl").open("a", encoding="utf-8") as stream:
-            stream.write(json.dumps({"time": datetime.now(UTC).isoformat(), "event": event}) + "\n")
+        self.storage.append_event({"time": datetime.now(UTC).isoformat(), "event": event})
 
     def cases(self) -> list[TestCase]:
         return [
             TestCase.model_validate(item)
-            for item in load_json(self.root / "test-cases/test-matrix.json")
+            for item in self.storage.read_json("test-cases/test-matrix.json")
         ]
 
     def discovery(self) -> Discovery:
-        return Discovery.model_validate(load_json(self.root / "discovery/workflow-map.json"))
+        return Discovery.model_validate(self.storage.read_json("discovery/workflow-map.json"))
 
 
 def initialize(name: str, parent: Path) -> Project:
@@ -278,25 +275,11 @@ def initialize(name: str, parent: Path) -> Project:
     (root / "config.yaml").write_text(
         yaml.safe_dump(Config(name=name).model_dump()), encoding="utf-8"
     )
-    metadata = parent.resolve() / ".autoqa"
-    metadata.mkdir(exist_ok=True)
-    with sqlite3.connect(metadata / "projects.db") as connection:
-        connection.execute(
-            "CREATE TABLE IF NOT EXISTS projects (name TEXT PRIMARY KEY, path TEXT NOT NULL)"
-        )
-        connection.execute("INSERT INTO projects VALUES (?, ?)", (name, str(root)))
-    save_json(metadata / "active.json", {"path": str(root)})
+    register_project(parent, name, root)
     project = Project(root)
     project.audit("project.initialized")
     return project
 
 
 def select_project(explicit: Path | None) -> Project:
-    if explicit:
-        return Project(explicit)
-    if (Path.cwd() / "config.yaml").is_file():
-        return Project(Path.cwd())
-    active = Path.cwd() / "projects/.autoqa/active.json"
-    if active.is_file():
-        return Project(Path(load_json(active)["path"]))
-    raise ValueError("No active project. Run autoqa init NAME or pass --project PATH.")
+    return Project(selected_root(explicit))

@@ -1,0 +1,199 @@
+# AutoQA V0.3 release finalization
+
+Date: 2026-11-19. Branch: `feat/v03-batch-c`, based on verified Batch C `7d2d599`.
+
+## Decision and scope
+
+**Ready for integration as version 0.3.0**, within the trusted, synchronous local-engine
+scope documented in the [release audit](./v03-release-audit.md). No release-blocking defect
+remains identified in that scope. This finalization fixes diagnostic screenshot references,
+adds regression coverage, aligns release metadata, and commits the audit locally.
+No PR, push, merge, tag, live AI call or external website benchmark was performed.
+
+## Corrected diagnostics and compatibility
+
+[Diagnostic evidence projection](../src/autoqa/diagnostics.py) and
+[filesystem lookup](../src/autoqa/reporting.py) share the same evidence-reference function.
+They retain historical `<test>.png`, `<test>.zip` and run-level `pytest.log` references,
+and now include `.png`/`.zip` filenames recorded by steps belonging to the matching test.
+Step filenames are resolved only inside the current run's artifact directory. Explicit
+step run IDs must match the run being diagnosed; traversal, absolute and non-filename
+references are ignored. File existence and existing storage path/link checks still apply.
+Duplicate references are removed. Missing files do not produce evidence links.
+
+Four new cases in [reporting boundary tests](../tests/test_reporting_boundaries.py) cover
+current step screenshots, legacy screenshots without step records, missing evidence,
+and isolation between tests/runs (including stale and escaping references). The first
+focused repro had **2 failed / 2 passed**, confirming the new-step omission before the
+fix. Existing assertions were preserved. Final non-browser regression passes all four.
+A real owned-localhost failure/report run also passed; its persisted diagnosis was
+independently checked to contain the actual `test_TC_001-step-1.png`, trace and pytest log.
+Diagnostic output remains a projection, not proof against forged local step metadata.
+
+## Version and installation
+
+[Package metadata](../pyproject.toml), [import version](../src/autoqa/__init__.py), and the
+editable project entry in [uv.lock](../uv.lock) are **0.3.0**. The lockfile diff changes
+only the root package version; dependency resolutions/hashes are unchanged.
+`uv lock --check --offline` succeeded (37 packages).
+
+Offline `uv build` produced `autoqa_agent-0.3.0.tar.gz` and
+`autoqa_agent-0.3.0-py3-none-any.whl`, building the wheel from the source distribution.
+The wheel was installed with `uv pip install --no-deps --offline` in a disposable venv.
+Import inspection confirmed `autoqa.__version__` and installed distribution metadata
+both equal `0.3.0`, with the imported file inside that venv's site-packages rather than
+the checkout. The console entry point remains `autoqa = autoqa.cli:app`.
+
+The initial dependency-free installation correctly could not launch the CLI without
+Typer. Locked runtime requirements were exported with `uv export --locked --no-dev
+--no-emit-project`; the offline install lacked cached greenlet. An authorized download
+installed the exact 25 locked runtime dependencies into that disposable environment.
+No project lock resolutions were changed. The installed `autoqa --help` and
+`python -m autoqa --help` smoke checks then passed, displaying **AutoQA Agent 0.3.0**.
+These checks do not claim an offline dependency installation from a complete cache.
+
+## Verification evidence
+
+Existing regression interpreter: `.venv/Scripts/python.exe`, Python 3.14.3.
+
+| Gate | Actual finalization result |
+| --- | --- |
+| All non-browser tests, live AI module explicitly ignored | **179 passed, 14 deselected**, 24.26s |
+| Owned-localhost Chromium failure/report test | **1 passed**, 21.79s |
+| New diagnostic cases | All 4 passed in the non-browser run |
+| Frozen legacy compatibility/signatures/read preservation | Passed in the non-browser run |
+| Ruff lint and format | Passed; 43 files formatted |
+| Lock consistency | Passed offline |
+| sdist / wheel | Built successfully as 0.3.0 |
+| Installed package/import/CLI metadata | 0.3.0, correct console entry point and successful help |
+| Editor diagnostics for changed Python files | No errors reported |
+
+Commands (outputs are disposable and ignored):
+
+```powershell
+.venv/Scripts/python.exe -m pytest tests -m 'not browser' --ignore=tests/test_live_ai.py -q -p no:cacheprovider --basetemp=.test-work/v030-final-nonbrowser --junitxml=.test-work/v030-final-nonbrowser.xml
+.venv/Scripts/python.exe -m pytest tests/test_pipeline.py::test_real_failure_and_report -q -p no:cacheprovider --basetemp=.test-work/v030-browser --junitxml=.test-work/v030-browser.xml
+.venv/Scripts/python.exe -m ruff check src tests
+.venv/Scripts/python.exe -m ruff format --check src tests
+uv lock --check --offline
+uv build --offline --out-dir .test-work/v030-release-dist
+git diff --check
+```
+
+Initial sandboxed repro attempts encountered pytest temporary-directory `WinError 5`;
+authorized reruns supplied the evidence above. The earlier audit's complete 189-test run
+(including all then-existing 14 browser cases and defect/restore acceptance) remains
+historical evidence, not a claim that all browser tests were rerun in finalization.
+
+## Preservation and remaining limits
+
+Historical compatibility ZIPs, their baseline, approved suites, legacy manifests and
+project evidence are unchanged. No original project suite was regenerated or executed;
+all new execution used disposable test projects. Fixture hashes remain those recorded
+in the audit. New test/build/install evidence stays under ignored `.test-work/` and is
+excluded from release contents. Wheel/sdist inventories are inspected before commit;
+the sdist intentionally contains tracked docs and frozen demo compatibility archives.
+
+Instrumentation still wraps **one generated scenario in one coarse step**. Per-action
+Playwright timings/outcomes, typed executable step contracts, richer sensitivity metadata,
+and more complete skipped/interrupted step semantics remain future development. This
+fix does not change screenshot policies or browser instrumentation. Local authorization
+is caller intent, and receipts/manifests depend on trusted local writers. Storage remains
+single-writer; browser evidence still requires review before distribution.
+
+## Local Git state and proposed integration
+
+All Batch A commits (`b7566a6`, `5bcba16`, `545a245`, `c5e71f4`), Batch B commits
+(`eb57329`, `d6e2614`, `8e6dc67`, `e55b824`), and Batch C commits
+(`4c9eace`, `bf70190`, `119dfad`, `7d2d599`) remain ancestors of the finalization commit.
+The audit document and verified finalization changes are committed together locally;
+the resulting SHA is reported in the completion message rather than embedded in itself.
+
+Local main/cached origin/main were `1853c35`; remote state has not been refreshed.
+After explicit authorization and with a clean working tree, preserve the full history:
+
+```powershell
+git fetch origin
+git switch main
+git merge --ff-only origin/main
+git merge-base --is-ancestor main feat/v03-batch-c
+# Continue only if every preceding command succeeds:
+git merge --ff-only feat/v03-batch-c
+```
+
+If ancestry or fast-forward checks fail, stop and inspect remote changes. Prepare a
+separate integration branch and validate the combined tree before seeking approval;
+do not reset, discard, force-push or cherry-pick only Batch C. No push, PR, merge or
+`v0.3.0` tag is authorized by this local finalization. Publishing/tagging requires a
+separate explicit instruction.
+
+## GitHub review preparation (2026-11-19)
+
+The subsequent publishing task explicitly authorizes pushing only `feat/v03-batch-c`
+and opening a PR against `main`; it does not authorize merging, tagging or changing
+visibility. The preceding local-main merge procedure is historical and is not executed
+for this review publication.
+
+Starting HEAD was exactly `f8851220281433b6ec504d7280c206aad059cf47`, with a clean tree.
+A successful fresh `git fetch origin` retained `origin/main` at `1853c35`; it is an
+ancestor of HEAD (0 remote-only / 13 release commits before documentation updates).
+The complete Batch A/B/C linear ancestry is preserved. Origin matches the specified
+repository. The proposed main-to-release diff and its 41 changed files were inspected.
+
+README and roadmap now describe the professional-service purpose, actual V0.3 stack,
+modular boundaries, real CLI/configuration, receipts, generation/execution, evidence,
+security limits and future V0.4 work. SaaS/subscription roadmap claims were removed.
+
+Fresh review-preparation checks:
+
+- Offline non-browser regression: **179 passed, 14 deselected in 46.99s**; live AI module
+  explicitly ignored. Sandbox temporary-directory errors required an authorized rerun.
+- Ruff check and format: passed (43 files already formatted).
+- `uv lock --check --offline`: passed, 37 packages. Cache permissions required escalation.
+- Root/module help and all nine command help pages: passed.
+- `autoqa`, application and engine imports: passed. Existing editable install metadata
+  was 0.2.0; `uv sync --locked --offline --extra ai` rebuilt the local project as 0.3.0.
+  Package/import/installed metadata/lock now all match 0.3.0; lock resolutions unchanged.
+- Frozen fixtures: no diff against main or the verified release commit; archive SHA256
+  values match the baseline. The regression verifies archive members and their hashes.
+- Tracked text and all 16 decompressed fixture members: no common private-key,
+  GitHub/OpenAI token or AWS access-key pattern hits. No project/build/cache directory
+  is tracked. Frozen demo archives and historical XML are intentional evidence; their
+  existing workstation/path provenance remains. No client evidence was identified.
+  This scoped pattern/content review is not a forensic audit of all Git history.
+- No browser suite was repeated: this task changes documentation only; existing real
+  headed/headless/failure evidence above remains historical, separately identified.
+- `git diff --check`: passed. New validation artifacts remain ignored.
+
+Known technical limits in the audit remain applicable. Publication state and final
+commit/PR identifiers are reported after remote verification, outside this commit.
+## PR CI correction (2026-11-19)
+
+The initial GitHub Actions failure came from the approved demo/client workflow running
+on PRs without the ignored `projects/demo-project` workspace or a configured
+`AUTOQA_BASE_URL`. It is not evidence of a core-engine regression.
+
+The checked-in demo workflow and CI generator now expose manual dispatch only, with
+explicit failure for missing project files or target URL. No private workspace is staged
+or fabricated. Provisioning, target scope and approval prerequisites are documented in
+[CI instructions](ci.md). Manual client execution remains unverified.
+
+A separate PR workflow verifies Python 3.14 with locked dependencies, Ruff lint/format
+and non-browser regression, explicitly ignoring the live AI module. It uses no client
+secrets or external application targets. No failure is suppressed.
+
+Local validation: 179 non-browser tests passed (14 browser tests deselected, 23.53s),
+then all 5 focused AI/CI tests passed after adding workflow-separation coverage. Ruff
+lint/format, YAML parsing, shell syntax checks and diff whitespace checks passed.
+The preflight was exercised in an empty temporary checkout: both empty URL and missing
+project config returned exit 1 with explicit errors. Sandbox restrictions required
+approved validation reruns. Hosted PR results are reported after publishing this commit.
+
+The first hosted code-verification run (44594720078, commit d97c501) passed setup,
+locked sync and Ruff, then failed collection with `ModuleNotFoundError: examples`
+from `tests/test_functional.py`. The console-script pytest entry point did not add the
+repository root to import search paths on the clean Linux runner. The PR workflow now
+uses `uv run python -m pytest`, matching the successful local module invocation and
+including the repository root. No tests are excluded beyond browser/live AI selection,
+and collection errors remain fatal. Hosted results of this correction are reported
+separately; the earlier failure remains visible in Actions history.

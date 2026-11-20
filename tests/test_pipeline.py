@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 from playwright.sync_api import Error, sync_playwright
 
+from autoqa.authorization import AuthorizationContext
 from autoqa.core import Discovery, Element, PageEvidence, save_json
 from autoqa.exploration import explore, extract_workflows
 from autoqa.planning import approve, plan, save_cases
@@ -12,6 +13,24 @@ from autoqa.reporting import diagnose, report
 from autoqa.repository import analyze, correlate, source_discovery
 from autoqa.security import Scope
 from autoqa.testing import generate, parse_junit, run
+
+
+def _authorized(function, operation):
+    def call(project, *args, **kwargs):
+        context = AuthorizationContext(project.root, frozenset({operation}))
+        return function(project, *args, authorization=context, **kwargs)
+
+    return call
+
+
+plan = _authorized(plan, "plan")
+approve = _authorized(approve, "review")
+generate = _authorized(generate, "generate")
+run = _authorized(run, "execute")
+explore = _authorized(explore, "discover")
+analyze = _authorized(analyze, "discover")
+correlate = _authorized(correlate, "discover")
+source_discovery = _authorized(source_discovery, "discover")
 
 
 def evidence(project):
@@ -60,7 +79,9 @@ def test_generation_integrity_and_approval_binding(project):
     assert "get_by_role" in generated.read_text()
     cases = project.cases()
     cases[0].expected = "Different requirement"
-    save_cases(project, cases)
+    save_cases(
+        project, cases, authorization=AuthorizationContext(project.root, frozenset({"review"}))
+    )
     with pytest.raises(ValueError, match="Approvals changed"):
         run(project)
     generated.write_text("raise RuntimeError('do not run')")
@@ -202,6 +223,11 @@ def test_real_browser_vertical_slice(project, demo_server):
     assert len(result["records"]) == 4
     assert all(r["status"] == "PASSED" for r in result["records"])
     assert len(list((project.root / result["artifact_dir"]).glob("*.zip"))) == 4
+    assert len(result["step_results"]) == 4
+    assert all(step["status"] == "PASSED" for step in result["step_results"])
+    assert all(
+        any(ref.endswith(".zip") for ref in step["evidence"]) for step in result["step_results"]
+    )
     assert diagnose(project) == []
     assert Path(report(project, "html")).is_file()
 
@@ -219,8 +245,25 @@ def test_real_failure_and_report(project, demo_server):
     result = run(project)
     assert result["exit_code"] == 1
     assert result["records"][0]["status"] == "FAILED"
+    assert result["step_results"][0]["status"] == "FAILED"
+    assert any(ref.endswith(".png") for ref in result["step_results"][0]["evidence"])
     assert diagnose(project)[0]["human_review_required"]
     assert "FAILED: 1" in Path(report(project, "html")).read_text()
+
+
+@pytest.mark.browser
+def test_real_headed_browser_execution(project, demo_server):
+    base, _ = demo_server
+    project.config.allow_localhost = True
+    project.config.headless = False
+    project.config.max_pages = 1
+    explore(project, base)
+    cases = plan(project)
+    approve(project, [cases[0].id])
+    generate(project)
+    result = run(project)
+    assert result["exit_code"] == 0
+    assert result["step_results"][0]["status"] == "PASSED"
 
 
 @pytest.mark.browser

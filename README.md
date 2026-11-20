@@ -1,10 +1,10 @@
-# AutoQA Agent 0.2.0
+# AutoQA Agent 0.3.0
 
-A private Python CLI for evidence-driven QA automation. AutoQA explores an authorized application, records visible UI evidence, proposes reviewable scenarios, generates approved Playwright tests, executes them with Pytest, and renders actual results as HTML or JSON. It works offline; optional AI produces review-only recommendations.
+A private professional QA engineering tool supporting its owner's QA Automation Engineering services. The source repository may be public; client workspaces and evidence remain private. It is a local Python CLI, with no SaaS or subscription offering. AutoQA explores an authorized application, records visible UI evidence, proposes reviewable scenarios, generates approved Playwright tests, executes them with Pytest, and renders actual results as HTML or JSON. It works offline; optional AI produces review-only recommendations.
 
-V0.2 adds passive functional control discovery, browser-checked semantic locators, typed behavior contracts, positive/negative/boundary cases, functional Python templates, pre-execution Ruff and collection checks, richer diagnostics and reports from execution snapshots. Unknown behavior stays pending review. Authentication, remote repository access and autonomous maintenance remain unsupported. See [V0.2 functional testing](docs/v0.2-functional-testing.md) for the exact contract schema, independent-demo benchmark and external validation limitations.
+The retained V0.2 foundation includes passive functional control discovery, browser-checked semantic locators, typed behavior contracts, positive/negative/boundary cases, functional Python templates, pre-execution Ruff and collection checks, richer diagnostics and reports from execution snapshots. Unknown behavior stays pending review. Authentication, remote repository access and autonomous maintenance remain unsupported. See [V0.2 functional testing](docs/v0.2-functional-testing.md) for the exact contract schema, independent-demo benchmark and external validation limitations.
 
-The V0.1 report and run history in projects/demo-project are preserved. New V0.2 acceptance evidence is isolated in projects/independent-v02 and projects/toolshop-v02.
+V0.3 adds versioned domain contracts, storage/reporting boundaries, project-bound discovery and planning services, approval receipts, shared generation/execution services and an in-process application engine. New suites require receipts matching the reviewed scenario at generation and execution. Historical generated suites retain legacy checks. See [final delivery](docs/v03-final-delivery.md), [audit](docs/v03-release-audit.md) and [release verification](docs/v03-release-finalization.md).
 
 ## Requirements and installation
 
@@ -22,7 +22,7 @@ python -m uv run autoqa --help
 Standard commands, when uv is on PATH:
 
 ```powershell
-uv sync
+uv sync --locked
 uv run autoqa --help
 uv run pytest
 uv run ruff check .
@@ -99,7 +99,10 @@ See [CLI reference](docs/cli-reference.md). Every project operation accepts `--p
 | `navigation_timeout_ms` | 15000 |
 | `overall_timeout_seconds` | 120; upper bound 600 |
 | `request_interval_ms` | 150; minimum spacing between permitted requests; use 500 for external validation |
-| `headless` | `true` |
+| `headless` | `true`; set `false` in project YAML for headed execution (no CLI mode flag) |
+| `slow_mo_ms` | `0`; bounded 0–2000 ms |
+| `screenshot_policy` | `failures_only`; also `every_step` or `disabled` |
+| `trace_enabled` | `true`; traces can include DOM snapshots and screenshots independently of screenshot policy |
 | `auth_reference` | `null`; non-null rejected by v0 discovery |
 | `ai_provider`, `ai_model` | `offline`, `null` |
 | `test_preferences` | Chromium; other browsers not implemented |
@@ -145,7 +148,15 @@ This creates `.github/workflows/autoqa-my-demo.yml` in the QA repository. Inspec
 pyproject.toml / uv.lock          package and reproducible dependencies
 src/autoqa/
   cli.py / __main__.py           Typer entry points
-  core.py                       Pydantic contracts, project storage, SQLite registry
+  application.py                ApplicationEngine and InProcessAdapter
+  domain.py / legacy.py          versioned contracts and historical projections
+  storage.py                    confined local persistence boundary
+  authorization.py              project/operation intent checks
+  discovery_service.py          authorized discovery orchestration
+  planning_service.py           authorized planning and review
+  engine.py                     generation, execution and JUnit services
+  diagnostics.py                evidence projections
+  core.py                       legacy models, configuration, project selection
   security.py                   URL scope and request policy
   demo.py                       local application
   exploration.py                Chromium observations and workflow extraction
@@ -164,7 +175,7 @@ docs/                           architecture, security, CLI, CI, roadmap, verifi
 projects/NAME/                  isolated private artifacts (Git-ignored)
 ```
 
-Each project contains `config.yaml`, `discovery/`, `test-cases/`, `automation/`, `reports/`, `screenshots/`, `artifacts/` and `logs/`. Workflow maps retain OBSERVED or INFERRED status; source inspection retains SOURCE status. Reports describe discovery counts, not requirements coverage percentages. Runs have unique IDs and retain screenshots/traces for all tests. `reports/latest-run.json` is the most recent completed run; `reports/qa-report.html` is regenerated explicitly.
+Each project contains `config.yaml`, `discovery/`, `test-cases/`, `automation/`, `reports/`, `screenshots/`, `artifacts/` and `logs/`. Workflow maps retain OBSERVED or INFERRED status; source inspection retains SOURCE status. Reports describe discovery counts, not requirements coverage percentages. Runs have unique IDs; screenshots and traces follow configured policies. New generated scenarios record one coarse step with status, duration, timestamp, error and evidence references. This is not per-action instrumentation; historical steps remain NOT_RECORDED. Diagnostics include recorded step screenshots and legacy filenames. `reports/latest-run.json` is the most recent completed run; `reports/qa-report.html` is regenerated explicitly.
 
 ## Development, verification and troubleshooting
 
@@ -188,3 +199,11 @@ The test suite includes real browser passes, a deliberately changed application 
 - **Run timed out:** inspect the run's `pytest.log` and JUnit file. Missing cases become NOT_EXECUTED, never PASSED. On Windows, forced timeout cleanup of descendant browser processes is not guaranteed.
 
 No remote clones, auth configuration command, self-healing, scheduling, API test generation, cloud dashboard or arbitrary AI code execution is provided. Functional contracts support observed fill/select/check/uncheck actions, limited safe button clicks, exact result lists/counts/text, visibility, native validity and numeric ordering. They cannot run arbitrary scripts. See [V0.2 guide](docs/v0.2-functional-testing.md) and [roadmap](docs/roadmap.md).
+
+## V0.3 operating limits and V0.4 direction
+
+Use only applications and source repositories you are authorized to assess. AuthorizationContext records caller intent; it does not authenticate a person or enforce roles. Receipts and manifests are unsigned local integrity checks and depend on trusted writers. The subprocess is not an OS sandbox. Storage requires a single writer; concurrent updates are not transactional across approval files.
+
+Review artifacts before sharing: screenshots, traces, raw JUnit and logs can contain client data. Screenshot disabling does not remove trace screenshots. AI remains optional and advisory. Authentication, hosted CI execution and general external functional coverage are unverified or unsupported as described above. Step skip/interruption semantics and sensitivity annotations need further work.
+
+V0.4 direction is richer typed executable steps, finer evidence/sensitivity policies, authenticated interface adapters, revision/concurrency control and stronger execution isolation. These are future work; no web API, dashboard, MCP server or cloud identity is implemented. See [roadmap](docs/roadmap.md).

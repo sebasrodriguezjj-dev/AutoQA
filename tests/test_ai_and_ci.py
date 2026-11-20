@@ -104,13 +104,44 @@ def test_workflow_generation(project, monkeypatch):
     path = Path(integrate(project))
     text = path.read_text()
     workflow = yaml.load(text, Loader=yaml.BaseLoader)
-    assert "pull_request" in workflow["on"]
+    assert set(workflow["on"]) == {"workflow_dispatch"}
     assert "workflow_dispatch" in workflow["on"]
     assert workflow["permissions"] == {"contents": "read"}
     assert "uv sync --locked" in text
+    assert 'test -n "$AUTOQA_BASE_URL"' in text
+    assert "exit 1;" in text
+    assert f'test -f "{project.root.relative_to(workspace).as_posix()}/$file"' in text
     assert "secrets." not in text and "pull_request_target" not in text
     for step in workflow["jobs"]["qa"]["steps"]:
         if "uses" in step:
             assert len(step["uses"].split("@")[1]) == 40
     with pytest.raises(ValueError, match="already exists"):
         integrate(project)
+
+
+def test_repository_workflows_separate_code_checks_from_private_execution():
+    root = Path(__file__).resolve().parents[1]
+    workflows = root / ".github/workflows"
+    demo = yaml.load((workflows / "autoqa-demo-project.yml").read_text(), Loader=yaml.BaseLoader)
+    assert set(demo["on"]) == {"workflow_dispatch"}
+    checks = yaml.load(
+        (workflows / "autoqa-pr-verification.yml").read_text(), Loader=yaml.BaseLoader
+    )
+    assert set(checks["on"]) == {"pull_request"}
+    assert checks["permissions"] == {"contents": "read"}
+    steps = checks["jobs"]["verify"]["steps"]
+    assert any(step.get("with", {}).get("python-version") == "3.14" for step in steps)
+    commands = [step["run"] for step in steps if "run" in step]
+    assert commands == [
+        "uv sync --locked",
+        "uv run ruff check src tests",
+        "uv run ruff format --check src tests",
+        'uv run python -m pytest tests -m "not browser" --ignore=tests/test_live_ai.py -q',
+    ]
+    assert all("continue-on-error" not in step for step in steps)
+    assert "continue-on-error" not in checks["jobs"]["verify"]
+    for workflow in (demo, checks):
+        for job in workflow["jobs"].values():
+            for step in job["steps"]:
+                if "uses" in step:
+                    assert len(step["uses"].split("@")[1]) == 40

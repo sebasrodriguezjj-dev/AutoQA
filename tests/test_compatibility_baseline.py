@@ -15,6 +15,7 @@ from typer.main import get_command
 from typer.testing import CliRunner
 
 from autoqa import cli, planning, reporting, testing
+from autoqa.authorization import AuthorizationContext
 from autoqa.core import Project, initialize, load_json, select_project
 
 FIXTURES = Path(__file__).parent / "fixtures/compatibility"
@@ -132,7 +133,7 @@ def test_cli_review_and_authorization_guards_are_non_mutating(project, args, mes
     ],
 )
 def test_cli_handled_errors(project, monkeypatch, error, code):
-    def fail(_):
+    def fail(_, *, authorization):
         raise error
 
     monkeypatch.setattr(testing, "run", fail)
@@ -143,7 +144,9 @@ def test_cli_handled_errors(project, monkeypatch, error, code):
 
 @pytest.mark.parametrize("code", [0, 1, 2, 3, 4, 5, 124])
 def test_cli_run_propagates_process_status(project, monkeypatch, code):
-    monkeypatch.setattr(testing, "run", lambda _: {"run_id": "stub", "exit_code": code})
+    monkeypatch.setattr(
+        testing, "run", lambda _, *, authorization: {"run_id": "stub", "exit_code": code}
+    )
     assert CliRunner().invoke(cli.app, ["run", "--project", str(project.root)]).exit_code == code
 
 
@@ -151,7 +154,9 @@ def test_cli_run_propagates_process_status(project, monkeypatch, code):
 def test_cli_repeated_review_ids_preserve_order(project, monkeypatch, option):
     calls = []
     monkeypatch.setattr(
-        planning, option, lambda selected, ids: calls.append((selected.root, ids)) or []
+        planning,
+        option,
+        lambda selected, ids, *, authorization: calls.append((selected.root, ids)) or [],
     )
     result = CliRunner().invoke(
         cli.app,
@@ -326,7 +331,9 @@ def test_run_records_snapshots_and_missing_tests_without_browser_execution(
     monkeypatch.setenv("PYTEST_ADDOPTS", "--untrusted-option")
     monkeypatch.setattr(testing, "validate_python", lambda source, name: source)
     monkeypatch.setattr(testing.subprocess, "run", process)
-    result = testing.run(project)
+    result = testing.run(
+        project, authorization=AuthorizationContext(project.root, frozenset({"execute"}))
+    )
     assert result["exit_code"] == code
     assert len(calls) == (1 if outcome == "collection_error" else 2)
     assert "--collect-only" in calls[0][0]
@@ -386,4 +393,6 @@ def test_saved_suite_refuses_drift_before_execution(legacy_project, mutation, me
         testing.subprocess, "run", lambda *a, **kw: pytest.fail("Unexpected subprocess")
     )
     with pytest.raises(ValueError, match=message):
-        testing.run(project)
+        testing.run(
+            project, authorization=AuthorizationContext(project.root, frozenset({"execute"}))
+        )

@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.table import Table
 
 from autoqa import __version__
+from autoqa.authorization import AuthorizationContext
 from autoqa.core import initialize, select_project
 
 app = typer.Typer(
@@ -67,41 +68,33 @@ def explore(
     allow_localhost: bool = False,
 ):
     """Explore an authorized URL and/or statically inspect a local repository."""
-    from autoqa.exploration import explore as discover
-    from autoqa.repository import analyze, correlate, source_discovery
+    from autoqa.discovery_service import DiscoveryService
 
     selected = select_project(project)
     if not url and not repo:
         raise ValueError("Provide --url and/or --repo.")
     if not authorized:
         raise ValueError("Confirm your testing authorization using --authorized.")
-    if selected.config.auth_reference:
-        raise ValueError("Authenticated exploration is not implemented in v0.1.")
-    if allow_localhost:
-        selected.config.allow_localhost = True
-    selected.config.mode = "hybrid" if url and repo else "ui" if url else "repository"
-    if repo:
-        with console.status("Inspecting repository without executing its code..."):
-            findings = analyze(selected, repo)
+    service = DiscoveryService(
+        selected, AuthorizationContext(selected.root, frozenset({"discover"}))
+    )
+    result = service.discover(url=url, repo=repo, allow_localhost=allow_localhost)
+    if result.findings is not None:
+        findings = result.findings
         console.print(
             f"Inspected {findings['files_scanned']} files; {len(findings['routes'])} route candidates (SOURCE evidence)."
         )
-        if not url:
-            source_discovery(selected, findings)
-    if url:
-        with console.status("Validating scope and discovering visible UI..."):
-            discovery = discover(selected, url)
+    if result.discovery is not None:
+        discovery = result.discovery
         console.print(
             f"Pages: {len(discovery.pages)}; workflows: {len(discovery.workflows)}; elements: {sum(len(p.elements) for p in discovery.pages)}; errors: {len(discovery.errors)}"
         )
-        if not discovery.pages:
-            raise ValueError("No pages were observed. Inspect discovery/summary.md.")
-        if repo:
-            matched = correlate(selected, discovery)
-            console.print(
-                f"Matched {len(matched['matches'])} browser paths to source route candidates."
-            )
-    selected.save_config()
+    if result.discovery is not None and not result.discovery.pages:
+        raise ValueError("No pages were observed. Inspect discovery/summary.md.")
+    if result.correlation is not None:
+        console.print(
+            f"Matched {len(result.correlation['matches'])} browser paths to source route candidates."
+        )
     console.print(
         "Evidence saved in discovery/. Next: autoqa plan (offline deterministic planning)."
     )
@@ -121,21 +114,22 @@ def plan(
     ),
 ):
     """Build a test matrix or approve selected IDs after reviewing it."""
-    from autoqa.planning import approve as approve_cases
-    from autoqa.planning import plan as create_plan
-    from autoqa.planning import reject as reject_cases
+    from autoqa.planning_service import PlanningService
 
     selected = select_project(project)
     if sum(bool(x) for x in (approve, reject, requirements)) > 1:
         raise ValueError("Import requirements, approve, or reject in separate commands.")
     if ai and (approve or reject):
         raise ValueError("Request AI suggestions separately from approving scenarios.")
+    service = PlanningService(
+        selected, AuthorizationContext(selected.root, frozenset({"plan", "review"}))
+    )
     cases = (
-        approve_cases(selected, approve)
+        service.approve(approve)
         if approve
-        else reject_cases(selected, reject)
+        else service.reject(reject)
         if reject
-        else create_plan(selected, requirements)
+        else service.plan(requirements)
     )
     table = Table("ID", "Scenario", "Automatable", "Review")
     for case in cases:
@@ -155,11 +149,14 @@ def plan(
 @handled
 def generate(project: Path | None = None, approved: bool = False):
     """Generate executable tests exclusively from approved observations."""
-    from autoqa.testing import generate as generate_tests
+    from autoqa.engine import GenerationService
 
     if not approved:
         raise ValueError("Use --approved; only reviewed scenarios can become tests.")
-    ids = generate_tests(select_project(project))
+    selected = select_project(project)
+    ids = GenerationService(
+        selected, AuthorizationContext(selected.root, frozenset({"generate"}))
+    ).generate()
     console.print(f"Generated {len(ids)} tests in automation/.")
 
 
@@ -167,10 +164,13 @@ def generate(project: Path | None = None, approved: bool = False):
 @handled
 def run(project: Path | None = None):
     """Execute the approved template suite and retain real results."""
-    from autoqa.testing import run as execute
+    from autoqa.engine import ExecutionService
 
     with console.status("Running approved Playwright tests..."):
-        result = execute(select_project(project))
+        selected = select_project(project)
+        result = ExecutionService(
+            selected, AuthorizationContext(selected.root, frozenset({"execute"}))
+        ).run()
     console.print(
         f"Run {result['run_id']}: exit {result['exit_code']}. Results: reports/latest-run.json"
     )
@@ -182,9 +182,9 @@ def run(project: Path | None = None):
 @handled
 def diagnose(project: Path | None = None):
     """Classify actual failures with explicit uncertainty."""
-    from autoqa.reporting import diagnose as analyze
+    from autoqa.application import ApplicationEngine
 
-    findings = analyze(select_project(project))
+    findings = ApplicationEngine(select_project(project)).diagnose()
     console.print(f"Recorded {len(findings)} failure diagnoses in reports/diagnosis.json.")
 
 
@@ -192,9 +192,9 @@ def diagnose(project: Path | None = None):
 @handled
 def report(project: Path | None = None, format: str = "html"):
     """Render an escaped HTML or JSON report from actual project records."""
-    from autoqa.reporting import report as render
+    from autoqa.application import ApplicationEngine
 
-    console.print(render(select_project(project), format))
+    console.print(ApplicationEngine(select_project(project)).report(format))
 
 
 @app.command()
