@@ -55,6 +55,16 @@ class ApplicationEngine:
 
     reporting = report
 
+    def build_framework(self, destination: Path):
+        from autoqa.framework import FrameworkService
+
+        return FrameworkService(self.project, self.authorization).build(destination)
+
+    def run_framework(self, destination: Path):
+        from autoqa.framework import FrameworkService
+
+        return FrameworkService(self.project, self.authorization).run(destination)
+
 
 class InProcessAdapter:
     """Test adapter exposing the same operations as an interface adapter."""
