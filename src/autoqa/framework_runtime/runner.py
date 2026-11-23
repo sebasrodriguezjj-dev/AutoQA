@@ -15,7 +15,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from .integrity import safe_path, validate
-from .management import TestSelection, load_inventory, select
+from .management import ExecutionResult, ExecutionRun, TestSelection, load_inventory, select
 
 
 def write_json(path, value):
@@ -354,7 +354,16 @@ def execute(root, *, collect_only=False, selection=None):
     distribution = Counter(r["status"] for r in case_results)
     eligible = sum(c.enabled and c.review_status == "approved" for c in inventory.cases)
     executed = sum(r["status"] in {"PASSED", "FAILED", "ERROR", "SKIPPED"} for r in case_results)
+    completed_at = datetime.now(UTC).isoformat()
+    execution_run = ExecutionRun(
+        run_id=run_id,
+        plan=plan,
+        started_at=started_at,
+        completed_at=completed_at,
+        results=[ExecutionResult.model_validate(r) for r in case_results],
+    )
     result = {
+        "execution_run": execution_run.model_dump(),
         "schema_version": "0.6",
         "project_id": plan.project_id,
         "suite_id": plan.suite_id,
@@ -365,7 +374,7 @@ def execute(root, *, collect_only=False, selection=None):
         "scope": "FULL_REGRESSION" if plan.selection.mode == "all" else "SELECTED_SCOPE",
         "overall_status": "PASSED" if code == 0 else "INCOMPLETE_OR_FAILED",
         "started_at": started_at,
-        "completed_at": datetime.now(UTC).isoformat(),
+        "completed_at": completed_at,
         "case_results": case_results,
         "reconciliation_errors": reconciliation_errors,
         "accounting": {

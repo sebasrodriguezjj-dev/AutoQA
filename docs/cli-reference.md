@@ -117,3 +117,22 @@ capture and its documented privacy limits. Screenshots/traces are not claimed re
 For current 0.5.0 evidence see the [stable release gate](v05-stable-release-gate.md).
 The [0.5.0rc1 candidate audit](v05-release-candidate.md) remains unchanged historical
 evidence, as do V0.4 documents. No arbitrary client/platform certification is claimed.
+
+
+## V0.6 candidate commands (0.6.0rc1)
+
+- `autoqa analyze-framework PATH`: JSON static audit and create/improve decision;
+  ANALYSIS_BLOCKED exits 1. No execution, installation or source modification.
+- `autoqa suite-propose --project PATH`: pending JSON inventory to stdout; nothing
+  persisted. Assign/review packs, tags and enabled state in a UTF-8 JSON file.
+- `autoqa suite-approve FILE --project PATH`: validate current scenario identity and
+  approvals, persist reviewed membership/digest/event history. Re-export afterwards.
+- `autoqa run-framework DEST --project PATH [--case ID | --pack ID | --suite ID |
+  --tag TAG | --all]`: one mode; repeat case/pack/tag to form a deduplicated union.
+  No flags retains approved-enabled regression. Invalid/empty/disabled/unapproved
+  selections fail, with no full-suite fallback. Unsupported/incomplete scope fails.
+
+Standalone: `python -m qa_runtime.runner run` and `collect` accept equivalent options;
+AutoQA need not be installed. Arbitrary Pytest expressions/node IDs are not accepted.
+See [management semantics/examples](v06-test-management.md), [analyzer limits](v06-framework-analyzer.md)
+and [current candidate evidence](v06-release-candidate.md). V0.5 examples remain valid.

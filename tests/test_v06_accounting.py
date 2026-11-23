@@ -41,7 +41,14 @@ def execute(tmp_path, monkeypatch, xml, *, unsupported=False, selection=None, st
         return subprocess.CompletedProcess(command, 0, "", "")
 
     monkeypatch.setattr(runner.subprocess, "run", child)
-    return runner.execute(tmp_path, selection=selection), commands
+    result = runner.execute(tmp_path, selection=selection)
+    from autoqa.framework_runtime.management import ExecutionRun
+
+    contract = ExecutionRun.model_validate(result["execution_run"])
+    assert contract.plan.case_ids == result["selected_case_ids"]
+    assert [r.case_id for r in contract.results] == contract.plan.case_ids
+    assert contract.completed_at == result["completed_at"]
+    return result, commands
 
 
 def test_partial_selection_is_not_full_regression(tmp_path, monkeypatch):

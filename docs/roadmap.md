@@ -1,8 +1,16 @@
 # AutoQA roadmap
 
-## V0.5.0 current release scope
+## V0.6 current candidate - 0.6.0rc1
 
-V0.5.0 provides receipt-bound API contracts and UI/API standalone export, controlled application authentication references, deterministic data, conservative sensitive evidence policy and reusable package/install/export quality gates. See the [stable release gate](v05-stable-release-gate.md) for current evidence and limitations; the [0.5.0rc1 audit](v05-release-candidate.md) remains historical. Stable metadata is prepared for PR review; merge, tag and GitHub Release are separate publication steps.
+Read-only bounded framework analyzer; reviewed suite/pack metadata; stable-ID case,
+pack, suite, tag and full execution; independent exported selection; scope/accounting
+reports. See [candidate audit](v06-release-candidate.md) for actual evidence and limits.
+One managed suite per project initially. No automatic client source refactoring,
+universal framework understanding or stable-release claim.
+
+## V0.5.0 retained official baseline
+
+V0.5.0 provides receipt-bound API contracts and UI/API standalone export, controlled application authentication references, deterministic data, conservative sensitive evidence policy and reusable package/install/export quality gates. See the [stable release gate](v05-stable-release-gate.md) for current evidence and limitations; the [0.5.0rc1 audit](v05-release-candidate.md) remains historical. PR #3 is integrated at 590832c229f9177c20eb4b928f78beac42488523 and annotated v0.5.0 points there; no GitHub Release entry was created.
 
 ## V0.4.0 retained release scope
 
@@ -29,7 +37,7 @@ Legacy generate/run still wraps scenarios in one coarse step. V0.4 exports recor
 
 External functional execution remains unvalidated after the documented dependency-origin block; scope restrictions were retained. Hosted generated CI and live AI provider access remain unverified. V0.5 supports a bounded application-authentication/API subset. Remote cloning, scheduling, self-healing, arbitrary model-generated executable code and multi-user operation remain absent.
 
-## V0.6 opportunities (not implemented)
+## Deferred capabilities (not implemented)
 
 1. Unify the new framework operation blueprint/evidence with historical domain step contracts without changing legacy outcomes.
 2. Extend V0.5 summary-only retention with reviewed field-level redaction, richer safe diagnostics and age-based cleanup.
@@ -40,4 +48,4 @@ External functional execution remains unvalidated after the documented dependenc
 7. Design explicit per-origin dependency permissions with DNS/redirect validation before expanding SPA scope; no wildcard permissions.
 8. Validate hosted CI, optional live AI and authenticated staging only under explicit authorization and client data policy.
 
-FastAPI, React, MCP and cloud identity are possible future interface concerns, not delivered dependencies or capabilities. V0.4.0 is the retained stable baseline and V0.5.0 is prepared for stable review within its verified scope; these deferred interface/platform capabilities are not included.
+FastAPI, React, MCP and cloud identity are possible future interface concerns, not delivered dependencies or capabilities. V0.5.0 is the official stable baseline and V0.6 is a release candidate within its verified scope; these deferred interface/platform capabilities are not included.

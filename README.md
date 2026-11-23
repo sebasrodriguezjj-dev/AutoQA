@@ -1,10 +1,35 @@
-# AutoQA Agent 0.5.0
+# AutoQA Agent 0.6.0rc1
 
 A private professional QA engineering tool supporting its owner's QA Automation Engineering services. The source repository may be public; client workspaces and evidence remain private. It is a local Python CLI, with no SaaS or subscription offering. AutoQA explores an authorized application, records visible UI evidence, proposes reviewable scenarios, generates approved Playwright tests, executes them with Pytest, and renders actual results as HTML or JSON. It works offline; optional AI produces review-only recommendations.
 
 The retained V0.2 foundation includes passive functional control discovery, browser-checked semantic locators, typed behavior contracts, positive/negative/boundary cases, functional Python templates, pre-execution Ruff and collection checks, richer diagnostics and reports from execution snapshots. Unknown behavior stays pending review. Legacy discovery remains unauthenticated; V0.5 standalone application-authentication support is described below. Remote repository access and autonomous maintenance remain unsupported. See [V0.2 functional testing](docs/v0.2-functional-testing.md) for the exact contract schema, independent-demo benchmark and external validation limitations.
 
 V0.3 adds versioned domain contracts, storage/reporting boundaries, project-bound discovery and planning services, approval receipts, shared generation/execution services and an in-process application engine. New suites require receipts matching the reviewed scenario at generation and execution. Historical generated suites retain legacy checks. See [final delivery](docs/v03-final-delivery.md), [audit](docs/v03-release-audit.md) and [release verification](docs/v03-release-finalization.md).
+
+## V0.6 release candidate
+
+V0.6 adds read-only static framework inspection, reviewed suite/pack membership,
+stable-ID single/pack/suite/tag/full execution, independent exported selection and
+scope-aware accounting. This is **0.6.0rc1**, not a stable release. See the
+[candidate audit](docs/v06-release-candidate.md), [architecture](docs/v06-architecture.md),
+[analyzer limits](docs/v06-framework-analyzer.md) and [test management examples](docs/v06-test-management.md).
+
+```powershell
+uv sync --locked
+uv run autoqa analyze-framework ../owned-repository
+uv run autoqa suite-propose --project projects/owned | Set-Content -Encoding utf8 suite.json
+# Inspect/edit membership JSON using UTF-8, then explicitly approve.
+uv run autoqa suite-approve suite.json --project projects/owned
+uv run autoqa build-framework ../owned-framework --approved --project projects/owned
+uv run autoqa run-framework ../owned-framework --pack SMOKE --project projects/owned
+uv run autoqa run-framework ../owned-framework --all --project projects/owned
+```
+
+The project and approved scenarios must already exist; reviewed SMOKE membership
+must be assigned explicitly. Analyzer never executes inspected code or replaces an
+existing framework. Packs reference cases without copying generated code. Unknown,
+empty, disabled and unapproved selections fail explicitly. A partial-selection pass
+is labeled selected scope; missing/unsupported scope cannot become a full pass.
 
 ## V0.5.0 stable release scope
 
@@ -25,7 +50,7 @@ The example declares an owned API at port 8002; it does not start a server. Run 
 
 API/credential-bearing exports use summary-only evidence: masked header names, status/duration and per-operation results remain; raw bodies, log details, screenshots and traces are restricted. Failed outcomes remain failures. JSON data must be synthetic/nonsecret; credentials belong in `AUTOQA_SECRET_*` environment variables. This is conservative suppression, not universal redaction.
 
-Version **0.5.0** is prepared for stable release review within its trusted-local verified scope. See the [stable release gate](docs/v05-stable-release-gate.md) for current evidence and limitations. The [0.5.0rc1 candidate audit](docs/v05-release-candidate.md) remains unchanged historical evidence. Reusable gates: `uv run python scripts/verify_release.py` (checks and package/install/export smoke). Stable package metadata does not mean the PR is merged, tagged or published as a GitHub Release.
+Version **0.5.0** is the officially integrated baseline within its trusted-local verified scope. See the [stable release gate](docs/v05-stable-release-gate.md) for current evidence and limitations. The [0.5.0rc1 candidate audit](docs/v05-release-candidate.md) remains unchanged historical evidence. Reusable gates: `uv run python scripts/verify_release.py` (checks and package/install/export smoke). V0.5 is merged and tagged; no GitHub Release entry was created. V0.6 remains an unmerged release candidate.
 
 ## Retained V0.4 standalone foundation
 
