@@ -86,6 +86,9 @@ def test_cli_signatures_and_help(command):
         "validate-framework",
         "run-framework",
         "plan-api",
+        "analyze-framework",
+        "suite-propose",
+        "suite-approve",
     }
     actual = []
     for param in commands[command].params:

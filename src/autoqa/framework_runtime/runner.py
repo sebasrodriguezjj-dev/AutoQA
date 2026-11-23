@@ -15,6 +15,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from .integrity import safe_path, validate
+from .management import TestSelection, load_inventory, select
 
 
 def write_json(path, value):
@@ -117,6 +118,7 @@ def render_report(output, result):
         "<style>body{font:16px system-ui;max-width:1200px;margin:32px auto}"
         "td,th{padding:8px;border:1px solid #ddd}table{border-collapse:collapse}</style></head>"
         f"<body><h1>QA run {escape(result['run_id'])}</h1><p>{escape(result['counts'])}</p>"
+        f"<h2>Selection and accounting</h2><pre>{escape(json.dumps({k: result.get(k) for k in ['scope', 'overall_status', 'selection_snapshot', 'accounting']}, indent=2))}</pre>"
         "<h2>Actual scenario outcomes</h2><table><tr><th>Case</th><th>Status</th><th>Seconds</th>"
         f"</tr>{rows}</table><h2>Recorded operations</h2><table><tr><th>Case</th><th>Step</th>"
         f"<th>Kind</th><th>Status</th><th>Seconds</th><th>Evidence</th></tr>{steps}</table>"
@@ -129,12 +131,16 @@ def render_report(output, result):
     )
 
 
-def execute(root, *, collect_only=False):
+def execute(root, *, collect_only=False, selection=None):
     from .config import Config
     from .security import Scope
 
     root = Path(root).absolute()
     manifest = validate(root)
+    inventory = load_inventory(root, manifest)
+    plan = select(inventory, selection or TestSelection())
+    selected_cases = [c for c in inventory.cases if c.id in plan.case_ids]
+    started_at = datetime.now(UTC).isoformat()
     for name in manifest["files"]:
         if name.endswith(".py"):
             ast.parse(safe_path(root, name).read_text(encoding="utf-8"), filename=name)
@@ -196,11 +202,25 @@ def execute(root, *, collect_only=False):
         "--confcutdir",
         str(root),
         "-q",
-        "tests/test_approved.py",
+        *[
+            "tests/test_approved.py::test_" + c.id.replace("-", "_")
+            for c in selected_cases
+            if c.supported
+        ],
     ]
+    has_executable = any(c.supported for c in selected_cases)
     started = time.monotonic()
-    collection = subprocess.run(
-        command + ["--collect-only"], cwd=root, env=env, capture_output=True, text=True, timeout=30
+    collection = (
+        subprocess.run(
+            command + ["--collect-only"],
+            cwd=root,
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        if has_executable
+        else subprocess.CompletedProcess(command, 3, "No compiled scenario in selected scope", "")
     )
     collection_log = (
         f"Collection exit: {collection.returncode}; details withheld by summary_only policy"
@@ -231,7 +251,14 @@ def execute(root, *, collect_only=False):
         log = f"Execution exit: {code}; details withheld by summary_only policy"
     (output / "pytest.log").write_text(log, encoding="utf-8")
     actual = {}
-    for record in junit(output / "junit.xml"):
+    reconciliation_errors = []
+    try:
+        junit_records = junit(output / "junit.xml")
+    except ET.ParseError, ValueError, OSError:
+        junit_records = []
+        reconciliation_errors.append("Unreadable or malformed JUnit; outcomes not established")
+        code = code or 3
+    for record in junit_records:
         name = record["name"]
         if name in actual:
             # Never let a later duplicate overwrite an earlier failure or error.
@@ -244,7 +271,19 @@ def execute(root, *, collect_only=False):
         else:
             actual[name] = record
     records = []
-    for case_id in manifest["cases"]:
+    for case_id in plan.case_ids:
+        if case_id not in manifest["cases"]:
+            records.append(
+                {
+                    "id": case_id,
+                    "case_id": case_id,
+                    "name": case_id,
+                    "status": "UNSUPPORTED",
+                    "duration": 0,
+                    "error": "No compiled scenario",
+                }
+            )
+            continue
         name = "test_" + case_id.replace("-", "_")
         rows = manifest.get("parameters", {}).get(case_id)
         names = [name + f"[{i}]" for i in range(rows)] if rows else [name]
@@ -265,23 +304,91 @@ def execute(root, *, collect_only=False):
         if record["status"] != "PASSED":
             continue
         observed = [step for step in steps if step["test_id"] == record["id"]]
-        if not observed or any(
-            step["status"] != "PASSED"
-            or step["sequence"] != index
-            or step["step_id"] != f"{record['id']}:step-{index}"
-            for index, step in enumerate(observed, 1)
+        required_operations = manifest.get("operation_counts", {}).get(record["case_id"])
+        if (
+            (required_operations is not None and len(observed) != required_operations)
+            or not observed
+            or any(
+                step["status"] != "PASSED"
+                or step["sequence"] != index
+                or step["step_id"] != f"{record['id']}:step-{index}"
+                for index, step in enumerate(observed, 1)
+            )
         ):
             record.update(
                 status="ERROR",
                 error="Passing JUnit outcome lacks consistent current-run operation evidence",
             )
-    if code == 0 and any(r["status"] in {"FAILED", "ERROR", "NOT_EXECUTED"} for r in records):
+    if code == 0 and any(
+        r["status"] in {"FAILED", "ERROR", "NOT_EXECUTED", "UNSUPPORTED", "SKIPPED"}
+        for r in records
+    ):
         code = 3
         (output / "pytest.log").write_text(
             log + "\nExecution did not emit successful JUnit results for every approved case.\n",
             encoding="utf-8",
         )
+    expected = {r["name"] for r in records if r["status"] != "UNSUPPORTED"}
+    if set(actual) - expected:
+        reconciliation_errors.append("JUnit contains identities outside the selected scope")
+        code = code or 3
+    case_results = []
+    for case_id in plan.case_ids:
+        outcomes = {r["status"] for r in records if r["case_id"] == case_id}
+        outcome = next(
+            status
+            for status in ["ERROR", "FAILED", "NOT_EXECUTED", "UNSUPPORTED", "SKIPPED", "PASSED"]
+            if status in outcomes
+        )
+        case_results.append(
+            {
+                "case_id": case_id,
+                "status": outcome,
+                "evidence": [
+                    r["id"] + "-steps.json"
+                    for r in records
+                    if r["case_id"] == case_id and any(s["test_id"] == r["id"] for s in steps)
+                ],
+            }
+        )
+    distribution = Counter(r["status"] for r in case_results)
+    eligible = sum(c.enabled and c.review_status == "approved" for c in inventory.cases)
+    executed = sum(r["status"] in {"PASSED", "FAILED", "ERROR", "SKIPPED"} for r in case_results)
     result = {
+        "schema_version": "0.6",
+        "project_id": plan.project_id,
+        "suite_id": plan.suite_id,
+        "pack_ids": plan.pack_ids,
+        "selected_case_ids": plan.case_ids,
+        "selection_mode": plan.selection.mode,
+        "selection_snapshot": plan.model_dump(),
+        "scope": "FULL_REGRESSION" if plan.selection.mode == "all" else "SELECTED_SCOPE",
+        "overall_status": "PASSED" if code == 0 else "INCOMPLETE_OR_FAILED",
+        "started_at": started_at,
+        "completed_at": datetime.now(UTC).isoformat(),
+        "case_results": case_results,
+        "reconciliation_errors": reconciliation_errors,
+        "accounting": {
+            "eligible": eligible,
+            "selected": len(plan.case_ids),
+            "executed": executed,
+            **{
+                status.lower(): distribution[status]
+                for status in [
+                    "PASSED",
+                    "FAILED",
+                    "ERROR",
+                    "SKIPPED",
+                    "NOT_EXECUTED",
+                    "UNSUPPORTED",
+                ]
+            },
+            "coverage_within_selection": executed / len(plan.case_ids),
+            "ui": sum(c.kind == "UI" for c in selected_cases),
+            "api": sum(c.kind == "API" for c in selected_cases),
+        },
+        "junit": "junit.xml",
+        "evidence_directory": ".",
         "run_id": run_id,
         "exit_code": code,
         "records": records,
@@ -296,7 +403,13 @@ def execute(root, *, collect_only=False):
 def main():
     parser = argparse.ArgumentParser(description="Validate/run the approved standalone framework")
     parser.add_argument("command", choices=["validate", "collect", "run"])
+    group = parser.add_mutually_exclusive_group()
+    for mode in ["case", "pack", "suite", "tag"]:
+        group.add_argument("--" + mode, action="append")
+    group.add_argument("--all", action="store_true")
     args = parser.parse_args()
+    mode = next((m for m in ["case", "pack", "suite", "tag"] if getattr(args, m)), "all")
+    selection = TestSelection(mode=mode, values=getattr(args, mode) if mode != "all" else [])
     root = Path(__file__).resolve().parents[1]
     try:
         if args.command == "validate":
@@ -306,7 +419,9 @@ def main():
                     ast.parse(safe_path(root, name).read_text(encoding="utf-8"), filename=name)
             print(f"Validated {len(manifest['cases'])} approved scenarios")
             return 0
-        return execute(root, collect_only=args.command == "collect")["exit_code"]
+        return execute(root, collect_only=args.command == "collect", selection=selection)[
+            "exit_code"
+        ]
     except (ValueError, OSError, subprocess.TimeoutExpired) as error:
         print(f"Framework operation failed: {error}", file=sys.stderr)
         return 1

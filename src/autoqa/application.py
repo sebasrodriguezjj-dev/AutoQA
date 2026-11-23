@@ -65,10 +65,10 @@ class ApplicationEngine:
 
         return FrameworkService(self.project, self.authorization).build(destination)
 
-    def run_framework(self, destination: Path):
+    def run_framework(self, destination: Path, selection=None):
         from autoqa.framework import FrameworkService
 
-        return FrameworkService(self.project, self.authorization).run(destination)
+        return FrameworkService(self.project, self.authorization).run(destination, selection)
 
 
 class InProcessAdapter:

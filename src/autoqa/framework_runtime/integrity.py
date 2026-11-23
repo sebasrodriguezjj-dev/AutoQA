@@ -132,4 +132,15 @@ def validate(root):
         config = json.loads((root / "config/environment.json").read_text(encoding="utf-8"))
         if config["trace_enabled"] or config["screenshot_policy"] != "disabled":
             raise ValueError("Protected frameworks must disable unsafe browser capture")
+    if "review/management.json" in manifest["files"]:
+        from .management import load_inventory
+
+        load_inventory(root, manifest)
+        blueprint = json.loads((root / "blueprint.json").read_text(encoding="utf-8"))
+        expected_operations = {
+            **{s["id"]: len(s["methods"]) for s in blueprint["scenarios"]},
+            **{s["id"]: 2 for s in blueprint.get("api_scenarios", [])},
+        }
+        if manifest.get("operation_counts") != expected_operations:
+            raise ValueError("Operation accounting differs from reviewed blueprint")
     return manifest

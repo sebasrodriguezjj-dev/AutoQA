@@ -242,14 +242,30 @@ def validate_framework(destination: Path):
 
 @app.command()
 @handled
-def run_framework(destination: Path, project: Path | None = None):
+def run_framework(
+    destination: Path,
+    project: Path | None = None,
+    case: list[str] = typer.Option(None),
+    pack: list[str] = typer.Option(None),
+    suite: str | None = None,
+    tag: list[str] = typer.Option(None),
+    all: bool = False,
+):
     """Run an export after rechecking the selected project's current approvals."""
     from autoqa.application import ApplicationEngine
 
     selected = select_project(project)
+    from autoqa.framework_runtime.management import TestSelection
+
+    choices = [("case", case), ("pack", pack), ("suite", [suite] if suite else []), ("tag", tag)]
+    active = [(mode, values) for mode, values in choices if values]
+    if len(active) + int(all) > 1:
+        raise ValueError("Choose exactly one selection mode")
+    mode, values = active[0] if active else ("all", [])
+    selection = TestSelection(mode=mode, values=values)
     code = ApplicationEngine(
         selected, AuthorizationContext(selected.root, frozenset({"execute"}))
-    ).run_framework(destination)
+    ).run_framework(destination, selection)
     if code:
         raise typer.Exit(code)
 
@@ -269,3 +285,44 @@ def plan_api(requirements: Path, project: Path | None = None):
     console.print(
         "Review test-cases/test-matrix.json, then plan --approve ID. Build with build-framework --approved."
     )
+
+
+@app.command("analyze-framework")
+@handled
+def analyze_framework(destination: Path):
+    """Read-only bounded static framework audit; never executes inspected code."""
+    import json
+
+    from autoqa.analyzer import analyze_framework as analyze
+
+    result = analyze(destination)
+    typer.echo(json.dumps(result, indent=2))
+    if result["classification"] == "ANALYSIS_BLOCKED":
+        raise typer.Exit(1)
+
+
+@app.command("suite-propose")
+@handled
+def suite_propose(project: Path | None = None):
+    """Print a pending suite proposal; edit and save JSON for explicit review."""
+    from autoqa.management import propose
+
+    typer.echo(propose(select_project(project)).model_dump_json(indent=2))
+
+
+@app.command("suite-approve")
+@handled
+def suite_approve(inventory: Path, project: Path | None = None):
+    """Approve operator-assigned packs/tags/enabled state without rewriting cases."""
+    from autoqa.framework_runtime.management import TestSuite
+    from autoqa.management import approve_suite
+
+    selected = select_project(project)
+    if (
+        any(p.is_symlink() or p.is_junction() for p in [inventory, *inventory.absolute().parents])
+        or inventory.stat().st_size > 1000000
+    ):
+        raise ValueError("Invalid inventory input")
+    suite = TestSuite.model_validate_json(inventory.read_text(encoding="utf-8-sig"))
+    approve_suite(selected, suite, AuthorizationContext(selected.root, frozenset({"review"})))
+    console.print("Suite membership approved; export a new framework")
