@@ -120,6 +120,27 @@ live AI, and the reusable package phase. The extended package phase now includes
 owned-loopback single/pack/full execution as well as wheel/install/independent smoke.
 It uses no client secrets or external websites and preserves nonzero failures.
 
-Hosted status before publication: **PENDING**. Successful local gates do not certify
-hosted CI. The PR will record the exact final HEAD, run URL and actual conclusion;
-this audit will retain the inspected hosted verification evidence.
+Implementation HEAD **c44b02386e2b33987a87d95f49a1a75de7608362** passed hosted CI:
+[run 45284318611](https://github.com/sebasrodriguezjj-dev/AutoQA/actions/runs/45284318611),
+job 138076545053, completed **success**. Actual job logs inspected:
+
+- CPython **3.14.4 / Linux**, locked install of autoqa-agent **0.6.0rc1**.
+- Ruff lint/format passed, **66 files**.
+- **279 passed / 1 skipped / 18 deselected in 36.04s**, zero unexpected failures.
+  Expected skip: native Windows file-handle test, which passed locally on Windows.
+- Wheel/sdist, isolated installed package/import/distribution/CLI, approved export,
+  independent dependencies with AutoQA absent, validation/collection all succeeded.
+- Independent case/pack/all each exited **0**, with 1 invocation / 2 operations.
+- Every job step completed successfully. Linux non-browser results do not certify
+  Linux browser execution or arbitrary client compatibility.
+
+[PR #4](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/4) is open against main,
+with 25 scoped changed files inspected. Main remains the verified v0.5.0 commit;
+GitHub reports no merge conflicts. This documentation-only evidence commit triggers
+another run; its exact-final-head result is recorded in the PR delivery status.
+No old-head or pending result is treated as final-head success.
+
+**Recommendation:** ready for independent V0.6 candidate review within this explicit
+scope, subject to the final documentation-head CI check. No reproducible mandatory
+release blocker remains in the executed gates. Stable 0.6.0 promotion is a separate
+review decision; this delivery remains 0.6.0rc1 and does not merge/tag the candidate.
