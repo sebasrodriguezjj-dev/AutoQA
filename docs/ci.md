@@ -11,10 +11,12 @@ disposable local projects. Every command must succeed; test failures fail the jo
 
 V0.4 non-browser coverage includes blueprint/approval/export integrity, CLI, step policies,
 diagnostics and an independent export installation/validation/collection smoke test.
-The latter resolves offline from the packages cached by the locked installation, asserts
-AutoQA is not installed in the export environment and does not launch a browser. Cache
-misses fail explicitly. Browser acceptance remains separate owned-local evidence; Linux
-non-browser CI does not certify Linux browser behavior or production client execution.
+The latter installs its declared pinned dependencies using normal registry resolution,
+asserts AutoQA is not installed in the export environment and does not launch a browser.
+The locked root install's cached wheels do not guarantee offline resolver metadata on a
+fresh runner. Registry/dependency failures fail explicitly. Browser acceptance remains
+separate owned-local evidence; Linux non-browser CI does not certify Linux browser
+behavior or production client execution.
 
 ```powershell
 uv sync --locked

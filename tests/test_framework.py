@@ -327,7 +327,7 @@ def test_standalone_export_collects_without_autoqa_or_browser(reviewed_project, 
     environment = {key: value for key, value in os.environ.items() if key.upper() in keep}
     environment["UV_PYTHON"] = sys.executable
     install = subprocess.run(
-        ["uv", "sync", "--offline"],
+        ["uv", "sync"],
         cwd=destination,
         env=environment,
         capture_output=True,

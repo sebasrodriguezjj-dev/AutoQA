@@ -279,8 +279,9 @@ approval, file/path integrity, CLI, evidence policy and diagnosis/reporting regr
 A new non-browser test additionally installs the export's declared dependencies into
 its own environment, asserts AutoQA is absent, validates and collects the generated
 test without Chromium, target requests or secrets. No execution results are invented
-for that collection-only check. Offline dependency resolution uses packages cached by
-the required locked installation; unavailable dependencies fail explicitly.
+for that collection-only check. Dependency resolution can access the public package
+registry, as setup already does; unavailable dependencies fail explicitly. No external
+application target or client secret is involved.
 
 This provides bounded automated PR coverage of export independence. Browser behavior
 remains separately supported by owned-local Windows/Chromium acceptance, not claimed
@@ -308,3 +309,18 @@ The candidate remains **0.4.0rc1**, not stable; publication approval does not au
 merge or tags. No remaining release-blocking defect was identified in the documented
 trusted-local scope after the two focused corrections. Promotion to a stable version
 still requires final owner review and a separate version/release decision.
+
+### First hosted PR check and focused CI repair
+
+PR #2's initial run 45225188057 (e855654) passed locked installation and Ruff, then
+finished **204 passed / 1 failed / 17 deselected** on Linux. The failure was the new
+independence test's offline dependency resolution: Playwright was unavailable to the
+resolver cache despite the root locked install having downloaded its wheel. Cached
+locked wheels do not guarantee the registry metadata needed for a fresh standalone lock.
+
+The test now uses normal `uv sync` for the exported pinned dependencies, matching the
+documented standalone setup. It still installs into its own environment, asserts AutoQA
+is absent and validates/collects actual generated tests. No assertion, failure propagation
+or application-network restriction was removed. Registry installation errors remain
+fatal. Historical offline browser acceptance is preserved unchanged. The corrected
+head's hosted outcome is recorded in the PR verification summary after the run completes.
