@@ -16,6 +16,8 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from autoqa import __version__
 from autoqa.authorization import AuthorizationContext, require_authorization
 from autoqa.core import Project
+from autoqa.framework_runtime.api import ui_auth
+from autoqa.framework_runtime.contracts import APIScenario
 from autoqa.framework_runtime.integrity import validate
 from autoqa.functional import render_functional
 from autoqa.planning import approval_receipt, case_signature, verify_approval_binding
@@ -49,7 +51,8 @@ class ScenarioBlueprint(BaseModel):
 
 class FrameworkBlueprint(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    schema_version: Literal["0.4"] = "0.4"
+    schema_version: Literal["0.4", "0.5"] = "0.4"
+    api_scenarios: list[APIScenario] = Field(default_factory=list)
     pages: list[PageBlueprint]
     scenarios: list[ScenarioBlueprint]
     unsupported: dict[str, str]
@@ -59,9 +62,14 @@ class FrameworkBlueprint(BaseModel):
         pages = {page.module: page for page in self.pages}
         if len(pages) != len(self.pages):
             raise ValueError("Duplicate blueprint page modules")
-        ids = [scenario.id.replace("-", "_") for scenario in self.scenarios]
+        ids = [scenario.id.replace("-", "_") for scenario in [*self.scenarios, *self.api_scenarios]]
         if len(ids) != len(set(ids)) or not ids:
             raise ValueError("Blueprint requires unique executable scenarios")
+        instances = [s.id for s in self.scenarios] + [
+            f"{s.id}--row-{i}" for s in self.api_scenarios for i in range(len(s.data.rows))
+        ]
+        if len(instances) != len(set(instances)):
+            raise ValueError("Scenario parameter identities collide")
         for scenario in self.scenarios:
             page = pages.get(scenario.page)
             if page is None or not set(scenario.methods) <= {op.method for op in page.operations}:
@@ -226,9 +234,10 @@ def compile_blueprint(project):
     cases = [c for c in project.cases() if c.review_status == "approved"]
     if not cases:
         raise ValueError("No approved scenarios; review and approve before building")
-    scope = Scope(project.config.application_url, project.config)
-    discovery = project.discovery()
-    pages, scenarios, unsupported, selected = {}, [], {}, []
+    has_ui = any(c.kind != "api" for c in cases)
+    scope = Scope(project.config.application_url, project.config) if has_ui else None
+    discovery = project.discovery() if has_ui else None
+    pages, scenarios, unsupported, selected, api_scenarios = {}, [], {}, [], []
     for case in cases:
         verify_approval_binding(project, case)
         if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{0,79}", case.id):
@@ -236,6 +245,13 @@ def compile_blueprint(project):
         try:
             if not case.feasible:
                 raise ValueError("Approved scenario is not automatable")
+            if case.kind == "api":
+                api = APIScenario.model_validate(case.contract)
+                if api.id != case.id:
+                    raise ValueError("API contract identity differs from reviewed case")
+                api_scenarios.append(api)
+                selected.append(case)
+                continue
             operations = _operations(case, discovery, scope)
         except ValueError as error:
             unsupported[case.id] = str(error)
@@ -257,12 +273,16 @@ def compile_blueprint(project):
                 )
         scenarios.append(ScenarioBlueprint(id=case.id, page=module, methods=methods))
         selected.append(case)
-    if not scenarios:
+    if not scenarios and not api_scenarios:
         raise ValueError("No supported approved scenarios: " + encoded(unsupported))
     if len({c.id.replace("-", "_") for c in selected}) != len(selected):
         raise ValueError("Scenario IDs collide after normalization")
     return FrameworkBlueprint(
-        pages=list(pages.values()), scenarios=scenarios, unsupported=unsupported
+        pages=list(pages.values()),
+        scenarios=scenarios,
+        unsupported=unsupported,
+        api_scenarios=api_scenarios,
+        schema_version="0.5" if api_scenarios else "0.4",
     ), selected
 
 
@@ -293,7 +313,7 @@ def _render(blueprint):
     files.update(
         {
             "pages/__init__.py": "",
-            "tests/conftest.py": "from qa_runtime.fixture import qa_session as qa_session\n",
+            "tests/conftest.py": "from qa_runtime.fixture import qa_session as qa_session\nfrom qa_runtime.api_fixture import qa_api as qa_api\nfrom qa_runtime.privacy import pytest_runtest_makereport as pytest_runtest_makereport\n",
         }
     )
     imports, tests = [], []
@@ -316,6 +336,29 @@ def _render(blueprint):
         tests.append(
             f"def test_{scenario.id.replace('-', '_')}(qa_session):\n    model = {scenario.page}(qa_session)\n{body}\n"
         )
+    if blueprint.api_scenarios:
+        files["services/__init__.py"] = ""
+        files[
+            "services/api_service.py"
+        ] = '''"""Reusable reviewed API service; no embedded credentials or untrusted code."""
+import json
+from pathlib import Path
+
+class ReviewedAPI:
+    def __init__(self, client):
+        self.client = client
+
+    def run(self, case_id, row):
+        root = Path(__file__).resolve().parents[1]
+        cases = json.loads((root / "review/cases.json").read_text(encoding="utf-8"))
+        contract = next(c["contract"] for c in cases if c["id"] == case_id)
+        self.client.execute(contract, row)
+'''
+        imports += ["import pytest", "from services.api_service import ReviewedAPI"]
+        for api in blueprint.api_scenarios:
+            tests.append(
+                f"@pytest.mark.parametrize('row', {list(range(len(api.data.rows)))!r})\ndef test_{api.id.replace('-', '_')}(qa_api, row):\n    ReviewedAPI(qa_api).run({api.id!r}, row)\n"
+            )
     files["tests/test_approved.py"] = "\n".join(imports) + "\n\n" + "\n".join(tests)
     return files
 
@@ -342,8 +385,12 @@ class FrameworkService:
             exclude={"repository", "ai_provider", "ai_model", "auth_reference"}
         )
         config["name"] = "Reviewed automation framework"
-        if self.project.config.auth_reference:
-            raise ValueError("Authenticated framework export is unsupported")
+        authentication = ui_auth(self.project.config.auth_reference)
+        protected = bool(blueprint.api_scenarios) or authentication.strategy != "none"
+        if protected:
+            config["screenshot_policy"] = "disabled"
+            config["trace_enabled"] = False
+        files["config/authentication.json"] = encoded(authentication.model_dump())
         files.update(
             {
                 "config/environment.json": encoded(config),
@@ -376,6 +423,9 @@ class FrameworkService:
             "files": {name: sha(text) for name, text in files.items()},
             "cases": {case.id: case_signature(case) for case in cases},
         }
+        if protected:
+            manifest["privacy"] = "summary_only"
+            manifest["parameters"] = {a.id: len(a.data.rows) for a in blueprint.api_scenarios}
         files["framework.json"] = encoded(manifest)
         staging = Path(tempfile.mkdtemp(prefix=".autoqa-export-", dir=destination.parent))
         try:
@@ -454,7 +504,18 @@ screenshot_policy (every_step/failures_only/disabled) and trace_enabled are pres
 To change these, update the source project's config and export a new directory.
 AUTOQA_BASE_URL can point to a separately authorized environment on the same allowed
 hostname; exact origin/path restrictions still apply. The application must be running.
-Authentication and arbitrary network writes remain unsupported.
+V0.5 API tests use exact reviewed contract origins/methods/paths and explicit mutation
+review. Redirects are rejected, DNS addresses are validated and pinned, and remote API
+requests require HTTPS. API-only runs do not require an installed browser. Select only
+a declared environment using AUTOQA_ENVIRONMENT; AUTOQA_BASE_URL applies to UI only.
+Credentials use AUTOQA_SECRET_* environment references. Missing credentials fail.
+For reviewed UI cookies, source auth_reference is cookie:AUTOQA_SECRET_NAME:cookie_name;
+no login form, storage-state import or automatic session acquisition is implemented.
+API/credential-bearing exports use summary_only retention: no raw HTTP bodies, header
+values, console logs, JUnit errors, screenshots or traces are persisted. Structured
+status/duration/operation evidence and sanitized JUnit remain. Summaries are retained
+until the operator removes them; automatic time-based deletion is not implemented.
+Unauthenticated UI-only exports retain V0.4 capture behavior and privacy limitations.
 
 Every run writes artifacts/RUN_ID/{results.json,diagnosis.json,report.html,junit.xml,
 pytest.log,collection.log} plus actual step screenshots/traces. Open report.html locally.

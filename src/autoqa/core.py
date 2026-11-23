@@ -7,7 +7,7 @@ from typing import Literal
 from urllib.parse import urlsplit
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from autoqa.storage import (
     LocalProjectStorage,
@@ -202,7 +202,7 @@ class TestCase(BaseModel):
     evidence: list[str]
     feasible: bool = True
     review_status: Literal["pending", "approved", "rejected"] = "pending"
-    kind: Literal["heading", "link", "manual", "functional"]
+    kind: Literal["heading", "link", "manual", "functional", "api"]
     url: str
     target: str = ""
     destination: str | None = None
@@ -210,6 +210,17 @@ class TestCase(BaseModel):
     evidence_refs: list[str] = Field(default_factory=list)
     workflow_id: str | None = None
     contract: dict | None = None
+
+    @model_validator(mode="after")
+    def api_contract(self):
+        if self.kind == "api":
+            from autoqa.framework_runtime.contracts import APIScenario
+
+            scenario = APIScenario.model_validate(self.contract)
+            env = next(e for e in scenario.environments if e.name == scenario.environment)
+            if scenario.id != self.id or self.url != env.origin + scenario.request.path:
+                raise ValueError("API case identity/URL differs from its reviewed contract")
+        return self
 
 
 class Project:

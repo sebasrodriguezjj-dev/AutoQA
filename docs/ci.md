@@ -9,7 +9,7 @@ execute client suites, use external application targets or read client secrets.
 Dependency/tool downloads require network access; regression uses synthetic data and
 disposable local projects. Every command must succeed; test failures fail the job.
 
-V0.4 non-browser coverage includes blueprint/approval/export integrity, CLI, step policies,
+Retained V0.4 non-browser coverage includes blueprint/approval/export integrity, CLI, step policies,
 diagnostics and an independent export installation/validation/collection smoke test.
 The latter installs its declared pinned dependencies using normal registry resolution,
 asserts AutoQA is not installed in the export environment and does not launch a browser.
@@ -20,10 +20,29 @@ behavior or production client execution.
 
 ```powershell
 uv sync --locked
-uv run ruff check src tests
-uv run ruff format --check src tests
+uv run ruff check src tests scripts
+uv run ruff format --check src tests scripts
 uv run python -m pytest tests -m "not browser" --ignore=tests/test_live_ai.py -q
 ```
+
+## V0.5 reusable gates
+
+`uv run python scripts/verify_release.py` runs metadata, Ruff, lock consistency,
+non-browser regression, build, isolated installed-wheel CLI, approved export and
+standalone dependency installation/validation/collection. `--phase checks` and
+`--phase package` run the two bounded stages separately. Paths are derived from
+the checkout; outputs use a fresh ignored `.test-work/release-gate-*` directory.
+Any failed subprocess exits nonzero. No browser, external application or live AI
+is contacted by the package stage; its synthetic API endpoint is collection-only.
+
+The PR workflow also runs the package stage. V0.5 API regression starts owned
+loopback servers with synthetic data/credentials, including healthy/defect/restored
+and missing-auth outcomes. It never requires client secrets or a private workspace.
+The authorized V0.5 engineering review publishes the candidate branch and one PR.
+Exact-head hosted results are recorded in that PR and its delivery report; pending
+runs do not count as success. The native Windows sharing-handle test is expected to
+skip on Linux, while the remaining non-browser suite must pass. Dependency registry
+access remains required.
 
 ## Manual project execution
 

@@ -8,7 +8,9 @@ from urllib.parse import urljoin, urlsplit
 import pytest
 from playwright.sync_api import sync_playwright
 
+from .api import credentials
 from .config import Config
+from .contracts import Authentication
 from .evidence import StepRecorder
 from .integrity import validate
 from .security import Scope
@@ -21,8 +23,22 @@ def qa_session(request):
     config = Config.model_validate(json.loads((root / "config/environment.json").read_text()))
     if config.auth_reference:
         raise ValueError("Authenticated execution is unsupported")
+    auth_path = root / "config/authentication.json"
+    authentication = (
+        Authentication.model_validate(json.loads(auth_path.read_text()))
+        if auth_path.exists()
+        else Authentication()
+    )
+    cookie_headers = credentials(authentication)
+    if manifest.get("privacy") == "summary_only":
+        config.screenshot_policy, config.trace_enabled = "disabled", False
     base = os.environ.get("AUTOQA_BASE_URL", config.application_url)
     scope = Scope(base, config)
+    if authentication.strategy != "none" and not base.startswith("https:"):
+        import ipaddress
+
+        if not (config.allow_localhost and ipaddress.ip_address(scope.pinned_address).is_loopback):
+            raise ValueError("Authenticated remote UI requires HTTPS")
     test_id = next(
         k for k in manifest["cases"] if "test_" + k.replace("-", "_") == request.node.name
     )
@@ -37,7 +53,30 @@ def qa_session(request):
         )
         try:
             context = browser.new_context(service_workers="block", accept_downloads=False)
-            context.route("**/*", scope.guard)
+            if authentication.strategy == "cookie":
+                context.add_cookies(
+                    [
+                        {
+                            "name": authentication.cookie_name,
+                            "value": cookie_headers["Cookie"].split("=", 1)[1],
+                            "url": base,
+                            "httpOnly": True,
+                            "secure": base.startswith("https:"),
+                            "sameSite": "Strict",
+                        }
+                    ]
+                )
+
+            def guarded(route):
+                if (
+                    authentication.strategy != "none"
+                    and scope._origin(route.request.url) != scope.origin
+                ):
+                    route.abort()
+                else:
+                    scope.guard(route)
+
+            context.route("**/*", guarded)
             context.route_web_socket("**/*", lambda socket: socket.close())
             if config.trace_enabled:
                 context.tracing.start(screenshots=True, snapshots=True, sources=False)

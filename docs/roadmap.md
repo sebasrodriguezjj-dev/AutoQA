@@ -1,6 +1,10 @@
 # AutoQA roadmap
 
-## V0.4.0 release scope
+## V0.5.0 current release scope
+
+V0.5.0 provides receipt-bound API contracts and UI/API standalone export, controlled application authentication references, deterministic data, conservative sensitive evidence policy and reusable package/install/export quality gates. See the [stable release gate](v05-stable-release-gate.md) for current evidence and limitations; the [0.5.0rc1 audit](v05-release-candidate.md) remains historical. Stable metadata is prepared for PR review; merge, tag and GitHub Release are separate publication steps.
+
+## V0.4.0 retained release scope
 
 V0.4.0 provides the standalone Page Object framework builder, approved-scenario compilation, operation evidence, independent validation/runner/reporting and three additive CLI commands. Preserved local acceptance demonstrates 9 pass / controlled 7 pass + 2 fail / restored 9 pass without AutoQA installed. See the [stable release gate](v04-stable-release-gate.md) for current verification and limitations, and the [0.4.0rc1 candidate audit](v04-release-candidate.md) for historical evidence. PR verification does not certify hosted browser/client execution or mean a GitHub Release was published.
 
@@ -23,12 +27,12 @@ AuthorizationContext is caller intent, not authenticated identity or role enforc
 
 Legacy generate/run still wraps scenarios in one coarse step. V0.4 exports record entered navigation, actions and assertions separately with skip/interruption status. Unified legacy contracts and richer sensitivity annotations need improvement. Raw logs, JUnit, screenshots and traces may expose client data and require review before sharing. Historical runs have NOT_RECORDED steps.
 
-External functional execution remains unvalidated after the documented dependency-origin block; scope restrictions were retained. Hosted generated CI and live AI provider access remain unverified. Authentication, remote cloning, API test generation, scheduling, self-healing, arbitrary model-generated executable code and multi-user operation are not implemented.
+External functional execution remains unvalidated after the documented dependency-origin block; scope restrictions were retained. Hosted generated CI and live AI provider access remain unverified. V0.5 supports a bounded application-authentication/API subset. Remote cloning, scheduling, self-healing, arbitrary model-generated executable code and multi-user operation remain absent.
 
-## V0.5 recommendations (not implemented)
+## V0.6 opportunities (not implemented)
 
 1. Unify the new framework operation blueprint/evidence with historical domain step contracts without changing legacy outcomes.
-2. Add sensitivity annotations, artifact redaction/retention policies and reviewable evidence controls.
+2. Extend V0.5 summary-only retention with reviewed field-level redaction, richer safe diagnostics and age-based cleanup.
 3. Design authenticated interface adapters with least-privilege project authorization; keep interfaces separate from engine logic.
 4. Add revision/concurrency control and durable approval history before multi-user exposure.
 5. Strengthen process cancellation and OS isolation, then validate supported execution platforms.
@@ -36,4 +40,4 @@ External functional execution remains unvalidated after the documented dependenc
 7. Design explicit per-origin dependency permissions with DNS/redirect validation before expanding SPA scope; no wildcard permissions.
 8. Validate hosted CI, optional live AI and authenticated staging only under explicit authorization and client data policy.
 
-FastAPI, React, MCP and cloud identity are possible future interface concerns, not delivered dependencies or capabilities. V0.4.0 is prepared for stable release within its verified scope; these deferred interface/platform capabilities are not included.
+FastAPI, React, MCP and cloud identity are possible future interface concerns, not delivered dependencies or capabilities. V0.4.0 is the retained stable baseline and V0.5.0 is prepared for stable review within its verified scope; these deferred interface/platform capabilities are not included.

@@ -13,7 +13,7 @@ from autoqa.security import Scope
 
 def case_signature(case: TestCase) -> str:
     excluded = {"review_status"}
-    if case.kind != "functional":
+    if case.kind not in {"functional", "api"}:
         excluded.update({"test_data", "evidence_refs", "workflow_id", "contract"})
     data = case.model_dump(exclude=excluded)
     return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
@@ -262,6 +262,10 @@ def plan(
             ]
             discovery.evidence_records.append(reference)
         save_json(project.root / "discovery/workflow-map.json", discovery.model_dump())
+    api_cases = [c for c in previous if c.kind == "api"]
+    if {c.id for c in api_cases} & {c.id for c in cases}:
+        raise ValueError("UI/API scenario IDs collide; use distinct reviewed IDs")
+    cases += api_cases
     _save_cases(project, cases)
     project.audit(f"Planned {len(cases)} scenarios (offline deterministic mode)")
     return cases

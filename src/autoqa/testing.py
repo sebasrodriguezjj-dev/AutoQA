@@ -147,6 +147,10 @@ def generate(project: Project, *, authorization: AuthorizationContext | None = N
         raise ValueError(
             "No approved automatable scenarios. Review test-matrix.md and use plan --approve ID."
         )
+    if any(case.kind == "api" for case in cases):
+        raise ValueError(
+            "API scenarios require build-framework --approved; legacy generate remains UI-only"
+        )
     if len({c.id.replace("-", "_") for c in cases}) != len(cases):
         raise ValueError("Scenario IDs collide after Python name normalization.")
     discovery = project.discovery()

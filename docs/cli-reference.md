@@ -1,6 +1,6 @@
 # CLI reference
 
-Use `python -m uv run autoqa COMMAND --help` for exact options. All project commands accept `--project PATH`. Run from a project directory or use the registry's active project when invoking from the QA repository root.
+Use `uv run autoqa COMMAND --help` for exact options. All project commands accept `--project PATH`. Run from a project directory or use the registry's active project when invoking from the QA repository root.
 
 | Command | Notes |
 | --- | --- |
@@ -16,13 +16,14 @@ Use `python -m uv run autoqa COMMAND --help` for exact options. All project comm
 | `plan --requirements FILE` | Import a reviewed JSON behavior-contract array; proposals remain pending |
 | `plan --reject ID` | Persist rejection without deleting the scenario |
 | `plan --ai` | Send reduced workflow evidence to configured cloud provider; saves review-only suggestions |
-| `generate --approved` | Generate approved supported heading/navigation and reviewed functional scenarios |
+| `generate --approved` | Legacy UI-only generator; API cases require build-framework |
 | `run` | Exit 0 only when Pytest succeeds; retain per-run JUnit and JSON |
 | `diagnose` | Analyze latest run; no automatic repairs |
 | `report --format html` | Client-facing HTML with escaped application text |
 | `report --format json` | Structured project/run summary |
 | `integrate --provider github` | Generate workflow from QA repository root; refuses overwrite |
-| `build-framework DESTINATION --approved --project PATH` | Export supported approved scenarios and Page Objects into a new standalone directory |
+| `plan-api REQUIREMENTS --project PATH` | Import 1?100 validated API contracts as pending cases without network requests; preserve identical approvals |
+| `build-framework DESTINATION --approved --project PATH` | Export supported approved UI/API scenarios, Page Objects and API services into a new standalone directory |
 | `validate-framework DESTINATION` | Check file hashes, Python syntax and exported approval snapshot; no execution |
 | `run-framework DESTINATION --project PATH` | Recheck current source approvals, collect and run; propagate failure exit status |
 
@@ -33,14 +34,15 @@ Repository-only discovery cannot generate executable UI cases. AI suggestions ca
 ## Standalone framework workflow (V0.4)
 
 Use the existing project selection and review commands first. `build-framework` requires
-`--approved`, valid independent receipts and browser evidence for supported scenarios.
+`--approved` and valid independent receipts. UI scenarios also require browser evidence;
+API scenarios require the complete reviewed declarative contract.
 Its destination parent must exist; the destination itself must be absent and outside the
 source project, without traversal or link/junction components. It never overwrites an
 existing export. Unsupported approved scenarios are listed explicitly; no test is emitted
 for them. At least one supported approved scenario is required.
 
 After export, install the dependencies in its own environment using `uv sync`, install
-Chromium with `uv run playwright install chromium`, then use:
+Chromium with `uv run playwright install chromium` when UI scenarios are included, then use:
 
 ```powershell
 uv run python -m qa_runtime.runner validate
@@ -61,3 +63,57 @@ Ruff is needed in the builder environment, but not in the standalone runtime.
 
 Failures return nonzero; collection failure/timeout cannot become passing records.
 See the [stable release gate](v04-stable-release-gate.md) for current verification and operating limits. The [0.4.0rc1 candidate audit](v04-release-candidate.md) remains historical evidence; commands are unchanged by the 0.4.0 version promotion.
+
+
+## V0.5 API and authentication workflow
+
+1. Initialize/select an authorized project. For UI cases, explore/plan first as before.
+2. Prepare a JSON array of versioned API contracts (see `examples/api_contracts.json`).
+3. `uv run autoqa plan-api FILE --project PATH` adds pending API cases without requests.
+4. Review **test-cases/test-matrix.json**, not just its human summary: method, exact
+   origin/path, query, headers, body, all environments, expectations, mutation review,
+   auth references, fixture rows and evidence policy must be intentional.
+5. `uv run autoqa plan --approve TC-API-ID --project PATH` creates the existing receipt.
+6. Build/validate/run the same standalone framework commands. Unsupported approved
+   cases are reported; pending/rejected cases never become tests. UI replanning retains
+   API cases and their receipts. Changed imported API contracts return to pending.
+
+Contracts support GET/POST/PUT/PATCH/DELETE, query parameters, static nonsecret headers,
+JSON body, exact status/header/value checks and dotted JSON field/index type checks.
+A non-GET request requires `mutation_review` of at least ten characters describing
+reviewed scope and expected effect. This does not authenticate the reviewer.
+`json_types` is basic shape checking, not full JSON Schema/OpenAPI validation.
+
+An environment contains a unique name, exact HTTP(S) origin, explicit localhost flag
+and nonsecret values. `AUTOQA_ENVIRONMENT` selects only one of those reviewed names;
+unknown names fail. API ignores `AUTOQA_BASE_URL`; UI retains its existing scoped
+base override. Remote API origins require HTTPS, public DNS addresses and direct
+validated/pinned connections. Redirects and private LAN/metadata addresses are denied.
+No proxy, wildcard scope, endpoint discovery or automatic retries are used.
+
+Authentication is `none`, `bearer` with `token_env`, `basic` with `username_env` and
+`password_env`, or `cookie` with `token_env` and `cookie_name`. References must match
+`AUTOQA_SECRET_[A-Z0-9_]+`. Set their real values only in the invoking environment;
+never place them in JSON, Python source, Git or reports. Missing/invalid values fail.
+Reviewed browser cookies use source config `auth_reference`:
+`cookie:AUTOQA_SECRET_SESSION:session`. Supply a legitimate application session yourself.
+Login forms, OAuth refresh, browser storage-state import and AutoQA user login are absent.
+Authenticated UI resources remain on the exact reviewed UI origin.
+
+Named data fixtures contain a seed and 1?30 isolated JSON rows. A `${field}` whole-value
+reference resolves from the row or environment values in query/body/JSON expectations.
+`synthetic_id` is seeded deterministically; each parameter row gets a unique operation
+identity. Credentials cannot be fixture data. Arbitrary client PII detection is not
+implemented. No remote setup/teardown automation is implied; the operator owns test
+state reset. Local fixtures and owned acceptance servers clean up their own lifetimes.
+
+API or authenticated exports use `summary_only`: all HTTP header values and payloads
+are omitted; marked header names appear masked. JUnit failure messages/log details,
+screenshots and traces are suppressed before persistent capture. Pass/fail/error and
+step associations remain intact. Summaries remain until explicit operator removal;
+there is no automatic age-based deletion. Unauthenticated UI-only exports retain V0.4
+capture and its documented privacy limits. Screenshots/traces are not claimed redacted.
+
+For current 0.5.0 evidence see the [stable release gate](v05-stable-release-gate.md).
+The [0.5.0rc1 candidate audit](v05-release-candidate.md) remains unchanged historical
+evidence, as do V0.4 documents. No arbitrary client/platform certification is claimed.
