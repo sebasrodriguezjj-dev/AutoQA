@@ -1,4 +1,4 @@
-# AutoQA Agent 0.3.0
+# AutoQA Agent 0.4.0
 
 A private professional QA engineering tool supporting its owner's QA Automation Engineering services. The source repository may be public; client workspaces and evidence remain private. It is a local Python CLI, with no SaaS or subscription offering. AutoQA explores an authorized application, records visible UI evidence, proposes reviewable scenarios, generates approved Playwright tests, executes them with Pytest, and renders actual results as HTML or JSON. It works offline; optional AI produces review-only recommendations.
 
@@ -6,6 +6,28 @@ The retained V0.2 foundation includes passive functional control discovery, brow
 
 V0.3 adds versioned domain contracts, storage/reporting boundaries, project-bound discovery and planning services, approval receipts, shared generation/execution services and an in-process application engine. New suites require receipts matching the reviewed scenario at generation and execution. Historical generated suites retain legacy checks. See [final delivery](docs/v03-final-delivery.md), [audit](docs/v03-release-audit.md) and [release verification](docs/v03-release-finalization.md).
 
+## V0.4.0 stable release scope
+
+V0.4 adds a deterministic standalone Playwright/Pytest framework builder with per-page Page Objects, checked locator properties, reusable operations, selected approved scenarios, self-contained fixtures/scope checks, environment configuration, dependencies and setup instructions. Exported tests record navigation, actions and assertions separately. Unsupported approved scenarios are reported explicitly; pending cases never become tests. Existing V0.3 generate/run behavior and historical formats remain intact.
+
+```powershell
+# First complete discovery, planning and explicit scenario approval as shown below.
+# The destination parent must exist; the export directory must be new.
+uv run autoqa build-framework .test-work/client-framework --project projects/my-demo --approved
+uv run autoqa validate-framework .test-work/client-framework
+uv run autoqa run-framework .test-work/client-framework --project projects/my-demo
+# Or install/run independently from the export directory (AutoQA is not required):
+Set-Location .test-work/client-framework
+uv sync
+uv run playwright install chromium
+uv run python -m qa_runtime.runner validate
+uv run python -m qa_runtime.runner collect
+uv run python -m qa_runtime.runner run
+```
+
+The target application must already be running and authorized. Results and the HTML report are stored under the export's `artifacts/RUN_ID/`. Build requires Ruff in the AutoQA environment (`uv sync --locked` includes it). File/receipt validation detects accidental changes; reapprove and export a new directory instead of editing generated files. Standalone delivery retains an approval snapshot and cannot observe later source-project revocation; `run-framework` rechecks current source approvals. Review all client inputs and evidence before sharing.
+
+Version 0.4.0 is prepared for stable release review within the documented trusted-local Windows/Chromium scope. See the [stable release gate](docs/v04-stable-release-gate.md) for current verification and limitations. The [0.4.0rc1 candidate audit](docs/v04-release-candidate.md) is retained as historical evidence. Stable metadata does not mean the PR has been merged, tagged or published as a GitHub Release.
 ## Requirements and installation
 
 Windows 11, Python 3.14, internet for initial package/browser downloads, and a browser-capable desktop session. The package deliberately supports Python 3.14 only in this release. Python 3.14.3 was used for local verification.
@@ -175,7 +197,7 @@ docs/                           architecture, security, CLI, CI, roadmap, verifi
 projects/NAME/                  isolated private artifacts (Git-ignored)
 ```
 
-Each project contains `config.yaml`, `discovery/`, `test-cases/`, `automation/`, `reports/`, `screenshots/`, `artifacts/` and `logs/`. Workflow maps retain OBSERVED or INFERRED status; source inspection retains SOURCE status. Reports describe discovery counts, not requirements coverage percentages. Runs have unique IDs; screenshots and traces follow configured policies. New generated scenarios record one coarse step with status, duration, timestamp, error and evidence references. This is not per-action instrumentation; historical steps remain NOT_RECORDED. Diagnostics include recorded step screenshots and legacy filenames. `reports/latest-run.json` is the most recent completed run; `reports/qa-report.html` is regenerated explicitly.
+Each project contains `config.yaml`, `discovery/`, `test-cases/`, `automation/`, `reports/`, `screenshots/`, `artifacts/` and `logs/`. Workflow maps retain OBSERVED or INFERRED status; source inspection retains SOURCE status. Reports describe discovery counts, not requirements coverage percentages. Runs have unique IDs; screenshots and traces follow configured policies. The legacy generate/run workflow records one coarse step with status, duration, timestamp, error and evidence references. This is not per-action instrumentation; historical steps remain NOT_RECORDED. Diagnostics include recorded step screenshots and legacy filenames. `reports/latest-run.json` is the most recent completed run; `reports/qa-report.html` is regenerated explicitly.
 
 ## Development, verification and troubleshooting
 
@@ -206,4 +228,4 @@ Use only applications and source repositories you are authorized to assess. Auth
 
 Review artifacts before sharing: screenshots, traces, raw JUnit and logs can contain client data. Screenshot disabling does not remove trace screenshots. AI remains optional and advisory. Authentication, hosted CI execution and general external functional coverage are unverified or unsupported as described above. Step skip/interruption semantics and sensitivity annotations need further work.
 
-V0.4 direction is richer typed executable steps, finer evidence/sensitivity policies, authenticated interface adapters, revision/concurrency control and stronger execution isolation. These are future work; no web API, dashboard, MCP server or cloud identity is implemented. See [roadmap](docs/roadmap.md).
+The V0.4 framework exporter adds typed blueprints and operation-level evidence. Unified legacy step contracts, finer sensitivity/redaction policies, authenticated interfaces, concurrency control and stronger isolation remain future work. No web API, dashboard, MCP server or cloud identity is implemented. See [roadmap](docs/roadmap.md).

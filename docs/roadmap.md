@@ -1,6 +1,10 @@
 # AutoQA roadmap
 
-## V0.3.0 delivered
+## V0.4.0 release scope
+
+V0.4.0 provides the standalone Page Object framework builder, approved-scenario compilation, operation evidence, independent validation/runner/reporting and three additive CLI commands. Preserved local acceptance demonstrates 9 pass / controlled 7 pass + 2 fail / restored 9 pass without AutoQA installed. See the [stable release gate](v04-stable-release-gate.md) for current verification and limitations, and the [0.4.0rc1 candidate audit](v04-release-candidate.md) for historical evidence. PR verification does not certify hosted browser/client execution or mean a GitHub Release was published.
+
+## V0.3.0 retained foundation
 
 AutoQA is a private professional QA engineering tool supporting its owner's QA Automation Engineering services. A public source repository does not make client artifacts public. The product direction is a trustworthy local engineering engine, with no SaaS/subscription or billing plan.
 
@@ -17,13 +21,13 @@ See [final delivery](v03-final-delivery.md), [release audit](v03-release-audit.m
 
 AuthorizationContext is caller intent, not authenticated identity or role enforcement. Approval receipts/manifests depend on trusted local writers; they are not signed hostile-filesystem protection. Storage is single-writer and approval updates are not a multi-file transaction. Execution is not an OS sandbox; Windows descendant-process timeout cleanup remains limited.
 
-Evidence wraps each generated scenario in one coarse step rather than individual Playwright actions. Skipped/interrupted step semantics and sensitivity annotations need improvement. Raw logs, JUnit, screenshots and traces may expose client data and require review before sharing. Historical runs have NOT_RECORDED steps.
+Legacy generate/run still wraps scenarios in one coarse step. V0.4 exports record entered navigation, actions and assertions separately with skip/interruption status. Unified legacy contracts and richer sensitivity annotations need improvement. Raw logs, JUnit, screenshots and traces may expose client data and require review before sharing. Historical runs have NOT_RECORDED steps.
 
 External functional execution remains unvalidated after the documented dependency-origin block; scope restrictions were retained. Hosted generated CI and live AI provider access remain unverified. Authentication, remote cloning, API test generation, scheduling, self-healing, arbitrary model-generated executable code and multi-user operation are not implemented.
 
-## V0.4 development direction (not implemented)
+## V0.5 recommendations (not implemented)
 
-1. Define richer typed executable step contracts, per-action evidence and explicit missing/skipped/interrupted outcomes.
+1. Unify the new framework operation blueprint/evidence with historical domain step contracts without changing legacy outcomes.
 2. Add sensitivity annotations, artifact redaction/retention policies and reviewable evidence controls.
 3. Design authenticated interface adapters with least-privilege project authorization; keep interfaces separate from engine logic.
 4. Add revision/concurrency control and durable approval history before multi-user exposure.
@@ -32,4 +36,4 @@ External functional execution remains unvalidated after the documented dependenc
 7. Design explicit per-origin dependency permissions with DNS/redirect validation before expanding SPA scope; no wildcard permissions.
 8. Validate hosted CI, optional live AI and authenticated staging only under explicit authorization and client data policy.
 
-FastAPI, React, MCP and cloud identity are possible future interface concerns, not dependencies or delivered capabilities of V0.3. No V0.4 implementation is part of this release.
+FastAPI, React, MCP and cloud identity are possible future interface concerns, not delivered dependencies or capabilities. V0.4.0 is prepared for stable release within its verified scope; these deferred interface/platform capabilities are not included.

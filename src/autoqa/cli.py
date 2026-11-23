@@ -206,3 +206,49 @@ def integrate(project: Path | None = None, provider: str = "github"):
     if provider != "github":
         raise ValueError("Only the github provider is implemented.")
     console.print(create(select_project(project)))
+
+
+@app.command()
+@handled
+def build_framework(destination: Path, project: Path | None = None, approved: bool = False):
+    """Export supported approved scenarios as a standalone Page Object framework."""
+    from autoqa.application import ApplicationEngine
+
+    if not approved:
+        raise ValueError("Use --approved after reviewing the scenario matrix")
+    selected = select_project(project)
+    result = ApplicationEngine(
+        selected, AuthorizationContext(selected.root, frozenset({"generate"}))
+    ).build_framework(destination)
+    console.print(f"Exported {len(result['cases'])} scenarios to {result['destination']}")
+    for case_id, reason in result["unsupported"].items():
+        console.print(f"Unsupported {case_id}: {reason}", markup=False)
+
+
+@app.command()
+@handled
+def validate_framework(destination: Path):
+    """Validate an export's file integrity, syntax and approval snapshot without execution."""
+    import ast
+
+    from autoqa.framework_runtime.integrity import safe_path, validate
+
+    manifest = validate(destination)
+    for name in manifest["files"]:
+        if name.endswith(".py"):
+            ast.parse(safe_path(destination, name).read_text(encoding="utf-8"), filename=name)
+    console.print(f"Validated {len(manifest['cases'])} exported scenarios")
+
+
+@app.command()
+@handled
+def run_framework(destination: Path, project: Path | None = None):
+    """Run an export after rechecking the selected project's current approvals."""
+    from autoqa.application import ApplicationEngine
+
+    selected = select_project(project)
+    code = ApplicationEngine(
+        selected, AuthorizationContext(selected.root, frozenset({"execute"}))
+    ).run_framework(destination)
+    if code:
+        raise typer.Exit(code)
