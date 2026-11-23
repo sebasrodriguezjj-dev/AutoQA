@@ -29,6 +29,11 @@ class ApplicationEngine:
 
     planning = plan
 
+    def plan_api(self, requirements: Path):
+        from autoqa.api_service import plan_api
+
+        return plan_api(self.project, requirements, self.authorization)
+
     def approve(self, ids: list[str]):
         return PlanningService(self.project, self.authorization).approve(ids)
 

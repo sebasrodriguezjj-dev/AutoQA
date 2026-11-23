@@ -252,3 +252,20 @@ def run_framework(destination: Path, project: Path | None = None):
     ).run_framework(destination)
     if code:
         raise typer.Exit(code)
+
+
+@app.command("plan-api")
+@handled
+def plan_api(requirements: Path, project: Path | None = None):
+    """Import declarative API scenarios as pending cases; no network requests."""
+    from autoqa.application import ApplicationEngine
+
+    selected = select_project(project)
+    cases = ApplicationEngine(
+        selected, AuthorizationContext(selected.root, frozenset({"plan"}))
+    ).plan_api(requirements)
+    for case in cases:
+        console.print(f"{case.id}: {case.review_status}")
+    console.print(
+        "Review test-cases/test-matrix.json, then plan --approve ID. Build with build-framework --approved."
+    )

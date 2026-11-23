@@ -81,7 +81,12 @@ def legacy_project(request, tmp_path):
 @pytest.mark.parametrize("command", CLI)
 def test_cli_signatures_and_help(command):
     commands = get_command(cli.app).commands
-    assert set(commands) == set(CLI) | {"build-framework", "validate-framework", "run-framework"}
+    assert set(commands) == set(CLI) | {
+        "build-framework",
+        "validate-framework",
+        "run-framework",
+        "plan-api",
+    }
     actual = []
     for param in commands[command].params:
         flag = getattr(param, "is_flag", False)

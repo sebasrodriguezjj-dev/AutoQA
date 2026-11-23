@@ -13,7 +13,7 @@ from autoqa.security import Scope
 
 def case_signature(case: TestCase) -> str:
     excluded = {"review_status"}
-    if case.kind != "functional":
+    if case.kind not in {"functional", "api"}:
         excluded.update({"test_data", "evidence_refs", "workflow_id", "contract"})
     data = case.model_dump(exclude=excluded)
     return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()

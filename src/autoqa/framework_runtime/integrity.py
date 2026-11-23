@@ -28,7 +28,7 @@ def safe_path(root, reference):
 
 def signature(case):
     data = {key: value for key, value in case.items() if key != "review_status"}
-    if case["kind"] != "functional":
+    if case["kind"] not in {"functional", "api"}:
         for key in ("test_data", "evidence_refs", "workflow_id", "contract"):
             data.pop(key, None)
     return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
