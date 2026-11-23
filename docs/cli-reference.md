@@ -114,5 +114,6 @@ step associations remain intact. Summaries remain until explicit operator remova
 there is no automatic age-based deletion. Unauthenticated UI-only exports retain V0.4
 capture and its documented privacy limits. Screenshots/traces are not claimed redacted.
 
-For current evidence see [V0.5 candidate audit](v05-release-candidate.md). Historical
-V0.4 documents remain unchanged. No arbitrary client/platform certification is claimed.
+For current 0.5.0 evidence see the [stable release gate](v05-stable-release-gate.md).
+The [0.5.0rc1 candidate audit](v05-release-candidate.md) remains unchanged historical
+evidence, as do V0.4 documents. No arbitrary client/platform certification is claimed.

@@ -1,4 +1,4 @@
-# AutoQA Agent 0.5.0rc1
+# AutoQA Agent 0.5.0
 
 A private professional QA engineering tool supporting its owner's QA Automation Engineering services. The source repository may be public; client workspaces and evidence remain private. It is a local Python CLI, with no SaaS or subscription offering. AutoQA explores an authorized application, records visible UI evidence, proposes reviewable scenarios, generates approved Playwright tests, executes them with Pytest, and renders actual results as HTML or JSON. It works offline; optional AI produces review-only recommendations.
 
@@ -6,7 +6,7 @@ The retained V0.2 foundation includes passive functional control discovery, brow
 
 V0.3 adds versioned domain contracts, storage/reporting boundaries, project-bound discovery and planning services, approval receipts, shared generation/execution services and an in-process application engine. New suites require receipts matching the reviewed scenario at generation and execution. Historical generated suites retain legacy checks. See [final delivery](docs/v03-final-delivery.md), [audit](docs/v03-release-audit.md) and [release verification](docs/v03-release-finalization.md).
 
-## V0.5 release candidate
+## V0.5.0 stable release scope
 
 V0.5 extends the standalone builder with approved HTTP API contracts, exact reviewed origins/methods/paths, status/header/JSON assertions, environment-referenced bearer/Basic/cookie credentials, seeded JSON data and parameterized tests. API and UI scenarios share the existing matrix, manual approvals, receipts, exporter, runner and reports. It remains a local professional engineering tool.
 
@@ -25,7 +25,7 @@ The example declares an owned API at port 8002; it does not start a server. Run 
 
 API/credential-bearing exports use summary-only evidence: masked header names, status/duration and per-operation results remain; raw bodies, log details, screenshots and traces are restricted. Failed outcomes remain failures. JSON data must be synthetic/nonsecret; credentials belong in `AUTOQA_SECRET_*` environment variables. This is conservative suppression, not universal redaction.
 
-Version **0.5.0rc1** is a local release candidate, not a stable release. See [candidate audit](docs/v05-release-candidate.md), [architecture](docs/v05-architecture.md) and [CLI reference](docs/cli-reference.md). Reusable gates: `uv run python scripts/verify_release.py` (checks and package/install/export smoke). V0.5 engineering review publishes this candidate branch and one PR with hosted code verification. No stable promotion, merge, version tag or GitHub Release is included.
+Version **0.5.0** is prepared for stable release review within its trusted-local verified scope. See the [stable release gate](docs/v05-stable-release-gate.md) for current evidence and limitations. The [0.5.0rc1 candidate audit](docs/v05-release-candidate.md) remains unchanged historical evidence. Reusable gates: `uv run python scripts/verify_release.py` (checks and package/install/export smoke). Stable package metadata does not mean the PR is merged, tagged or published as a GitHub Release.
 
 ## Retained V0.4 standalone foundation
 

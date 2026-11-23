@@ -1,8 +1,8 @@
 # AutoQA roadmap
 
-## V0.5.0rc1 current candidate
+## V0.5.0 current release scope
 
-The local candidate adds receipt-bound API contracts and UI/API standalone export, controlled application authentication references, deterministic data, conservative sensitive evidence policy and reusable package/install/export quality gates. See [candidate audit](v05-release-candidate.md) for actual evidence and limitations. It is not a stable release or hosted service.
+V0.5.0 provides receipt-bound API contracts and UI/API standalone export, controlled application authentication references, deterministic data, conservative sensitive evidence policy and reusable package/install/export quality gates. See the [stable release gate](v05-stable-release-gate.md) for current evidence and limitations; the [0.5.0rc1 audit](v05-release-candidate.md) remains historical. Stable metadata is prepared for PR review; merge, tag and GitHub Release are separate publication steps.
 
 ## V0.4.0 retained release scope
 
@@ -40,4 +40,4 @@ External functional execution remains unvalidated after the documented dependenc
 7. Design explicit per-origin dependency permissions with DNS/redirect validation before expanding SPA scope; no wildcard permissions.
 8. Validate hosted CI, optional live AI and authenticated staging only under explicit authorization and client data policy.
 
-FastAPI, React, MCP and cloud identity are possible future interface concerns, not delivered dependencies or capabilities. V0.4.0 is the retained stable baseline and V0.5.0rc1 remains a local candidate; these deferred interface/platform capabilities are not included.
+FastAPI, React, MCP and cloud identity are possible future interface concerns, not delivered dependencies or capabilities. V0.4.0 is the retained stable baseline and V0.5.0 is prepared for stable review within its verified scope; these deferred interface/platform capabilities are not included.
