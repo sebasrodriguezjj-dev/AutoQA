@@ -219,9 +219,28 @@ evidence for supported, unsupported, mixed/full and rejected selections. No clie
 system or real credential is used. Historical V0.5 audits/data and frozen fixtures
 remain unchanged; version remains **0.6.0rc1**, with no dependency changes.
 
-Hosted remediation status: **PENDING**. The existing PR #4 will be updated and its
-new exact-head Actions run inspected. Earlier green runs do not certify these
-changes. Local success alone is not a final hosted-success or stable-readiness claim.
+Remediation implementation HEAD **e90921663a0915f953422dd71f543f7cb31310ab** passed
+[Actions run 45291754560](https://github.com/sebasrodriguezjj-dev/AutoQA/actions/runs/45291754560),
+job 138101980841, completed **success**. Actual job logs inspected:
+
+- Python **3.14.4 / Linux**, locked installation, Ruff lint/format (**67 files**).
+- **304 passed / 1 skipped / 18 deselected in 42.99s**, zero unexpected failures.
+  The native Windows handle test skips on Linux and passed in the local Windows run.
+- Wheel/sdist, isolated installed CLI/package version **0.6.0rc1**, approved export,
+  independent dependency installation with AutoQA absent, validation/collection and
+  single/pack/full execution all succeeded. Every workflow job step passed.
+
+The existing PR #4 targets main and includes all corrections. Only seven files differ
+from the audited baseline; existing assertions, historical audits and fixtures remain.
+This documentation-only evidence commit triggers a further run; the PR delivery
+status records its actual final-head result. No earlier-head or pending CI result
+is treated as final-head success.
+
+H01 and H02 are **VERIFIED within the documented scope**; no reproduced mandatory
+blocker remains after these repairs. Recommend a new independent candidate audit,
+subject to the final documentation-head CI check. This remains **0.6.0rc1**; stable
+promotion and merge require separate review/authorization. Linux non-browser CI
+adds no Linux browser certification.
 
 No stable promotion, merge, V0.6 tag, main push or new release entry is included.
 Static-analysis and trusted-local limitations remain as documented; these repairs
