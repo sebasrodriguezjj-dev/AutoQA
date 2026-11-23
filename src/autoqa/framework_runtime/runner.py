@@ -22,6 +22,40 @@ def write_json(path, value):
     path.write_text(json.dumps(value, indent=2), encoding="utf-8")
 
 
+def reconcile_collection(manifest, selected_cases, plan, collection):
+    """Collection is complete only when every selected invocation is observed once."""
+    expected = []
+    unsupported = [c.id for c in selected_cases if not c.supported]
+    for case in selected_cases:
+        if not case.supported:
+            continue
+        node = "tests/test_approved.py::test_" + case.id.replace("-", "_")
+        rows = manifest.get("parameters", {}).get(case.id)
+        expected.extend([node + f"[{i}]" for i in range(rows)] if rows else [node])
+    observed = Counter(
+        line.strip() for line in collection.stdout.splitlines() if ".py::" in line.strip()
+    )
+    missing = sorted(set(expected) - observed.keys())
+    duplicate = sorted(node for node in expected if observed[node] > 1)
+    unexpected = sum(count for node, count in observed.items() if node not in expected)
+    complete = not (unsupported or missing or duplicate or unexpected) and bool(expected)
+    code = collection.returncode or (0 if complete else 3)
+    return {
+        "schema_version": "0.6",
+        "exit_code": code,
+        "collected_only": True,
+        "selection_snapshot": plan.model_dump(),
+        "selected_case_ids": plan.case_ids,
+        "collection_status": "COMPLETE" if code == 0 else "INCOMPLETE_OR_FAILED",
+        "unsupported_case_ids": unsupported,
+        "missing_node_ids": missing,
+        "duplicate_node_ids": duplicate,
+        "unexpected_node_count": unexpected,
+        "expected_invocations": len(expected),
+        "collected_invocations": sum(observed[node] for node in expected),
+    }
+
+
 def junit(path):
     records = []
     if not path.exists():
@@ -229,8 +263,18 @@ def execute(root, *, collect_only=False, selection=None):
     )
     (output / "collection.log").write_text(collection_log, encoding="utf-8")
     if collect_only:
+        result = reconcile_collection(manifest, selected_cases, plan, collection)
+        result["run_id"] = run_id
+        write_json(output / "collection.json", result)
         print(collection_log)
-        return {"exit_code": collection.returncode, "run_id": run_id, "collected_only": True}
+        print(
+            f"Selection collection: {result['collection_status']}; "
+            f"unsupported={len(result['unsupported_case_ids'])}, "
+            f"missing={len(result['missing_node_ids'])}, "
+            f"duplicate={len(result['duplicate_node_ids'])}, "
+            f"unexpected={result['unexpected_node_count']}; details: {output / 'collection.json'}"
+        )
+        return result
     try:
         process = (
             subprocess.run(

@@ -1,8 +1,97 @@
 """Bounded static inspection. Never imports or executes inspected project code."""
 
 import ast
+import json
 import os
+import re
+import xml.etree.ElementTree as ET
+from fnmatch import fnmatchcase
 from pathlib import Path
+
+BUILD_METADATA = {"package.json", "pom.xml", "build.gradle", "build.gradle.kts"}
+UNSUPPORTED_CONFIG = {
+    f"{tool}.config.{suffix}"
+    for tool in ["cypress", "playwright", "jest", "vitest"]
+    for suffix in ["js", "ts", "mjs", "cjs", "mts", "cts"]
+}
+
+
+def metadata_tooling(name, text):
+    """Read declarations, not mere manifest existence. No dependency resolution."""
+    if name == "package.json":
+        data = json.loads(text)
+        if not isinstance(data, dict):
+            raise ValueError("Invalid package metadata")
+        dependencies = set()
+        for field in [
+            "dependencies",
+            "devDependencies",
+            "peerDependencies",
+            "optionalDependencies",
+        ]:
+            section = data.get(field, {})
+            if not isinstance(section, dict):
+                raise ValueError("Unknown dependency declaration")
+            dependencies.update(section)
+        return bool(
+            dependencies
+            & {
+                "cypress",
+                "@playwright/test",
+                "jest",
+                "mocha",
+                "vitest",
+                "jasmine",
+                "ava",
+                "tape",
+                "webdriverio",
+                "testcafe",
+                "nightwatch",
+            }
+        )
+    if name == "pom.xml":
+        tree = ET.fromstring(text)
+        for node in tree.iter():
+            if node.tag.rsplit("}", 1)[-1] != "dependency":
+                continue
+            fields = {n.tag.rsplit("}", 1)[-1]: (n.text or "").strip() for n in node}
+            group, artifact = fields.get("groupId", ""), fields.get("artifactId", "")
+            if group.startswith(("org.junit", "io.cucumber", "org.seleniumhq.selenium")) or (
+                group,
+                artifact,
+            ) in {("junit", "junit"), ("org.testng", "testng")}:
+                return True
+        return False
+    # Only literal test dependency coordinates are interpreted; Gradle code is never evaluated.
+    clean = re.sub(r"/\*.*?\*/|(?m:^\s*//[^\r\n]*$)", "", text, flags=re.S)
+    return bool(
+        re.search(
+            r"(?:testImplementation|testRuntimeOnly|testCompileOnly|testCompile)\s*\(?\s*['\"]"
+            r"(?:org\.junit[^:'\"]*|junit|org\.testng|io\.cucumber[^:'\"]*|org\.seleniumhq\.selenium):",
+            clean,
+        )
+    )
+
+
+def collected_candidates(tree, filename):
+    """Default Pytest file/function/class conventions, not arbitrary AST descendants."""
+    parts = Path(filename).parts
+    filename = parts[-1]
+    ignored = ["*.egg", ".*", "_darcs", "build", "CVS", "dist", "node_modules", "venv", "{arch}"]
+    if any(fnmatchcase(part, pattern) for part in parts[:-1] for pattern in ignored):
+        return set()
+    if not (filename.startswith("test_") or filename.endswith("_test.py")):
+        return set()
+    functions = (ast.FunctionDef, ast.AsyncFunctionDef)
+    candidates = set()
+    for node in tree.body:
+        if isinstance(node, functions) and node.name.startswith("test_"):
+            candidates.add(id(node))
+        if isinstance(node, ast.ClassDef) and node.name.startswith("Test"):
+            methods = [n for n in node.body if isinstance(n, functions)]
+            if not any(n.name in {"__init__", "__new__"} for n in methods):
+                candidates.update(id(n) for n in methods if n.name.startswith("test_"))
+    return candidates
 
 
 def analyze_framework(destination: Path):
@@ -60,17 +149,38 @@ def analyze_framework(destination: Path):
                     raise ValueError("Inspection file budget exceeded")
                 path = Path(parent) / name
                 relative = path.relative_to(root).as_posix()
-                if name in {
-                    "package.json",
-                    "pom.xml",
-                    "build.gradle",
-                    "playwright.config.ts",
-                    "cypress.config.js",
-                }:
+                is_metadata = name in BUILD_METADATA or name in {
+                    "pytest.ini",
+                    "pyproject.toml",
+                    "conftest.py",
+                    "setup.cfg",
+                    "tox.ini",
+                }
+                if is_metadata or name in UNSUPPORTED_CONFIG:
+                    report["configuration"].append(relative)
+                if name in UNSUPPORTED_CONFIG:
                     unsupported = True
-                    report["configuration"].append(relative)
-                if name in {"pytest.ini", "pyproject.toml", "conftest.py", "setup.cfg", "tox.ini"}:
-                    report["configuration"].append(relative)
+                if path.suffix == ".py" or is_metadata:
+                    size = path.stat().st_size
+                    total += size
+                    if size > 512000 or total > 5000000:
+                        raise ValueError("Inspection source/metadata budget exceeded")
+                if name in BUILD_METADATA:
+                    try:
+                        unsupported |= metadata_tooling(name, path.read_text(encoding="utf-8-sig"))
+                    except ValueError, UnicodeError, ET.ParseError:
+                        report["concerns"].append(
+                            relative + ": metadata tooling could not be established"
+                        )
+                if is_metadata and name not in BUILD_METADATA and name != "conftest.py":
+                    text = path.read_text(encoding="utf-8-sig")
+                    if re.search(
+                        r"(?m)^\s*(python_files|python_functions|python_classes|testpaths|norecursedirs)\s*=",
+                        text,
+                    ):
+                        report["concerns"].append(
+                            relative + ": custom collection configuration requires review"
+                        )
                 if path.suffix in {".robot", ".feature"} or name.endswith(
                     (".spec.ts", ".test.js", ".spec.js")
                 ):
@@ -78,10 +188,6 @@ def analyze_framework(destination: Path):
                     report["configuration"].append(relative)
                 if path.suffix != ".py":
                     continue
-                size = path.stat().st_size
-                total += size
-                if size > 512000 or total > 5000000:
-                    raise ValueError("Inspection source budget exceeded")
                 report["files"].append(relative)
                 try:
                     tree = ast.parse(path.read_text(encoding="utf-8-sig"))
@@ -112,10 +218,15 @@ def analyze_framework(destination: Path):
                     report["concerns"].append(
                         relative + ": test generation/collection may be dynamic"
                     )
+                candidates = collected_candidates(tree, relative)
                 seen = set()
                 for node in ast.walk(tree):
                     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                        if node.name.startswith("test_"):
+                        if node.name.startswith("test_") and id(node) not in candidates:
+                            report["concerns"].append(
+                                relative + ": test-like helper outside default collection structure"
+                            )
+                        if id(node) in candidates:
                             # Source identity includes location; no claim this equals a collected Pytest node ID.
                             report["tests"].append(
                                 {

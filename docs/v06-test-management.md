@@ -90,3 +90,33 @@ be observed by an already delivered independent snapshot.
 Historical standalone runners do not gain new flags retroactively: source-backed
 no-flag/all execution forwards their original command without new arguments.
 Selective execution against such an export fails with a request to review/re-export.
+
+
+## Collection scope integrity (independent audit H02)
+
+`collect` now reconciles every selected expected invocation against Pytest's emitted
+node identities, including parameter rows. Pytest exit 0 alone is insufficient.
+Approved unsupported selections, missing or duplicate identities, unexpected nodes (including other Python modules)
+or a collection-process failure produce nonzero and INCOMPLETE_OR_FAILED diagnostics.
+Fully supported complete scope retains exit 0. Unknown/empty selections still fail
+before subprocess execution. An unsupported-only selection does not invoke Pytest.
+
+Each collection writes collection.json with the selection snapshot, expected/observed
+invocation counts, unsupported case IDs, missing/duplicate expected node IDs and an
+unexpected-node count. Protected output retains summary-only policy; arbitrary
+unexpected node names are not copied into this structured diagnostic. Collection
+creates no execution results, JUnit outcomes or operation evidence and never invokes
+target-request/browser fixtures. Its status is collection completeness, not PASSED
+test execution. Actual execution/JUnit/evidence reconciliation remains unchanged.
+
+Compatibility is explicit: the updated runner can adapt historical manifests with
+no management inventory, checking only their declared executable scope. It cannot
+infer unsupported source cases absent from that historical snapshot. Previously
+exported runtime files are not patched retroactively; re-export to obtain the fix.
+The exporter also avoids initializing UI scope/discovery for a non-automatable
+manual case in an API project; that case remains unsupported in the reviewed scope.
+
+Collection reconciliation targets the pinned generated Pytest node-ID format,
+including its integer parameter-row IDs. Arbitrary third-party collectors/plugins
+are not supported; plugin autoload remains disabled. Collection output is not
+execution evidence and never certifies a target application's behavior.

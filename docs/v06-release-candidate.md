@@ -144,3 +144,86 @@ No old-head or pending result is treated as final-head success.
 scope, subject to the final documentation-head CI check. No reproducible mandatory
 release blocker remains in the executed gates. Stable 0.6.0 promotion is a separate
 review decision; this delivery remains 0.6.0rc1 and does not merge/tag the candidate.
+
+
+## Independent audit remediation: H01 and H02
+
+Audited baseline: 878c2af100cb6a879f2a9822bfebb52a145c31b0, PR #4.
+This section supersedes the earlier readiness recommendation for these findings;
+the previous local/hosted observations remain historical evidence, not proof that
+the findings were absent.
+
+Before repairs, focused reproductions yielded **13 failed / 8 passed in 1.46s**:
+plain application manifests and non-collected Python helpers were misclassified;
+Cypress TypeScript config was missed; mixed/unsupported or missing/foreign/duplicate
+collection output could receive exit 0. These were actual reproducible defects.
+
+H01: build metadata is inspected as bounded data, with recognized test dependency/
+configuration indicators distinct from ordinary applications. Default Pytest
+module/function/class structure is required for static test candidates. Uncertain
+helpers/custom collection or mixed tooling remain partial. No inspected code is
+imported/executed, no repository dependency installed and no existing file modified.
+
+H02: collection-only mode reconciles expected parameterized node IDs and the entire
+selected inventory, not only the supported subset sent to Pytest. Unsupported,
+missing, duplicate, unexpected or failed collection returns nonzero with a separate
+collection.json diagnostic. Fully supported collection still succeeds. Historical
+manifest scope is adapted explicitly, not silently expanded. Execution-mode JUnit,
+current-run evidence and permanent-persistence safeguards remain unchanged.
+
+The independent export acceptance also reproduced an adjacent prerequisite defect:
+a non-automatable manual case in an API-only project triggered UI setup with no URL.
+A bounded exporter condition now prepares UI scope only for feasible UI candidates;
+the manual case remains unsupported rather than disappearing from full scope.
+The original manual-case acceptance is retained, not replaced by an easier inventory.
+
+An expanded boundary reproduction additionally yielded **3 failed / 22 deselected
+in 2.54s**: default-excluded build/hidden directories still became test facts, and
+an unexpected collection node in another Python module was ignored. The second
+focused H01/H02 repairs use actual default Pytest directory exclusions and reconcile
+foreign Python modules as unexpected. Those three regressions then passed (**3
+passed / 22 deselected in 3.14s**). No prior assertion was removed or weakened.
+
+Final repaired-tree non-browser regression on Windows/Python 3.14.3:
+**305 passed / 18 deselected in 303.82s**. The suite includes all **25 new audit
+regressions**, existing management/overlap/rejection acceptance, owned API healthy/
+defect/restored execution, UI standalone collection, JUnit/evidence/persistence
+reliability and frozen compatibility. Ruff lint/format passed (**67 files**), lock
+consistency passed, and editor diagnostics reported no errors. Package/import/lock
+version remains 0.6.0rc1; dependency resolutions are unchanged.
+
+An intermediate full run had **1 failed / 301 passed / 18 deselected in 392.81s**,
+reproducing the manual-case exporter condition described above. It was not treated
+as success; the original scenario is retained and passes after the bounded fix.
+The final full regression above follows both audit boundary repairs.
+
+The complete reusable release script (`--phase all`) finished with **exit 0**.
+Wheel and sdist built; isolated installed distribution/import/CLI assert 0.6.0rc1;
+approved API export and independent dependency installation passed with AutoQA absent.
+Standalone validation and fully supported collection passed (COMPLETE, no missing,
+unsupported, duplicate or unexpected nodes). Single/pack/all execution each passed
+with one invocation and two actual operations. Package inventories exclude private
+projects, local environments, evidence and disposable output.
+
+No full browser benchmark was repeated: the changed runner branch is collection-only,
+and existing non-browser API execution plus real UI collection exercise the affected
+boundaries. Prior Windows/Chromium execution evidence remains historical; these
+repairs do not add platform/browser certification. Scoped inventory review covered
+128 tracked/new files, with no conventional credential or private/disposable path
+findings. Frozen fixtures, V0.5 historical audits, package version and lock are
+unchanged against the audited HEAD.
+
+The tests use owned loopback services, synthetic cases and fresh independent
+exports. Collection asserts zero server requests, no execution results and no step
+evidence for supported, unsupported, mixed/full and rejected selections. No client
+system or real credential is used. Historical V0.5 audits/data and frozen fixtures
+remain unchanged; version remains **0.6.0rc1**, with no dependency changes.
+
+Hosted remediation status: **PENDING**. The existing PR #4 will be updated and its
+new exact-head Actions run inspected. Earlier green runs do not certify these
+changes. Local success alone is not a final hosted-success or stable-readiness claim.
+
+No stable promotion, merge, V0.6 tag, main push or new release entry is included.
+Static-analysis and trusted-local limitations remain as documented; these repairs
+do not prove complete framework coverage, sandboxing or multi-platform browser
+readiness. The historical V0.5 intermittent incident remains unroot-caused.

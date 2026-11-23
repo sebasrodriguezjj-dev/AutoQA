@@ -234,7 +234,7 @@ def compile_blueprint(project):
     cases = [c for c in project.cases() if c.review_status == "approved"]
     if not cases:
         raise ValueError("No approved scenarios; review and approve before building")
-    has_ui = any(c.kind != "api" for c in cases)
+    has_ui = any(c.kind != "api" and c.feasible for c in cases)
     scope = Scope(project.config.application_url, project.config) if has_ui else None
     discovery = project.discovery() if has_ui else None
     pages, scenarios, unsupported, selected, api_scenarios = {}, [], {}, [], []
