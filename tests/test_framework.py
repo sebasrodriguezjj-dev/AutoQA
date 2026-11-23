@@ -4,13 +4,16 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
 import threading
+import tomllib
 from http.server import ThreadingHTTPServer
 from pathlib import Path
 
 import pytest
 from typer.testing import CliRunner
 
+from autoqa import __version__
 from autoqa.application import ApplicationEngine
 from autoqa.authorization import AuthorizationContext
 from autoqa.cli import app
@@ -106,6 +109,9 @@ def test_framework_export_integrity_and_cli(reviewed_project, tmp_path):
     destination = tmp_path / "export"
     result = ApplicationEngine(project, context(project, "generate")).build_framework(destination)
     manifest = validate(destination)
+    assert manifest["version"] == __version__ == "0.4.0rc1"
+    metadata = tomllib.loads((destination / "pyproject.toml").read_text())
+    assert metadata["project"]["version"] == __version__
     assert result["cases"] == list(manifest["cases"])
     second = tmp_path / "repeat-export"
     FrameworkService(project, context(project, "generate")).build(second)
@@ -275,7 +281,9 @@ def test_standalone_safe_paths(tmp_path, reference):
         safe_path(tmp_path, reference)
 
 
-@pytest.mark.parametrize("mode,expected", [("collection", 2), ("timeout", 124)])
+@pytest.mark.parametrize(
+    "mode,expected", [("collection", 2), ("timeout", 124), ("missing-junit", 3)]
+)
 def test_missing_junit_is_not_passed(reviewed_project, tmp_path, monkeypatch, mode, expected):
     destination = tmp_path / "export"
     FrameworkService(reviewed_project, context(reviewed_project, "generate")).build(destination)
@@ -287,6 +295,8 @@ def test_missing_junit_is_not_passed(reviewed_project, tmp_path, monkeypatch, mo
             return subprocess.CompletedProcess(
                 command, 2 if mode == "collection" else 0, "collection", ""
             )
+        if mode == "missing-junit":
+            return subprocess.CompletedProcess(command, 0, "no JUnit emitted", "")
         raise subprocess.TimeoutExpired(command, 1)
 
     monkeypatch.setattr(runner.subprocess, "run", process)
@@ -295,6 +305,64 @@ def test_missing_junit_is_not_passed(reviewed_project, tmp_path, monkeypatch, mo
     assert result["counts"] == {"NOT_EXECUTED": 1}
     assert result["steps"] == []
     assert len(calls) == (1 if mode == "collection" else 2)
+
+
+def test_standalone_export_collects_without_autoqa_or_browser(reviewed_project, tmp_path):
+    destination = tmp_path / "independent-export"
+    FrameworkService(reviewed_project, context(reviewed_project, "generate")).build(destination)
+    keep = {
+        "PATH",
+        "SYSTEMROOT",
+        "WINDIR",
+        "TEMP",
+        "TMP",
+        "HOME",
+        "USERPROFILE",
+        "APPDATA",
+        "LOCALAPPDATA",
+        "COMSPEC",
+        "UV_CACHE_DIR",
+        "UV_PYTHON_INSTALL_DIR",
+    }
+    environment = {key: value for key, value in os.environ.items() if key.upper() in keep}
+    environment["UV_PYTHON"] = sys.executable
+    install = subprocess.run(
+        ["uv", "sync", "--offline"],
+        cwd=destination,
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=90,
+    )
+    assert install.returncode == 0, install.stdout + install.stderr
+    python = destination / ".venv" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+    probe = subprocess.run(
+        [
+            str(python),
+            "-c",
+            "import importlib.util; assert importlib.util.find_spec('autoqa') is None; import playwright, pytest, pydantic, yaml",
+        ],
+        cwd=destination,
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert probe.returncode == 0, probe.stdout + probe.stderr
+    for operation in ("validate", "collect"):
+        check = subprocess.run(
+            [str(python), "-m", "qa_runtime.runner", operation],
+            cwd=destination,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=45,
+        )
+        assert check.returncode == 0, check.stdout + check.stderr
+        if operation == "collect":
+            assert "1 test collected" in check.stdout
+    # Collection is not execution evidence and must not fabricate scenario outcomes.
+    assert not list((destination / "artifacts").glob("*/results.json"))
 
 
 @pytest.mark.parametrize("method", ["is_symlink", "is_junction"])

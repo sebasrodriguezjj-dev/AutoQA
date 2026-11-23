@@ -15,7 +15,8 @@ universal application compatibility, hosted CI certification or a published rele
 
 AutoQA remains an internal professional QA Automation Engineering tool supporting its
 owner's consulting work. No SaaS, billing, dashboard, FastAPI or MCP service was added.
-No V0.4 push, PR, merge or tag was performed. Main and v0.3.0 remain unchanged.
+At initial local delivery, no V0.4 push, PR, merge or tag was performed. Subsequent
+release preparation is recorded below; main and v0.3.0 remain unchanged.
 
 ## Architecture and implementation
 
@@ -233,8 +234,9 @@ ignored. The wheel contains package/template/metadata only, not test or client a
 The legacy generate/run evidence format remains coarse by design; the upgraded operation
 model applies to V0.4 standalone exports. Existing V0.3 domain versions, signatures,
 wire manifests, reports and frozen archives remain readable and unchanged. Hosted V0.4
-CI, live AI, external sites, auth sessions, remote clones and arbitrary scripts were not
-tested or added. They must not be represented as delivered capabilities.
+CI was not tested during initial local delivery. Subsequent PR verification is described
+below. Live AI, external sites, auth sessions, remote clones and arbitrary scripts were
+not tested or added. They must not be represented as delivered capabilities.
 
 ## V0.5 recommendations
 
@@ -249,3 +251,60 @@ tested or added. They must not be represented as delivered capabilities.
 
 No blocker remains for local RC review in the verified scope. Public publication,
 additional platforms and production-client adoption require their own review decisions.
+
+## Release preparation for GitHub review (2026-11-23)
+
+Fresh origin fetch retained main at the verified v0.3.0 baseline, with no remote-only
+commits. Initial candidate HEAD was 37c2cb8, with a clean tree and the complete local
+implementation/documentation history. Initial fresh regression passed 203 tests with
+17 browser tests deselected. The earlier 9 PASS / 7 PASS + 2 FAIL / 9 PASS artifacts
+remain untouched; their counts and every referenced evidence file were checked again.
+
+Two focused repros identified and confirmed release-preparation corrections:
+
+- The root package/import/lock were 0.4.0rc1, but the exported manifest and pyproject
+  still used 0.4.0. Both now derive their version from the candidate's import version.
+  A regression verifies all three values match 0.4.0rc1; historical exports are not modified.
+- A subprocess exit of zero without JUnit retained NOT_EXECUTED records but returned
+  zero. The new runner now returns 3 if a nominally successful process has failed, error
+  or missing-case JUnit outcomes. Actual statuses remain unchanged; missing cases never
+  become passed. Existing collection/test failure and timeout exit codes are preserved.
+
+Both repros failed before the corrections. Changes are bounded to metadata and the new
+standalone runner, preserving V0.3 generation/execution behavior and frozen fixtures.
+
+The unchanged PR workflow uses Python 3.14, locked installation, Ruff checks and all
+non-browser tests with live AI explicitly ignored. It already exercises V0.4 blueprint,
+approval, file/path integrity, CLI, evidence policy and diagnosis/reporting regressions.
+A new non-browser test additionally installs the export's declared dependencies into
+its own environment, asserts AutoQA is absent, validates and collects the generated
+test without Chromium, target requests or secrets. No execution results are invented
+for that collection-only check. Offline dependency resolution uses packages cached by
+the required locked installation; unavailable dependencies fail explicitly.
+
+This provides bounded automated PR coverage of export independence. Browser behavior
+remains separately supported by owned-local Windows/Chromium acceptance, not claimed
+for a Linux runner merely because non-browser CI runs there. No external benchmark,
+client workspace or live AI provider is required. The attached workflow snapshot uses
+the older pytest console entry point; the repository correctly retains python -m pytest.
+
+Fresh final-gate commands use new ignored directories under .test-work/v04-pr-* so the
+original acceptance evidence is preserved.
+
+| Fresh preparation gate | Observed result |
+| --- | --- |
+| Full non-browser regression after corrections | **205 passed, 17 deselected**, 143.51s |
+| Focused framework regressions, including independent install/collection | **25 passed, 3 deselected**, 136.73s |
+| Focused headless failures-only browser/CLI regression | **1 passed, 27 deselected**, 79.58s; real healthy/failing outcomes retained |
+| Ruff lint and format / lock consistency | Passed; 52 files / 37 packages |
+| Fresh wheel and sdist | Built; 41 wheel members, runtime present, generated/client evidence excluded |
+| Isolated installed wheel | Correct site-packages import and 0.4.0rc1 metadata; approved export/validation and CLI help exit 0 |
+| Fresh installed-package export collection | 1 generated test collected; no browser execution claimed |
+| Frozen compatibility / original acceptance | Archive/member hashes and old run evidence references verified unchanged |
+| Credential-pattern and tracked-inventory review | No matches or private/generated workspaces identified; scoped scan limitations above apply |
+
+Exact final commit, PR URL and GitHub run results are reported with the review publication.
+The candidate remains **0.4.0rc1**, not stable; publication approval does not authorize
+merge or tags. No remaining release-blocking defect was identified in the documented
+trusted-local scope after the two focused corrections. Promotion to a stable version
+still requires final owner review and a separate version/release decision.

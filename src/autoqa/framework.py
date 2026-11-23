@@ -13,6 +13,7 @@ from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from autoqa import __version__
 from autoqa.authorization import AuthorizationContext, require_authorization
 from autoqa.core import Project
 from autoqa.framework_runtime.integrity import validate
@@ -352,7 +353,7 @@ class FrameworkService:
                 ),
                 "blueprint.json": encoded(blueprint.model_dump()),
                 "requirements.txt": "\n".join(requirements) + "\n",
-                "pyproject.toml": '[project]\nname = "reviewed-qa-framework"\nversion = "0.4.0"\nrequires-python = ">=3.14,<3.15"\ndependencies = '
+                "pyproject.toml": f'[project]\nname = "reviewed-qa-framework"\nversion = "{__version__}"\nrequires-python = ">=3.14,<3.15"\ndependencies = '
                 + json.dumps(requirements)
                 + "\n\n[tool.uv]\npackage = false\n",
                 "pytest.ini": "[pytest]\ntestpaths = tests\naddopts =\npythonpath = .\n",
@@ -371,7 +372,7 @@ class FrameworkService:
             raise ValueError("Potential credential material in export; review source inputs")
         manifest = {
             "schema": "autoqa.framework.v1",
-            "version": "0.4.0",
+            "version": __version__,
             "files": {name: sha(text) for name, text in files.items()},
             "cases": {case.id: case_signature(case) for case in cases},
         }

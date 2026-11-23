@@ -217,6 +217,12 @@ def execute(root, *, collect_only=False):
             },
         )
         records.append({"id": case_id, **record})
+    if code == 0 and any(r["status"] in {"FAILED", "ERROR", "NOT_EXECUTED"} for r in records):
+        code = 3
+        (output / "pytest.log").write_text(
+            log + "\nExecution did not emit successful JUnit results for every approved case.\n",
+            encoding="utf-8",
+        )
     result = {
         "run_id": run_id,
         "exit_code": code,

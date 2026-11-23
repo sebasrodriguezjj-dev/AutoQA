@@ -27,7 +27,7 @@ uv run python -m qa_runtime.runner run
 
 The target application must already be running and authorized. Results and the HTML report are stored under the export's `artifacts/RUN_ID/`. Build requires Ruff in the AutoQA environment (`uv sync --locked` includes it). File/receipt validation detects accidental changes; reapprove and export a new directory instead of editing generated files. Standalone delivery retains an approval snapshot and cannot observe later source-project revocation; `run-framework` rechecks current source approvals. Review all client inputs and evidence before sharing.
 
-See [V0.4 release candidate](docs/v04-release-candidate.md) for actual verification, supported scenarios and limitations. This candidate is delivered locally; no V0.4 push, PR or tag has been created.
+See [V0.4 release candidate](docs/v04-release-candidate.md) for actual verification, supported scenarios and limitations. Version 0.4.0rc1 is a release candidate prepared for GitHub review; it has not been promoted to a stable release.
 ## Requirements and installation
 
 Windows 11, Python 3.14, internet for initial package/browser downloads, and a browser-capable desktop session. The package deliberately supports Python 3.14 only in this release. Python 3.14.3 was used for local verification.
