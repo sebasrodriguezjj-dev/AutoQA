@@ -38,8 +38,11 @@ is contacted by the package stage; its synthetic API endpoint is collection-only
 The PR workflow also runs the package stage. V0.5 API regression starts owned
 loopback servers with synthetic data/credentials, including healthy/defect/restored
 and missing-auth outcomes. It never requires client secrets or a private workspace.
-These workflow changes are prepared locally only; no V0.5 hosted run is claimed
-until a separately authorized push/PR. Dependency registry access remains required.
+The authorized V0.5 engineering review publishes the candidate branch and one PR.
+Exact-head hosted results are recorded in that PR and its delivery report; pending
+runs do not count as success. The native Windows sharing-handle test is expected to
+skip on Linux, while the remaining non-browser suite must pass. Dependency registry
+access remains required.
 
 ## Manual project execution
 

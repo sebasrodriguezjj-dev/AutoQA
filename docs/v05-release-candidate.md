@@ -6,8 +6,10 @@ Local engineering review date: 2026-11-23. Development branch:
 
 AutoQA is a local professional QA Automation Engineering tool for its owner's
 consulting work. This is a release candidate, not a stable release, hosted SaaS
-platform or universal client-system certification. No V0.5 push, PR, merge, tag,
-GitHub Release, visibility change or V0.6 implementation is authorized/performed.
+platform or universal client-system certification. The initial delivery was local-only.
+The subsequent engineering review authorizes publishing feat/v05-development and
+one review PR into main, with hosted CI verification. Merge, stable promotion, tags,
+GitHub Release, visibility changes and V0.6 implementation remain unauthorized.
 
 ## Functionality classification
 
@@ -28,11 +30,11 @@ GitHub Release, visibility change or V0.6 implementation is authorized/performed
 | Network boundaries | VERIFIED | Local refusal, DNS pinning, no redirect, reviewed environment/method/path, size/timeout controls |
 | Hosted HTTPS deployment | PARTIALLY VERIFIED | Standard-library TLS verification retained; no owned hosted HTTPS integration/certificate/platform acceptance |
 | Reusable quality gates | VERIFIED | Local script and reviewed CI definition; failures propagate |
-| Hosted V0.5 CI | BLOCKED | Branch publication not authorized in this delivery; no remote success claimed |
+| Hosted V0.5 CI | BLOCKED | Publication was not authorized for the initial local-only delivery; see subsequent review below |
 | Historical compatibility | VERIFIED | Frozen V0.1/V0.2 members and unchanged archives; legacy UI/non-browser regression; focused V0.4 browser case |
 | Broad browser/platform/client certification | NOT IMPLEMENTED | Focused Windows/Python 3.14/Chromium only |
 
-## Actual local verification
+## Initial local delivery verification (historical)
 
 | Final gate | Actual result |
 | --- | --- |
@@ -188,4 +190,99 @@ scope only. Mandatory local acceptance gates pass: **ready for local release-can
 engineering review**, with no permanent failing local test identified. This is not an unconditional stable
 release recommendation for arbitrary client infrastructure. Hosted CI/platform coverage
 and the residual intermittent observation must remain visible in any later promotion.
-All release evidence is local. No remote publication or V0.6 implementation is performed.
+The initial delivery evidence above remains historical. The review below supersedes
+its local-only publication status; no stable promotion or V0.6 work is included.
+
+
+## Subsequent engineering review and publication gate
+
+Reviewed baseline HEAD: `cd35aa452ad7b5ae59b78a83dc2a97b35a9ae023`.
+A fresh fetch confirmed origin/main remains the exact v0.4.0 baseline. The three
+reported development commits, package/import/lock version 0.5.0rc1, frozen archives
+and every frozen member hash were verified. Dependency resolutions are unchanged.
+The initial working tree was clean. No V0.4 historical audit was edited.
+
+### Reliability findings and bounded repairs
+
+The original intermediate API/JUnit failure was not reproduced during this review.
+Its original exception category is unavailable, so **its exact cause remains unknown**.
+Do not equate the separate sharing-violation repro with proof of that historical cause.
+
+A real Windows CreateFileW handle with read/write sharing but no delete sharing
+reproduced PermissionError on atomic replacement. Closing that handle on the first
+bounded retry allowed the completed step to persist. Existing tests verify exactly
+three attempts for transient replacement and visible permanent failure. Writes close
+the temporary file before replacement. Retries apply only to persistence, not test
+assertions, HTTP calls or browser operations; configured waits are 25ms and 50ms.
+
+A bounded ThreadPoolExecutor stress test used four workers, eight run directories,
+four row identities per run and eight sequential completed steps per identity:
+**256 steps**, all persisted with contiguous identities and genuine PASSED status.
+Readback checked every intermediate snapshot. Reading a different run ID returned
+no records. Supported concurrency is distinct identities/runs, not multiple writers
+for the same test/run file. Same-identity concurrent writers, power-loss durability
+and adversarial filesystem mutation remain outside the single-writer trust model.
+
+Two deterministic result-integrity defects were demonstrated with failing tests and
+repaired in one focused attempt each:
+
+1. A duplicate JUnit testcase name could overwrite a previous failure with a later
+   pass. Duplicate identities now produce ERROR regardless of record order, and a
+   nominal zero child exit becomes nonzero. No assertion was weakened.
+2. A nominal passing JUnit record with absent or foreign-run step records could pass
+   without supporting evidence. Passing results now require nonempty current-run,
+   matching-test operation records with contiguous sequence/step identity and PASSED
+   state. Missing/inconsistent evidence produces ERROR. Real failed/error JUnit records
+   remain failed/error; absent JUnit remains NOT_EXECUTED and nonzero.
+
+The focused contract/reliability set passed **29 tests in 2.66s**. The authenticated
+combined standalone browser acceptance passed **1 test in 52.73s**, exercising actual
+2 PASS with valid cookie and 1 PASS + 1 ERROR without it, with AutoQA absent.
+The original V0.4 9/7+2/9 benchmark was not repeated.
+
+These guards prevent the reproduced false-positive paths. They do not establish a
+root cause for the original isolated failure or guarantee crash durability. Residual
+historical risk is retained for stable-promotion review; no material unresolved result
+corruption path was identified within the tested trusted-local operating scope.
+
+### Current local quality gates
+
+The full reusable checks stage passed on the reviewed implementation:
+**251 passed / 18 deselected in 151.26s** (Python 3.14.3, Windows). Ruff lint and
+format passed (61 files); locked consistency passed (37 packages), with version
+0.5.0rc1 throughout. Browser/live AI suites were excluded from this regression;
+the focused authenticated browser result is recorded separately above.
+
+The reusable package stage also passed in `.test-work/release-gate-mxi14c1n`:
+wheel/sdist build and inventory checks, isolated wheel import/distribution/CLI,
+approved API export/validation, independent dependency installation, AutoQA-absence
+assertion and standalone collection all succeeded. Only ignored disposable outputs
+were produced. The complete reusable script returned exit 0.
+
+### Security, inventory and CI expectations
+
+Source review and owned-loopback acceptance retain exact reviewed origins/methods/paths,
+explicit mutation statements, redirect rejection, DNS classification and pinned socket
+connections. Bearer/Basic/cookie credentials are explicit environment references.
+Missing-secret, response assertion, unauthorized-target, bounded response/timeout,
+seeded data and parameter identities remain covered by the complete non-browser suite.
+Authenticated UI routes reject cross-origin resources; its browser capture is disabled.
+No real client service, credential or evidence is used in this review.
+
+Tracked inventory and scoped credential-pattern checks found no private workspace,
+venv, disposable output or real credential material. Package inventories are checked
+by the reusable script. Synthetic contracts/tests and frozen archives are intentional.
+These checks are not universal secret/PII detection or a forensic audit of Git history.
+
+Hosted CI must install locked dependencies, run Ruff on src/tests/scripts, run the full
+non-browser suite with live AI excluded and execute package/install/export/standalone
+smoke gates. The native Windows handle test is expected to skip on Linux; it was
+executed locally on Windows. No flaky test is skipped. Linux non-browser success does
+not certify Linux browser behavior. The final exact-head hosted result belongs in the
+PR and delivery report; an earlier head or pending run cannot satisfy that gate.
+
+All previous security boundaries remain: trusted local operator/filesystem, unsigned
+receipts, no AutoQA identity or OS sandbox, limited descendant-process cancellation,
+manual summary retention, no universal redaction, no remote setup/teardown and no
+arbitrary hosted/client/platform certification. Keep 0.5.0rc1 until a separately
+approved stable-promotion decision. No merge, tag or GitHub Release is performed.

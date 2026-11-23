@@ -117,7 +117,11 @@ conservative suppression, not pixel/trace redaction. Failed status is unchanged.
 Summaries are retained until operator removal; age-based purging is not implemented.
 
 The runner maps real parameterized JUnit records to row identities. Missing JUnit
-still means NOT_EXECUTED and nonzero exit, not pass. Diagnostics do not invent
+still means NOT_EXECUTED and nonzero exit, not pass. Engineering review additionally
+rejects duplicate JUnit identities and requires consistent current-run operation
+evidence for passing outcomes; ambiguous or unsupported passes become ERROR.
+Bounded stress and real Windows handle tests cover persistence and run separation.
+The historical isolated failure remains unroot-caused. Diagnostics do not invent
 root causes. V0.4 unauthenticated UI-only capture remains unchanged, including its
 documented privacy risks; legacy generated suites retain coarse scenario steps.
 

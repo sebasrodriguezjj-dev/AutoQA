@@ -25,7 +25,7 @@ The example declares an owned API at port 8002; it does not start a server. Run 
 
 API/credential-bearing exports use summary-only evidence: masked header names, status/duration and per-operation results remain; raw bodies, log details, screenshots and traces are restricted. Failed outcomes remain failures. JSON data must be synthetic/nonsecret; credentials belong in `AUTOQA_SECRET_*` environment variables. This is conservative suppression, not universal redaction.
 
-Version **0.5.0rc1** is a local release candidate, not a stable release. See [candidate audit](docs/v05-release-candidate.md), [architecture](docs/v05-architecture.md) and [CLI reference](docs/cli-reference.md). Reusable gates: `uv run python scripts/verify_release.py` (checks and package/install/export smoke). No V0.5 branch push, PR, tag or GitHub Release is included.
+Version **0.5.0rc1** is a local release candidate, not a stable release. See [candidate audit](docs/v05-release-candidate.md), [architecture](docs/v05-architecture.md) and [CLI reference](docs/cli-reference.md). Reusable gates: `uv run python scripts/verify_release.py` (checks and package/install/export smoke). V0.5 engineering review publishes this candidate branch and one PR with hosted code verification. No stable promotion, merge, version tag or GitHub Release is included.
 
 ## Retained V0.4 standalone foundation
 

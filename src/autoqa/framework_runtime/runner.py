@@ -230,7 +230,19 @@ def execute(root, *, collect_only=False):
     if protected:
         log = f"Execution exit: {code}; details withheld by summary_only policy"
     (output / "pytest.log").write_text(log, encoding="utf-8")
-    actual = {r["name"]: r for r in junit(output / "junit.xml")}
+    actual = {}
+    for record in junit(output / "junit.xml"):
+        name = record["name"]
+        if name in actual:
+            # Never let a later duplicate overwrite an earlier failure or error.
+            actual[name] = {
+                "name": name,
+                "status": "ERROR",
+                "duration": 0,
+                "error": "Ambiguous duplicate JUnit testcase identity",
+            }
+        else:
+            actual[name] = record
     records = []
     for case_id in manifest["cases"]:
         name = "test_" + case_id.replace("-", "_")
@@ -248,6 +260,21 @@ def execute(root, *, collect_only=False):
             )
             identity = case_id + f"--row-{index}" if rows else case_id
             records.append({"id": identity, "case_id": case_id, **record})
+    steps = read_steps(output, run_id, [r["id"] for r in records])
+    for record in records:
+        if record["status"] != "PASSED":
+            continue
+        observed = [step for step in steps if step["test_id"] == record["id"]]
+        if not observed or any(
+            step["status"] != "PASSED"
+            or step["sequence"] != index
+            or step["step_id"] != f"{record['id']}:step-{index}"
+            for index, step in enumerate(observed, 1)
+        ):
+            record.update(
+                status="ERROR",
+                error="Passing JUnit outcome lacks consistent current-run operation evidence",
+            )
     if code == 0 and any(r["status"] in {"FAILED", "ERROR", "NOT_EXECUTED"} for r in records):
         code = 3
         (output / "pytest.log").write_text(
@@ -259,7 +286,7 @@ def execute(root, *, collect_only=False):
         "exit_code": code,
         "records": records,
         "duration": round(time.monotonic() - started, 3),
-        "steps": read_steps(output, run_id, [r["id"] for r in records]),
+        "steps": steps,
     }
     render_report(output, result)
     print(f"Run {run_id}: exit {code}; report: {output / 'report.html'}")
