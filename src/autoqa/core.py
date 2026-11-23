@@ -261,7 +261,7 @@ class Project:
 
 def initialize(name: str, parent: Path) -> Project:
     if not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}", name):
-        raise ValueError("Project names must be 1â€“64 letters, digits, underscores or hyphens.")
+        raise ValueError("Project names must be 1–64 letters, digits, underscores or hyphens.")
     if name.upper().split(".")[0] in {
         "CON",
         "PRN",

@@ -21,3 +21,26 @@ Optional AI receives only reduced workflow IDs and visible element text after ex
 The test runner accepts only AutoQA template outputs with matching manifest hashes and approvals. It disables plugin autoload, controls Pytest configuration, removes unrelated environment variables and uses `shell=False`. It is process isolation, not a sandbox: Python and Chromium retain host-user privileges. Do not place untrusted code in the QA workspace or edit manifests to bypass checks. No AI-generated code is accepted for execution.
 
 Generated CI has read-only repository permissions, immutable action revisions, no secret references, no credential persistence and no pull_request_target trigger. Review all workflows before committing. Pull-request code still executes on the runner: use public/synthetic targets and restricted environments. Do not introduce staging credentials into untrusted pull-request jobs.
+
+
+## V0.5 standalone API/authenticated execution
+
+V0.5 adds reviewed API requests through the framework builder, not to passive UI
+exploration. Mutating methods require a reviewed mutation statement and the complete
+scenario is bound to manual approval receipts. Exact origins/methods/paths and named
+environments are reviewed; DNS is validated and pinned, redirects are rejected and
+remote API credentials require HTTPS. Private LAN/metadata targets remain unsupported.
+Authenticated browser cookies are externally supplied legitimate sessions, restricted
+to the exact UI origin and HTTPS except owned loopback. There is no AutoQA user login.
+
+Only AUTOQA_SECRET_* environment references are exported. Conventional sensitive keys
+are rejected in JSON/header data; arbitrary client PII detection is not implemented.
+Review every fixture/input value. API/authenticated exports restrict persistent capture
+to safe summaries: HTTP payload/header values omitted, failure/log details suppressed,
+screenshots/traces disabled. Results remain genuine. Unauthenticated UI-only and legacy
+capture retain their historical privacy limits. Summaries require manual retention
+management; no automated age-based purge or full screenshot/trace redaction is claimed.
+
+The subprocess remains unsandboxed, receipts unsigned, filesystem trusted and storage
+single-writer. Local Windows/Chromium and loopback HTTP evidence do not certify arbitrary
+client services, public HTTPS infrastructure or other platforms. See [V0.5 audit](v05-release-candidate.md).

@@ -1,12 +1,33 @@
-# AutoQA Agent 0.4.0
+# AutoQA Agent 0.5.0rc1
 
 A private professional QA engineering tool supporting its owner's QA Automation Engineering services. The source repository may be public; client workspaces and evidence remain private. It is a local Python CLI, with no SaaS or subscription offering. AutoQA explores an authorized application, records visible UI evidence, proposes reviewable scenarios, generates approved Playwright tests, executes them with Pytest, and renders actual results as HTML or JSON. It works offline; optional AI produces review-only recommendations.
 
-The retained V0.2 foundation includes passive functional control discovery, browser-checked semantic locators, typed behavior contracts, positive/negative/boundary cases, functional Python templates, pre-execution Ruff and collection checks, richer diagnostics and reports from execution snapshots. Unknown behavior stays pending review. Authentication, remote repository access and autonomous maintenance remain unsupported. See [V0.2 functional testing](docs/v0.2-functional-testing.md) for the exact contract schema, independent-demo benchmark and external validation limitations.
+The retained V0.2 foundation includes passive functional control discovery, browser-checked semantic locators, typed behavior contracts, positive/negative/boundary cases, functional Python templates, pre-execution Ruff and collection checks, richer diagnostics and reports from execution snapshots. Unknown behavior stays pending review. Legacy discovery remains unauthenticated; V0.5 standalone application-authentication support is described below. Remote repository access and autonomous maintenance remain unsupported. See [V0.2 functional testing](docs/v0.2-functional-testing.md) for the exact contract schema, independent-demo benchmark and external validation limitations.
 
 V0.3 adds versioned domain contracts, storage/reporting boundaries, project-bound discovery and planning services, approval receipts, shared generation/execution services and an in-process application engine. New suites require receipts matching the reviewed scenario at generation and execution. Historical generated suites retain legacy checks. See [final delivery](docs/v03-final-delivery.md), [audit](docs/v03-release-audit.md) and [release verification](docs/v03-release-finalization.md).
 
-## V0.4.0 stable release scope
+## V0.5 release candidate
+
+V0.5 extends the standalone builder with approved HTTP API contracts, exact reviewed origins/methods/paths, status/header/JSON assertions, environment-referenced bearer/Basic/cookie credentials, seeded JSON data and parameterized tests. API and UI scenarios share the existing matrix, manual approvals, receipts, exporter, runner and reports. It remains a local professional engineering tool.
+
+```powershell
+uv sync --locked
+uv run autoqa init api-review
+uv run autoqa plan-api examples/api_contracts.json --project projects/api-review
+# Review the complete test-matrix.json, including all origins, mutations and expectations.
+uv run autoqa plan --approve TC-API-HEALTH --project projects/api-review
+# The parent directory must exist; choose a new export destination.
+uv run autoqa build-framework ../reviewed-api --approved --project projects/api-review
+uv run autoqa validate-framework ../reviewed-api
+```
+
+The example declares an owned API at port 8002; it does not start a server. Run only an authorized application matching the reviewed contract before executing. For self-contained owned-server acceptance, run `uv run python -m pytest tests/test_api_framework.py -m "not browser" -q`. No external target or live AI is used. In the export run `uv sync`, `uv run python -m qa_runtime.runner collect`, then `uv run python -m qa_runtime.runner run`. API-only execution needs no Chromium installation and never imports AutoQA.
+
+API/credential-bearing exports use summary-only evidence: masked header names, status/duration and per-operation results remain; raw bodies, log details, screenshots and traces are restricted. Failed outcomes remain failures. JSON data must be synthetic/nonsecret; credentials belong in `AUTOQA_SECRET_*` environment variables. This is conservative suppression, not universal redaction.
+
+Version **0.5.0rc1** is a local release candidate, not a stable release. See [candidate audit](docs/v05-release-candidate.md), [architecture](docs/v05-architecture.md) and [CLI reference](docs/cli-reference.md). Reusable gates: `uv run python scripts/verify_release.py` (checks and package/install/export smoke). No V0.5 branch push, PR, tag or GitHub Release is included.
+
+## Retained V0.4 standalone foundation
 
 V0.4 adds a deterministic standalone Playwright/Pytest framework builder with per-page Page Objects, checked locator properties, reusable operations, selected approved scenarios, self-contained fixtures/scope checks, environment configuration, dependencies and setup instructions. Exported tests record navigation, actions and assertions separately. Unsupported approved scenarios are reported explicitly; pending cases never become tests. Existing V0.3 generate/run behavior and historical formats remain intact.
 
@@ -27,7 +48,7 @@ uv run python -m qa_runtime.runner run
 
 The target application must already be running and authorized. Results and the HTML report are stored under the export's `artifacts/RUN_ID/`. Build requires Ruff in the AutoQA environment (`uv sync --locked` includes it). File/receipt validation detects accidental changes; reapprove and export a new directory instead of editing generated files. Standalone delivery retains an approval snapshot and cannot observe later source-project revocation; `run-framework` rechecks current source approvals. Review all client inputs and evidence before sharing.
 
-Version 0.4.0 is prepared for stable release review within the documented trusted-local Windows/Chromium scope. See the [stable release gate](docs/v04-stable-release-gate.md) for current verification and limitations. The [0.4.0rc1 candidate audit](docs/v04-release-candidate.md) is retained as historical evidence. Stable metadata does not mean the PR has been merged, tagged or published as a GitHub Release.
+V0.4.0 was integrated and tagged at `41b940642c389bb426cd6fb836178a99453f4792`. Its [stable release gate](docs/v04-stable-release-gate.md) and [0.4.0rc1 candidate audit](docs/v04-release-candidate.md) remain historical evidence. V0.5 verification and limitations are recorded separately.
 ## Requirements and installation
 
 Windows 11, Python 3.14, internet for initial package/browser downloads, and a browser-capable desktop session. The package deliberately supports Python 3.14 only in this release. Python 3.14.3 was used for local verification.
@@ -129,7 +150,7 @@ See [CLI reference](docs/cli-reference.md). Every project operation accepts `--p
 | `ai_provider`, `ai_model` | `offline`, `null` |
 | `test_preferences` | Chromium; other browsers not implemented |
 
-For another authorized host, use a separate client project or update `allowed_domains` deliberately. Scope is stricter than the hostname list: all requests must retain the initial scheme, host and port. Query URLs, credential URLs, private networks other than explicitly enabled loopback, external resources, modifying HTTP methods and sensitive route names are excluded. These restrictions may prevent some SPAs from loading correctly. Read [security boundaries](docs/security.md) before using client applications.
+For another authorized host, use a separate client project or update `allowed_domains` deliberately. Discovery scope is stricter than the hostname list: its requests must retain the initial scheme, host and port. Query URLs, credential URLs, private networks other than explicitly enabled loopback, external resources, modifying HTTP methods and sensitive route names are excluded. These restrictions may prevent some SPAs from loading correctly. Read [security boundaries](docs/security.md) before using client applications.
 
 ## Optional AI
 
@@ -220,12 +241,12 @@ The test suite includes real browser passes, a deliberately changed application 
 - **Package upgrade cannot replace autoqa.exe on Windows:** stop running AutoQA commands before `uv sync`; Windows locks an active executable.
 - **Run timed out:** inspect the run's `pytest.log` and JUnit file. Missing cases become NOT_EXECUTED, never PASSED. On Windows, forced timeout cleanup of descendant browser processes is not guaranteed.
 
-No remote clones, auth configuration command, self-healing, scheduling, API test generation, cloud dashboard or arbitrary AI code execution is provided. Functional contracts support observed fill/select/check/uncheck actions, limited safe button clicks, exact result lists/counts/text, visibility, native validity and numeric ordering. They cannot run arbitrary scripts. See [V0.2 guide](docs/v0.2-functional-testing.md) and [roadmap](docs/roadmap.md).
+V0.5 provides reviewed API test generation and environment-referenced application authentication through standalone exports. No remote clones, auth configuration command, self-healing, scheduling, cloud dashboard or arbitrary AI code execution is provided. Functional contracts support observed fill/select/check/uncheck actions, limited safe button clicks, exact result lists/counts/text, visibility, native validity and numeric ordering. They cannot run arbitrary scripts. See [V0.2 guide](docs/v0.2-functional-testing.md) and [roadmap](docs/roadmap.md).
 
 ## V0.3 operating limits and V0.4 direction
 
 Use only applications and source repositories you are authorized to assess. AuthorizationContext records caller intent; it does not authenticate a person or enforce roles. Receipts and manifests are unsigned local integrity checks and depend on trusted writers. The subprocess is not an OS sandbox. Storage requires a single writer; concurrent updates are not transactional across approval files.
 
-Review artifacts before sharing: screenshots, traces, raw JUnit and logs can contain client data. Screenshot disabling does not remove trace screenshots. AI remains optional and advisory. Authentication, hosted CI execution and general external functional coverage are unverified or unsupported as described above. Step skip/interruption semantics and sensitivity annotations need further work.
+Review artifacts before sharing: screenshots, traces, raw JUnit and logs can contain client data. Screenshot disabling does not remove trace screenshots. AI remains optional and advisory. V0.5 application authentication is locally verified only within its documented subset; hosted client execution and general external functional coverage remain unverified. API/authenticated exports restrict unsafe capture; legacy UI-only exports retain the preceding capture limitations. Richer sensitivity annotations and redaction need further work.
 
 The V0.4 framework exporter adds typed blueprints and operation-level evidence. Unified legacy step contracts, finer sensitivity/redaction policies, authenticated interfaces, concurrency control and stronger isolation remain future work. No web API, dashboard, MCP server or cloud identity is implemented. See [roadmap](docs/roadmap.md).

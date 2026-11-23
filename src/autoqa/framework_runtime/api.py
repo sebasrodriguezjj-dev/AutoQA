@@ -86,7 +86,9 @@ def check_response(expected, status, headers, body, data):
         decoded = json.loads(body)
         for path, value in substitute(expected.json_values, data).items():
             actual = field(decoded, path)
-            if type(actual) is not type(value) or actual != value:
+            if json.dumps(actual, sort_keys=True, allow_nan=False) != json.dumps(
+                value, sort_keys=True, allow_nan=False
+            ):
                 raise APIExecutionError("API JSON value assertion failed")
         types = {
             "object": (dict,),

@@ -147,3 +147,12 @@ def test_persistent_evidence_error_is_not_success(tmp_path, monkeypatch):
     monkeypatch.setattr(Path, "replace", denied)
     with pytest.raises(PermissionError):
         StepRecorder(None, tmp_path, "TC-PERSIST", "owned-run", "disabled").persist()
+
+
+def test_nested_json_boolean_is_not_an_integer():
+    from autoqa.framework_runtime.api import APIExecutionError, check_response
+    from autoqa.framework_runtime.contracts import ResponseAssertions
+
+    expected = ResponseAssertions(status=200, json_values={"value": {"nested": 1}})
+    with pytest.raises(APIExecutionError, match="JSON value"):
+        check_response(expected, 200, {}, b'{"value":{"nested":true}}', {})
