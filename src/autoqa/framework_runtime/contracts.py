@@ -73,6 +73,17 @@ class Authentication(Contract):
             (self.token_env, self.username_env, self.password_env, self.cookie_name)
         ):
             raise ValueError("Unused authentication references")
+        allowed = {
+            "none": set(),
+            "bearer": {"token_env"},
+            "basic": {"username_env", "password_env"},
+            "cookie": {"token_env", "cookie_name"},
+        }[self.strategy]
+        if any(
+            getattr(self, key) is not None
+            for key in {"token_env", "username_env", "password_env", "cookie_name"} - allowed
+        ):
+            raise ValueError("Unused authentication references")
         return self
 
 

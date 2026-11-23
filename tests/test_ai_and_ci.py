@@ -134,9 +134,10 @@ def test_repository_workflows_separate_code_checks_from_private_execution():
     commands = [step["run"] for step in steps if "run" in step]
     assert commands == [
         "uv sync --locked",
-        "uv run ruff check src tests",
-        "uv run ruff format --check src tests",
+        "uv run ruff check src tests scripts",
+        "uv run ruff format --check src tests scripts",
         'uv run python -m pytest tests -m "not browser" --ignore=tests/test_live_ai.py -q',
+        "uv run python scripts/verify_release.py --phase package",
     ]
     assert all("continue-on-error" not in step for step in steps)
     assert "continue-on-error" not in checks["jobs"]["verify"]

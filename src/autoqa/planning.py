@@ -262,6 +262,10 @@ def plan(
             ]
             discovery.evidence_records.append(reference)
         save_json(project.root / "discovery/workflow-map.json", discovery.model_dump())
+    api_cases = [c for c in previous if c.kind == "api"]
+    if {c.id for c in api_cases} & {c.id for c in cases}:
+        raise ValueError("UI/API scenario IDs collide; use distinct reviewed IDs")
+    cases += api_cases
     _save_cases(project, cases)
     project.audit(f"Planned {len(cases)} scenarios (offline deterministic mode)")
     return cases

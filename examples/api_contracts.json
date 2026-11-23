@@ -1,0 +1,19 @@
+[
+  {
+    "schema_version": "0.5",
+    "id": "TC-API-HEALTH",
+    "title": "Owned local API reports healthy status",
+    "request": {"path": "/health", "timeout_seconds": 3},
+    "expect": {
+      "status": 200,
+      "json_values": {"healthy": true},
+      "json_types": {"": "object", "healthy": "boolean"}
+    },
+    "environments": [
+      {"name": "local", "origin": "http://127.0.0.1:8002", "allow_localhost": true}
+    ],
+    "environment": "local",
+    "data": {"name": "synthetic", "seed": 42, "rows": [{"label": "first"}, {"label": "second"}]},
+    "evidence": {"retention": "summary_only", "sensitive_fields": ["token"]}
+  }
+]

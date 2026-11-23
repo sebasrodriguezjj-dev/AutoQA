@@ -86,3 +86,64 @@ def test_api_plan_receipts_and_invalidation(project, tmp_path):
     assert case_signature(new) != case_signature(original)
     with pytest.raises(ValueError, match="changed"):
         verify_approval_binding(project, new)
+
+
+def test_ui_replan_preserves_api_and_contract_fields_bind_approval(project, tmp_path):
+    from autoqa.core import Discovery
+    from autoqa.planning import plan
+
+    path = tmp_path / "api.json"
+    path.write_text(json.dumps([scenario().model_dump()]))
+    ctx = AuthorizationContext(project.root, frozenset({"plan", "review"}))
+    api = plan_api(project, path, ctx)[0]
+    approve(project, [api.id], authorization=ctx)
+    project.storage.write_json("discovery/workflow-map.json", Discovery().model_dump())
+    assert plan(project, authorization=ctx)[0].kind == "api"
+    assert project.cases()[0].review_status == "approved"
+    base = project.cases()[0]
+    for key, value in [
+        (
+            "environments",
+            [{"name": "local", "origin": "http://127.0.0.1:8001", "allow_localhost": True}],
+        ),
+        ("data", {"name": "changed", "rows": [{"x": 1}]}),
+        ("authentication", {"strategy": "bearer", "token_env": "AUTOQA_SECRET_NEW"}),
+    ]:
+        changed = base.model_copy(update={"contract": base.contract | {key: value}})
+        assert case_signature(changed) != case_signature(base)
+        with pytest.raises(ValueError, match="changed"):
+            verify_approval_binding(project, changed)
+
+
+def test_transient_evidence_replace_does_not_lose_results(tmp_path, monkeypatch):
+    from pathlib import Path
+
+    from autoqa.framework_runtime.evidence import StepRecorder
+
+    real = Path.replace
+    calls = []
+
+    def transient(path, destination):
+        calls.append(path)
+        if len(calls) < 3:
+            raise PermissionError("controlled transient sharing violation")
+        return real(path, destination)
+
+    recorder = StepRecorder(None, tmp_path, "TC-PERSIST", "owned-run", "disabled")
+    monkeypatch.setattr(Path, "replace", transient)
+    recorder.persist()
+    assert len(calls) == 3
+    assert json.loads((tmp_path / "TC-PERSIST-steps.json").read_text()) == []
+
+
+def test_persistent_evidence_error_is_not_success(tmp_path, monkeypatch):
+    from pathlib import Path
+
+    from autoqa.framework_runtime.evidence import StepRecorder
+
+    def denied(*args):
+        raise PermissionError("controlled permanent denial")
+
+    monkeypatch.setattr(Path, "replace", denied)
+    with pytest.raises(PermissionError):
+        StepRecorder(None, tmp_path, "TC-PERSIST", "owned-run", "disabled").persist()

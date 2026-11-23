@@ -140,7 +140,7 @@ def execute(root, *, collect_only=False):
             ast.parse(safe_path(root, name).read_text(encoding="utf-8"), filename=name)
     config = Config.model_validate(json.loads((root / "config/environment.json").read_text()))
     base = os.environ.get("AUTOQA_BASE_URL", config.application_url)
-    if not collect_only:
+    if not collect_only and config.application_url:
         Scope(base, config)
     run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8]
     output = safe_path(root, "artifacts/" + run_id)
@@ -158,6 +158,26 @@ def execute(root, *, collect_only=False):
         "COMSPEC",
         "PLAYWRIGHT_BROWSERS_PATH",
     }
+    protected = manifest.get("privacy") == "summary_only"
+    if protected:
+        from .contracts import APIScenario, Authentication
+
+        auths = [
+            Authentication.model_validate(
+                json.loads((root / "config/authentication.json").read_text())
+            )
+        ]
+        cases = json.loads((root / "review/cases.json").read_text())
+        auths += [
+            APIScenario.model_validate(c["contract"]).authentication
+            for c in cases
+            if c["kind"] == "api"
+        ]
+        keep.add("AUTOQA_ENVIRONMENT")
+        for auth in auths:
+            keep.update(
+                name for name in (auth.token_env, auth.username_env, auth.password_env) if name
+            )
     env = {k: v for k, v in os.environ.items() if k.upper() in keep}
     env.update(
         PYTEST_DISABLE_PLUGIN_AUTOLOAD="1",
@@ -182,9 +202,14 @@ def execute(root, *, collect_only=False):
     collection = subprocess.run(
         command + ["--collect-only"], cwd=root, env=env, capture_output=True, text=True, timeout=30
     )
-    (output / "collection.log").write_text(collection.stdout + collection.stderr, encoding="utf-8")
+    collection_log = (
+        f"Collection exit: {collection.returncode}; details withheld by summary_only policy"
+        if protected
+        else collection.stdout + collection.stderr
+    )
+    (output / "collection.log").write_text(collection_log, encoding="utf-8")
     if collect_only:
-        print(collection.stdout + collection.stderr)
+        print(collection_log)
         return {"exit_code": collection.returncode, "run_id": run_id, "collected_only": True}
     try:
         process = (
@@ -202,21 +227,27 @@ def execute(root, *, collect_only=False):
         code, log = process.returncode, process.stdout + process.stderr
     except subprocess.TimeoutExpired:
         code, log = 124, "Execution timed out; outcomes may be incomplete."
+    if protected:
+        log = f"Execution exit: {code}; details withheld by summary_only policy"
     (output / "pytest.log").write_text(log, encoding="utf-8")
     actual = {r["name"]: r for r in junit(output / "junit.xml")}
     records = []
     for case_id in manifest["cases"]:
         name = "test_" + case_id.replace("-", "_")
-        record = actual.get(
-            name,
-            {
-                "name": name,
-                "status": "NOT_EXECUTED",
-                "duration": 0,
-                "error": "No JUnit testcase; inspect collection and execution logs",
-            },
-        )
-        records.append({"id": case_id, **record})
+        rows = manifest.get("parameters", {}).get(case_id)
+        names = [name + f"[{i}]" for i in range(rows)] if rows else [name]
+        for index, instance_name in enumerate(names):
+            record = actual.get(
+                instance_name,
+                {
+                    "name": instance_name,
+                    "status": "NOT_EXECUTED",
+                    "duration": 0,
+                    "error": "No JUnit testcase; inspect collection and execution logs",
+                },
+            )
+            identity = case_id + f"--row-{index}" if rows else case_id
+            records.append({"id": identity, "case_id": case_id, **record})
     if code == 0 and any(r["status"] in {"FAILED", "ERROR", "NOT_EXECUTED"} for r in records):
         code = 3
         (output / "pytest.log").write_text(
@@ -228,7 +259,7 @@ def execute(root, *, collect_only=False):
         "exit_code": code,
         "records": records,
         "duration": round(time.monotonic() - started, 3),
-        "steps": read_steps(output, run_id, manifest["cases"]),
+        "steps": read_steps(output, run_id, [r["id"] for r in records]),
     }
     render_report(output, result)
     print(f"Run {run_id}: exit {code}; report: {output / 'report.html'}")

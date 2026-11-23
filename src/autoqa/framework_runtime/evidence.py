@@ -15,8 +15,17 @@ class StepRecorder:
     def persist(self):
         path = self.output / (self.test_id + "-steps.json")
         temporary = path.with_suffix(".tmp")
-        temporary.write_text(json.dumps(self.records, indent=2), encoding="utf-8")
-        temporary.replace(path)
+        # Windows sharing scanners/readers can briefly deny atomic replacement.
+        # Retry only persistence, never an assertion or an HTTP/browser operation.
+        for attempt in range(3):
+            try:
+                temporary.write_text(json.dumps(self.records, indent=2), encoding="utf-8")
+                temporary.replace(path)
+                return
+            except PermissionError:
+                if attempt == 2:
+                    raise
+                time.sleep(0.025 * (attempt + 1))
 
     @contextmanager
     def step(self, kind, description):

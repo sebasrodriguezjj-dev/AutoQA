@@ -98,4 +98,38 @@ def validate(root):
             or not isinstance(receipt.get("approved_at"), str)
         ):
             raise ValueError("Exported approval binding invalid")
+    api_cases = [case for case in cases if case["kind"] == "api"]
+    if api_cases:
+        from .contracts import APIScenario
+
+        contracts = [APIScenario.model_validate(case["contract"]) for case in api_cases]
+        if any(
+            contract.id != case["id"] for contract, case in zip(contracts, api_cases, strict=True)
+        ):
+            raise ValueError("API contract identity differs from reviewed case")
+        if manifest.get("privacy") != "summary_only" or manifest.get("parameters") != {
+            contract.id: len(contract.data.rows) for contract in contracts
+        }:
+            raise ValueError("API privacy/parameter metadata differs from approved contracts")
+        api_required = {
+            "qa_runtime/api.py",
+            "qa_runtime/api_fixture.py",
+            "qa_runtime/contracts.py",
+            "qa_runtime/privacy.py",
+            "services/api_service.py",
+            "config/authentication.json",
+        }
+        if not api_required <= manifest["files"].keys():
+            raise ValueError("Missing API runtime files")
+    auth_path = root / "config/authentication.json"
+    if auth_path.exists():
+        from .contracts import Authentication
+
+        auth = Authentication.model_validate(json.loads(auth_path.read_text(encoding="utf-8")))
+        if auth.strategy != "none" and manifest.get("privacy") != "summary_only":
+            raise ValueError("Authenticated UI requires protected evidence policy")
+    if manifest.get("privacy") == "summary_only":
+        config = json.loads((root / "config/environment.json").read_text(encoding="utf-8"))
+        if config["trace_enabled"] or config["screenshot_policy"] != "disabled":
+            raise ValueError("Protected frameworks must disable unsafe browser capture")
     return manifest
