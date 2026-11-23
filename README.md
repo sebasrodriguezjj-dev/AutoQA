@@ -1,4 +1,4 @@
-# AutoQA Agent 0.4.0rc1
+# AutoQA Agent 0.4.0
 
 A private professional QA engineering tool supporting its owner's QA Automation Engineering services. The source repository may be public; client workspaces and evidence remain private. It is a local Python CLI, with no SaaS or subscription offering. AutoQA explores an authorized application, records visible UI evidence, proposes reviewable scenarios, generates approved Playwright tests, executes them with Pytest, and renders actual results as HTML or JSON. It works offline; optional AI produces review-only recommendations.
 
@@ -6,7 +6,7 @@ The retained V0.2 foundation includes passive functional control discovery, brow
 
 V0.3 adds versioned domain contracts, storage/reporting boundaries, project-bound discovery and planning services, approval receipts, shared generation/execution services and an in-process application engine. New suites require receipts matching the reviewed scenario at generation and execution. Historical generated suites retain legacy checks. See [final delivery](docs/v03-final-delivery.md), [audit](docs/v03-release-audit.md) and [release verification](docs/v03-release-finalization.md).
 
-## V0.4 release candidate
+## V0.4.0 stable release scope
 
 V0.4 adds a deterministic standalone Playwright/Pytest framework builder with per-page Page Objects, checked locator properties, reusable operations, selected approved scenarios, self-contained fixtures/scope checks, environment configuration, dependencies and setup instructions. Exported tests record navigation, actions and assertions separately. Unsupported approved scenarios are reported explicitly; pending cases never become tests. Existing V0.3 generate/run behavior and historical formats remain intact.
 
@@ -27,7 +27,7 @@ uv run python -m qa_runtime.runner run
 
 The target application must already be running and authorized. Results and the HTML report are stored under the export's `artifacts/RUN_ID/`. Build requires Ruff in the AutoQA environment (`uv sync --locked` includes it). File/receipt validation detects accidental changes; reapprove and export a new directory instead of editing generated files. Standalone delivery retains an approval snapshot and cannot observe later source-project revocation; `run-framework` rechecks current source approvals. Review all client inputs and evidence before sharing.
 
-See [V0.4 release candidate](docs/v04-release-candidate.md) for actual verification, supported scenarios and limitations. Version 0.4.0rc1 is a release candidate prepared for GitHub review; it has not been promoted to a stable release.
+Version 0.4.0 is prepared for stable release review within the documented trusted-local Windows/Chromium scope. See the [stable release gate](docs/v04-stable-release-gate.md) for current verification and limitations. The [0.4.0rc1 candidate audit](docs/v04-release-candidate.md) is retained as historical evidence. Stable metadata does not mean the PR has been merged, tagged or published as a GitHub Release.
 ## Requirements and installation
 
 Windows 11, Python 3.14, internet for initial package/browser downloads, and a browser-capable desktop session. The package deliberately supports Python 3.14 only in this release. Python 3.14.3 was used for local verification.

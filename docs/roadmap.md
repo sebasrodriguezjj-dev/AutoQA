@@ -1,8 +1,8 @@
 # AutoQA roadmap
 
-## V0.4 release candidate
+## V0.4.0 release scope
 
-V0.4.0rc1 adds the standalone Page Object framework builder, approved-scenario compilation, operation evidence, independent validation/runner/reporting and three additive CLI commands. Local acceptance demonstrates 9 pass / controlled 7 pass + 2 fail / restored 9 pass without AutoQA installed. See [candidate audit](v04-release-candidate.md) for current verification and limitations. No hosted V0.4 release is claimed.
+V0.4.0 provides the standalone Page Object framework builder, approved-scenario compilation, operation evidence, independent validation/runner/reporting and three additive CLI commands. Preserved local acceptance demonstrates 9 pass / controlled 7 pass + 2 fail / restored 9 pass without AutoQA installed. See the [stable release gate](v04-stable-release-gate.md) for current verification and limitations, and the [0.4.0rc1 candidate audit](v04-release-candidate.md) for historical evidence. PR verification does not certify hosted browser/client execution or mean a GitHub Release was published.
 
 ## V0.3.0 retained foundation
 
@@ -36,4 +36,4 @@ External functional execution remains unvalidated after the documented dependenc
 7. Design explicit per-origin dependency permissions with DNS/redirect validation before expanding SPA scope; no wildcard permissions.
 8. Validate hosted CI, optional live AI and authenticated staging only under explicit authorization and client data policy.
 
-FastAPI, React, MCP and cloud identity are possible future interface concerns, not dependencies or delivered capabilities of V0.3. V0.4 is a local release candidate; these deferred interface/platform capabilities are not included.
+FastAPI, React, MCP and cloud identity are possible future interface concerns, not delivered dependencies or capabilities. V0.4.0 is prepared for stable release within its verified scope; these deferred interface/platform capabilities are not included.

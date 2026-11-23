@@ -60,4 +60,4 @@ contain real JUnit, JSON outcomes, per-operation evidence, diagnosis.json and re
 Ruff is needed in the builder environment, but not in the standalone runtime.
 
 Failures return nonzero; collection failure/timeout cannot become passing records.
-See [release candidate](v04-release-candidate.md) for verification and operating limits.
+See the [stable release gate](v04-stable-release-gate.md) for current verification and operating limits. The [0.4.0rc1 candidate audit](v04-release-candidate.md) remains historical evidence; commands are unchanged by the 0.4.0 version promotion.
