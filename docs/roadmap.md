@@ -1,14 +1,49 @@
 # AutoQA roadmap
 
+AutoQA is a supervised, professional local QA Automation Engineering agent for
+authorized engagements, supporting its owner's services. It is not SaaS or
+multi-tenant. Read the [product vision](product-vision.md) for the complete intended
+workflow and the [project state](project-state.md) for the current verified handoff.
+
+## Current authorized work and verified baseline
+
+V0.6.0 is the latest verified stable release, integrated by PR #4 at
+`bbd54ad0821cb6962c09d8a1149a0f40b936764b`; annotated `v0.6.0` targets that commit.
+The foundation setup is documentation/governance work based on that release, not
+V0.7 development. Deliver one reviewed setup PR and leave it unmerged. The next
+owner action is independent audit triggered by "Audita al dev". A later V0.7
+startup requires explicit owner authorization and fresh GitHub verification.
+These publication observations were verified by the Lead on 2026-11-23,
+America/Costa_Rica; they are a dated snapshot, not a live GitHub query.
+
+## Owner-defined future milestones (proposed, not implemented)
+
+| Milestone | Intended objective | Status and authorization boundary |
+| --- | --- | --- |
+| V0.7 | Intelligent QA Planning and coverage-gap analysis. | Next product milestone; no feature implementation authorized by the foundation task. |
+| V0.8 | Maintenance, diagnosis, reliability and reviewed repairs. | Proposed expansion beyond current conservative diagnosis; no automatic repair/self-healing claim. |
+| V0.9 | QA Operations, dashboards, history and CI integrations. | Proposed operations layer; current per-run artifacts and local workflow generation are the retained baseline. |
+| V1.0 | Professionally validated supervised end-to-end QA agent. | Validation objective, not a statement of arbitrary client readiness or a SaaS conversion. |
+
+Future roadmap changes require explicit owner authorization. Keep every proposed
+scope distinguishable from implemented behavior and deferred ideas. Prioritize
+reliability, maintainability, reproducibility, security, accurate reporting,
+compatibility and practical QA engineering value over feature count. Human review
+remains mandatory for sensitive, mutating or uncertain actions.
+
 ## V0.6.0 stable release scope
 
 Read-only bounded framework analyzer; reviewed suite/pack metadata; stable-ID case,
 pack, suite, tag and full execution; independent exported selection; scope/accounting
-reports. See [candidate audit](v06-release-candidate.md) for actual evidence and limits.
+reports. H01 framework classification and H02 complete collection reconciliation are
+verified repairs. See the [stable gate](v06-stable-release-gate.md) for promotion
+verification and the unchanged [candidate audit](v06-release-candidate.md) for history.
 One managed suite per project initially. No automatic client source refactoring,
-universal framework understanding. Stable publication requires the [V0.6 gate](v06-stable-release-gate.md).
+universal framework understanding or intelligent coverage-gap analysis is delivered.
+Static candidates are not runtime coverage; collection is not execution. Existing
+legacy/domain/API schema versions and released exports are not rewritten.
 
-## V0.5.0 retained official baseline
+## V0.5.0 retained stable foundation
 
 V0.5.0 provides receipt-bound API contracts and UI/API standalone export, controlled application authentication references, deterministic data, conservative sensitive evidence policy and reusable package/install/export quality gates. See the [stable release gate](v05-stable-release-gate.md) for current evidence and limitations; the [0.5.0rc1 audit](v05-release-candidate.md) remains historical. PR #3 is integrated at 590832c229f9177c20eb4b928f78beac42488523 and annotated v0.5.0 points there; no GitHub Release entry was created.
 
@@ -31,13 +66,18 @@ See [final delivery](v03-final-delivery.md), [release audit](v03-release-audit.m
 
 ## Current limits
 
+The historical V0.5 intermittent API/evidence/JUnit incident remains unroot-caused.
+Deterministic persistence and reconciliation protections do not establish its cause.
+Static framework analysis remains heuristic, and independent delivery snapshots
+cannot observe later source approval/membership revocation.
+
 AuthorizationContext is caller intent, not authenticated identity or role enforcement. Approval receipts/manifests depend on trusted local writers; they are not signed hostile-filesystem protection. Storage is single-writer and approval updates are not a multi-file transaction. Execution is not an OS sandbox; Windows descendant-process timeout cleanup remains limited.
 
 Legacy generate/run still wraps scenarios in one coarse step. V0.4 exports record entered navigation, actions and assertions separately with skip/interruption status. Unified legacy contracts and richer sensitivity annotations need improvement. Raw logs, JUnit, screenshots and traces may expose client data and require review before sharing. Historical runs have NOT_RECORDED steps.
 
 External functional execution remains unvalidated after the documented dependency-origin block; scope restrictions were retained. Hosted generated CI and live AI provider access remain unverified. V0.5 supports a bounded application-authentication/API subset. Remote cloning, scheduling, self-healing, arbitrary model-generated executable code and multi-user operation remain absent.
 
-## Deferred capabilities (not implemented)
+## Deferred capabilities and improvement backlog (not implemented in full)
 
 1. Unify the new framework operation blueprint/evidence with historical domain step contracts without changing legacy outcomes.
 2. Extend V0.5 summary-only retention with reviewed field-level redaction, richer safe diagnostics and age-based cleanup.
@@ -45,7 +85,16 @@ External functional execution remains unvalidated after the documented dependenc
 4. Add revision/concurrency control and durable approval history before multi-user exposure.
 5. Strengthen process cancellation and OS isolation, then validate supported execution platforms.
 6. Improve stable scenario identities, accessible-name/readiness evidence and multi-page declarative contracts.
-7. Design explicit per-origin dependency permissions with DNS/redirect validation before expanding SPA scope; no wildcard permissions.
-8. Validate hosted CI, optional live AI and authenticated staging only under explicit authorization and client data policy.
+7. Extend SPA compatibility only through separately reviewed exact resource permissions;
+   bounded explicit resource rules and DNS/redirect controls already exist. Broader
+   dependency scope is deferred; no wildcard permissions.
+8. Validate hosted client-suite execution, optional live AI and authenticated staging
+   only under explicit authorization and client data policy. Repository PR code
+   verification is already hosted; it is distinct from client-suite certification.
 
 FastAPI, React, MCP and cloud identity are possible future interface concerns, not delivered dependencies or capabilities. V0.6.0 promotion retains the V0.5 baseline within its verified scope; these deferred interface/platform capabilities are not included.
+
+The backlog above is not an automatically approved milestone scope. Preserve the
+original version-specific recommendations and acceptance evidence in their release
+documents; evaluate future work against the owner-defined milestones and explicit
+authorization. No V0.7 feature is included in this foundation delivery.
