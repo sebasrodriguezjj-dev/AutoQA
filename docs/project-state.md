@@ -50,7 +50,8 @@ authorized the subsequent merge. The stable V0.6.0 tag remains at its release SH
 
 Current documentation branch: **codex/docs-post-merge-context**, based on verified main.
 Fresh GitHub inspection found no open PR before this reconciliation's publication.
-The new focused documentation PR must remain unmerged for independent audit. Its final
+The focused [documentation PR #6](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/6)
+targets main and must remain unmerged for independent audit. Its final
 HEAD, verification results and CI links are recorded in that PR and the external handoff;
 this document cannot embed its own eventual commit SHA. Verify fresh GitHub state at
 the next handoff. The original `chore/multiagent-foundation` branch is preserved at the
@@ -125,7 +126,8 @@ compatibility fixtures are unchanged. Scoped inventory reviewed 146 tracked file
 plus frozen ZIP members, with no conventional credential/private-output findings;
 this does not establish universal secret detection or a forensic history audit.
 
-The focused PR's final exact-HEAD CI and inspected job logs remain a post-commit
+The [PR #6 checks view](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/6/checks)
+tracks the final published HEAD. Exact-HEAD CI and inspected job logs remain a post-commit
 delivery requirement, recorded in that PR and the handoff after execution. The PR
 must remain unmerged for independent audit; these local checks do not authorize merge.
 
