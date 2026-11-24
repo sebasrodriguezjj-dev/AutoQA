@@ -50,7 +50,7 @@ The example declares an owned API at port 8002; it does not start a server. Run 
 
 API/credential-bearing exports use summary-only evidence: masked header names, status/duration and per-operation results remain; raw bodies, log details, screenshots and traces are restricted. Failed outcomes remain failures. JSON data must be synthetic/nonsecret; credentials belong in `AUTOQA_SECRET_*` environment variables. This is conservative suppression, not universal redaction.
 
-Version **0.5.0** is the officially integrated baseline within its trusted-local verified scope. See the [stable release gate](docs/v05-stable-release-gate.md) for current evidence and limitations. The [0.5.0rc1 candidate audit](docs/v05-release-candidate.md) remains unchanged historical evidence. Reusable gates: `uv run python scripts/verify_release.py` (checks and package/install/export smoke). V0.5 is merged and tagged; no GitHub Release entry was created. V0.6 remains an unmerged release candidate.
+Version **0.5.0** is the retained previous stable baseline within its trusted-local verified scope. See the [stable release gate](docs/v05-stable-release-gate.md) for current evidence and limitations. The [0.5.0rc1 candidate audit](docs/v05-release-candidate.md) remains unchanged historical evidence. Reusable gates: `uv run python scripts/verify_release.py` (checks and package/install/export smoke). V0.5 is merged and tagged; no GitHub Release entry was created. V0.6.0 is now merged and tagged at `bbd54ad0821cb6962c09d8a1149a0f40b936764b`; see the [V0.6 stable gate](docs/v06-stable-release-gate.md) and [project state](docs/project-state.md).
 
 ## Retained V0.4 standalone foundation
 
