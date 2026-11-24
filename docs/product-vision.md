@@ -70,8 +70,11 @@ V1.0 a professionally validated supervised end-to-end QA agent.
 
 These are proposed development milestones, not implemented capabilities, release
 promises or authorization to begin. Future roadmap changes require explicit owner
-authorization. The foundation delivery stops before V0.7 and leaves its setup PR
-unmerged for independent audit. Existing deferred ideas must be evaluated against
+authorization. The original foundation delivery left its setup PR unmerged for audit;
+after independent approval, PR #5 merged at `57a133626cc9c1b09ddf3039c6521e65ac5fdcc7`.
+That governance integration did not implement or authorize V0.7. See current
+[project state](project-state.md) for the active documentation-only handoff.
+Existing deferred ideas must be evaluated against
 this direction rather than silently promoted into a version's scope.
 
 ## Operating limits that must remain visible

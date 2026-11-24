@@ -90,8 +90,14 @@ Implementation must match authorization/acceptance, retain invariants and real r
 coverage, pass focused plus full gates, preserve security/evidence limits and include
 updated context and residual risks. Delivery requires a real verified GitHub PR or a
 clearly identified blocker/draft. Only separately authorized release work can merge/tag.
-This foundation ends with its setup PR open and unmerged. Next is the owner's independent
-audit trigger, "Audita al dev". After audit and explicit V0.7 authorization, Lead refreshes
-GitHub/context, defines a bounded planning/coverage-gap design and acceptance criteria,
+The foundation was independently approved and [PR #5](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/5)
+merged at `57a133626cc9c1b09ddf3039c6521e65ac5fdcc7`. Its original delivery and pilot
+records retain their pre-merge instructions as historical evidence; they do not describe
+the current PR state. V0.6.0 remains the stable release. Current authorization covers
+post-merge context reconciliation and its independent audit; this documentation PR
+must remain unmerged until separately authorized. Roadmap changes and releases require
+explicit owner authorization. V0.7 is planned, not implemented or authorized by the
+foundation merge. After explicit V0.7 authorization, Lead refreshes GitHub/context,
+defines a bounded planning/coverage-gap design and acceptance criteria,
 then delegates disjoint backend/framework/QA work. Do not infer permission to implement
 V0.7 from the roadmap or from the existence of these role profiles.
