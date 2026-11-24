@@ -119,7 +119,7 @@ The [0.5.0rc1 candidate audit](v05-release-candidate.md) remains unchanged histo
 evidence, as do V0.4 documents. No arbitrary client/platform certification is claimed.
 
 
-## V0.6 candidate commands (0.6.0rc1)
+## V0.6.0 commands
 
 - `autoqa analyze-framework PATH`: JSON static audit and create/improve decision;
   ANALYSIS_BLOCKED exits 1. No execution, installation or source modification.
@@ -135,4 +135,4 @@ evidence, as do V0.4 documents. No arbitrary client/platform certification is cl
 Standalone: `python -m qa_runtime.runner run` and `collect` accept equivalent options;
 AutoQA need not be installed. Arbitrary Pytest expressions/node IDs are not accepted.
 See [management semantics/examples](v06-test-management.md), [analyzer limits](v06-framework-analyzer.md)
-and [current candidate evidence](v06-release-candidate.md). V0.5 examples remain valid.
+and [historical candidate evidence](v06-release-candidate.md) and [stable gate](v06-stable-release-gate.md). V0.5 examples remain valid.
