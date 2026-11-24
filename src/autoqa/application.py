@@ -70,6 +70,44 @@ class ApplicationEngine:
 
         return FrameworkService(self.project, self.authorization).run(destination, selection)
 
+    def intelligent_plan(self, requirements: Path | None = None):
+        from autoqa.intelligent_planning_service import IntelligentPlanningService
+
+        return IntelligentPlanningService(self.project, self.authorization).analyze(requirements)
+
+    def import_requirements(self, path: Path):
+        from autoqa.intelligent_planning_service import IntelligentPlanningService
+
+        return IntelligentPlanningService(self.project, self.authorization).import_requirements(
+            path
+        )
+
+    def review_plan(self, plan_id: str, proposal_ids: list[str], decision: str):
+        from autoqa.intelligent_planning_service import IntelligentPlanningService
+
+        return IntelligentPlanningService(self.project, self.authorization).review(
+            plan_id, proposal_ids, decision
+        )
+
+    def coverage_report(self, requirements: Path | None = None):
+        snapshot = self.intelligent_plan(requirements)
+        return snapshot.model_dump(
+            mode="json",
+            include={
+                "schema_version",
+                "id",
+                "project_id",
+                "input_digest",
+                "coverage_scope",
+                "execution_coverage",
+                "summary",
+                "findings",
+                "context",
+                "review_state",
+                "limitations",
+            },
+        )
+
 
 class InProcessAdapter:
     """Test adapter exposing the same operations as an interface adapter."""

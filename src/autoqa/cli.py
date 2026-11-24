@@ -326,3 +326,58 @@ def suite_approve(inventory: Path, project: Path | None = None):
     suite = TestSuite.model_validate_json(inventory.read_text(encoding="utf-8-sig"))
     approve_suite(selected, suite, AuthorizationContext(selected.root, frozenset({"review"})))
     console.print("Suite membership approved; export a new framework")
+
+
+@app.command("requirements-import")
+@handled
+def requirements_import(requirements: Path, project: Path | None = None):
+    """Explicitly import bounded V0.7 requirements; never approve executable cases."""
+    from autoqa.application import ApplicationEngine
+
+    selected = select_project(project)
+    document = ApplicationEngine(
+        selected, AuthorizationContext(selected.root, frozenset({"plan"}))
+    ).import_requirements(requirements)
+    typer.echo(document.model_dump_json(indent=2))
+
+
+@app.command("intelligent-plan")
+@handled
+def intelligent_plan(requirements: Path | None = None, project: Path | None = None):
+    """Print a deterministic review-only plan without changing project data."""
+    from autoqa.application import ApplicationEngine
+
+    snapshot = ApplicationEngine(select_project(project)).intelligent_plan(requirements)
+    typer.echo(snapshot.model_dump_json(indent=2))
+
+
+@app.command("coverage-report")
+@handled
+def coverage_report(requirements: Path | None = None, project: Path | None = None):
+    """Print supplied-requirement mappings, not executed/application coverage."""
+    import json
+
+    from autoqa.application import ApplicationEngine
+
+    result = ApplicationEngine(select_project(project)).coverage_report(requirements)
+    typer.echo(json.dumps(result, indent=2, ensure_ascii=False))
+
+
+@app.command("plan-review")
+@handled
+def plan_review(
+    plan_id: str,
+    accept: list[str] = typer.Option(None, "--accept"),
+    reject: list[str] = typer.Option(None, "--reject"),
+    project: Path | None = None,
+):
+    """Accept/reject planning recommendations, separately from scenario approval."""
+    from autoqa.application import ApplicationEngine
+
+    if bool(accept) == bool(reject):
+        raise ValueError("Choose exactly one nonempty --accept or --reject decision")
+    selected = select_project(project)
+    snapshot = ApplicationEngine(
+        selected, AuthorizationContext(selected.root, frozenset({"review"}))
+    ).review_plan(plan_id, accept or reject, "accepted" if accept else "rejected")
+    typer.echo(snapshot.model_dump_json(indent=2))
