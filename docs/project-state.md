@@ -125,7 +125,7 @@ fixtures are unchanged from stable V0.6.0. The later architecture integration ch
 documentation only; this full regression therefore covers the final executable tree.
 Fresh resumed Ruff lint/format (67 files) and lock checks also passed.
 
-Integrated documentation checks resolved **199 relative destinations**, parsed all four
+Integrated documentation checks resolved **200 relative destinations**, parsed all four
 role TOML definitions, verified the original architecture text remains an exact suffix,
 and confirmed unchanged product/tests/lock/workflows and historical audits. Scoped
 inventory reviewed **146 tracked/new files plus frozen ZIP members**, with no conventional
@@ -143,3 +143,27 @@ Fresh fetch and remote ref inspection confirmed main and the annotated stable ta
 unchanged at the recorded release, no setup branch and no active PR before publication.
 Publication details are recorded in the setup PR; final PR HEAD is recorded there and
 in the external handoff rather than embedding this document's own commit SHA.
+
+## Setup publication handoff
+
+The single setup [PR #5](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/5) targets
+main from `chore/multiagent-foundation` and remains **open and unmerged**. Fresh remote
+inspection before publication found no other active PR. Its initial published recovery
+commit was `f40cdd978d2620b4f6d87b82539a8df463e58ec0`; this final link/count handoff
+is a subsequent documentation-only commit. Resolve the final branch SHA from the PR
+head, not the initial commit or this self-contained document.
+
+The [PR checks view](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/5/checks)
+is the canonical current hosted verification link. The Lead must verify success for
+the final published HEAD and inspect its actual job logs before reporting completion;
+the inspected run/job IDs, checkout SHA, regression/package results and exact final
+HEAD are recorded in the PR body and delivery handoff after that post-commit check.
+An earlier-head or pending result is insufficient. This source record describes the
+publication sequence without claiming future CI success from inside its own commit.
+
+All three specialist worktrees remain available and clean. Stable main and the
+annotated `v0.6.0` object/target were verified unchanged during recovery. No release
+merge/tag was repeated, no V0.7 work began, and no foundation merge is authorized.
+There is no local mandatory-gate blocker; a final mandatory CI failure blocks delivery
+until corrected or explicitly reported. Next action after verified publication is
+the owner's independent audit trigger: **"Audita al dev"**.
