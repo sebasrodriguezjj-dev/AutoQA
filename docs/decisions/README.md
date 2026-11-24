@@ -8,3 +8,5 @@ do not authorize implementation. Never invent reasons for historical changes.
 [ADR 0001](0001-supervised-local-and-isolated-engineering.md) records the current
 foundation governance decision. Historical technical rationale remains in the linked
 V0.3–V0.6 architecture/release documents, not retroactively reclassified as new ADRs.
+
+[ADR 0002](0002-enduring-instructions-and-dated-state.md) separates enduring instructions from dated state (D02).

@@ -1,5 +1,44 @@
 # Permanent project state and engineering handoff
 
+Last verification: 2026-11-24, America/Costa_Rica. Dated observation, not live GitHub.
+Verify origin, branches, PRs and exact-head CI before trusting historical status.
+
+## Active authorized objective
+
+The owner explicitly authorized V0.7 Intelligent QA Planning and Coverage Gap Analysis,
+including D02, using one Lead and three isolated specialists. Work on
+`feat/v07-development`; no merge, stable promotion/tag or V0.8 implementation.
+Verified starting/current main: `baa776d2253831f08dc7d630cf0e67d0a22d4b8f`.
+PR #5 merged at 57a1336 and PR #6 merged at baa776d; fresh GitHub search found no open PR.
+Stable product release remains v0.6.0 at bbd54ad0821cb6962c09d8a1149a0f40b936764b,
+annotated tag object bea83dc984687dcde97416a8fa57bd2849f8aa0f. Existing pilot worktrees
+and all history are preserved. Candidate version is not claimed until acceptance passes.
+
+## Environment and delegation
+
+Native spawn/send/followup/wait tools are exposed with four active slots including
+Lead. The current native tool schema has no custom-profile selection/loading result;
+automatic .codex/agents TOML discovery cannot be verified in this session. Read those
+profiles and provide explicit role/common-context briefings instead. Installed
+codex-cli 0.114.0 reports multi_agent=false and child_agents_md=false. No global setting
+is changed and no automatic-profile-loading success is claimed. Actual specialist
+creation, worktrees, commits and checks will be recorded in the V0.7 handoff.
+
+D02 is the first structural task: enduring rules live in AGENTS and role/workflow/gate
+instructions, owner direction in roadmap, dated facts here, live state in GitHub.
+See [ADR 0002](decisions/0002-enduring-instructions-and-dated-state.md).
+V0.6 architecture, approvals, schemas and security remain the compatibility baseline.
+The historical V0.5 intermittent incident remains unroot-caused.
+
+## Historical foundation and reconciliation handoff
+
+The following original dated handoff is retained intact as historical evidence.
+Its temporary PR/authorization descriptions are superseded by the active section above.
+
+---
+
+# Permanent project state and engineering handoff
+
 Last verification: **2026-11-24, America/Costa_Rica**. This is a dated handoff, not live
 GitHub state. Before work the Lead must fetch and inspect actual repository, branch,
 PR/head/base and associated exact-head check state. Update this file at every development

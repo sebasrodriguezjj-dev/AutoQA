@@ -5,25 +5,20 @@ authorized engagements, supporting its owner's services. It is not SaaS or
 multi-tenant. Read the [product vision](product-vision.md) for the complete intended
 workflow and the [project state](project-state.md) for the current verified handoff.
 
-## Current authorized work and verified baseline
+## Development direction and status
 
-V0.6.0 is the latest verified stable release, integrated by PR #4 at
-`bbd54ad0821cb6962c09d8a1149a0f40b936764b`; annotated `v0.6.0` targets that commit.
-The approved foundation [PR #5](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/5)
-is merged at `57a133626cc9c1b09ddf3039c6521e65ac5fdcc7`, the currently verified main.
-This engineering-context integration is separate from the stable product release;
-it implements no V0.7 features. Current authorized work is post-merge documentation
-reconciliation, followed by independent audit of its unmerged documentation PR.
-V0.7 remains the next planned milestone; startup requires explicit owner authorization
-and fresh GitHub verification. Releases also require explicit owner authorization.
-These publication observations were verified by the Lead on 2026-11-24,
-America/Costa_Rica; they are a dated snapshot, not a live GitHub query.
+The owner-approved sequence below is enduring product direction. Current implemented
+scope, stable release, candidate, active branch/PR, authorization and verification
+belong in dated [project state](project-state.md) and version-specific delivery records.
+Verify live GitHub before relying on status. A roadmap milestone is not automatic
+permission to implement, merge or release. The owner has explicitly initiated V0.7;
+V0.8 remains the next milestone after V0.7, without authorizing its implementation.
 
 ## Owner-defined future milestones (proposed, not implemented)
 
 | Milestone | Intended objective | Status and authorization boundary |
 | --- | --- | --- |
-| V0.7 | Intelligent QA Planning and coverage-gap analysis. | Next product milestone; no feature implementation authorized by the foundation task. |
+| V0.7 | Intelligent QA Planning and coverage-gap analysis. | Authorized development milestone; current delivery status is recorded in project-state. |
 | V0.8 | Maintenance, diagnosis, reliability and reviewed repairs. | Proposed expansion beyond current conservative diagnosis; no automatic repair/self-healing claim. |
 | V0.9 | QA Operations, dashboards, history and CI integrations. | Proposed operations layer; current per-run artifacts and local workflow generation are the retained baseline. |
 | V1.0 | Professionally validated supervised end-to-end QA agent. | Validation objective, not a statement of arbitrary client readiness or a SaaS conversion. |

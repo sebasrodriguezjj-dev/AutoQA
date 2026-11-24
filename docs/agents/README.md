@@ -2,8 +2,8 @@
 
 Common instructions: read [AGENTS.md](../../AGENTS.md) and all linked permanent context;
 verify the Lead's shared briefing, worktree, baseline, exclusive ownership, acceptance,
-approved targets and limits. Current stable release is V0.6.0; no V0.7 implementation
-is authorized by foundation setup. Never modify another checkout or publish as a specialist.
+approved targets and limits. Read dated project-state and the current owner request for the stable release, active
+version and authorization; role definitions do not authorize a milestone. Never modify another checkout or publish as a specialist.
 
 The project-scoped TOML profiles in [.codex/agents](../../.codex/agents) are reusable
 instructions following the current documented custom-agent schema. Model and permissions

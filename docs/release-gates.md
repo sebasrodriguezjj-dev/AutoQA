@@ -181,9 +181,8 @@ A GitHub Release entry is separate and was not required for V0.6.0.
 Any mandatory failed/incomplete gate blocks release promotion. Preserve evidence and
 report the exact blocker; do not begin dependent migrations. A safe verified partial
 delivery may be published as one draft PR if technically possible and authorized.
-The original multi-agent foundation delivery required its setup PR to remain unmerged
-for independent audit. After approval and explicit owner merge authorization, PR #5
-merged at `57a133626cc9c1b09ddf3039c6521e65ac5fdcc7`. That completed exception does not
-authorize merging later PRs or beginning V0.7. The current context-reconciliation PR
-must remain unmerged for independent audit ("Audita al dev"). Roadmap changes and
-releases continue to require explicit owner authorization; stop at each task's boundary.
+Follow the active owner's delivery boundary recorded in dated project-state and the
+current request. Leave review PRs unmerged unless explicitly authorized after their
+required audit and exact-head checks. Historical foundation/reconciliation restrictions
+are dated evidence, not permanent prohibitions on already authorized merges. Roadmap
+changes and releases require explicit owner authorization; stop at each task's boundary.
