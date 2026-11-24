@@ -1,6 +1,6 @@
 # Permanent project state and engineering handoff
 
-Last verification: **2026-11-23, America/Costa_Rica**. This is a dated handoff, not live
+Last verification: **2026-11-24, America/Costa_Rica**. This is a dated handoff, not live
 GitHub state. Before work the Lead must fetch and inspect actual repository, branch,
 PR/head/base and associated exact-head check state. Update this file at every development
 and release handoff. Source-controlled implementation facts and remote observations
@@ -100,10 +100,46 @@ case/pack/full execution (one invocation/two operations each). Scoped inventory:
 files plus ZIP members, no conventional credential/private-output findings. No new
 browser or live AI benchmark. Local logs/evidence are disposable ignored output.
 
-Foundation integrated gates and exact-head hosted result are pending until recorded by
-the Lead below. [Pilot evidence](multiagent-pilot.md) records actual agents, ownership,
+Foundation recovery and publication evidence is recorded below. [Pilot evidence](multiagent-pilot.md) records actual agents, ownership,
 worktrees, commits, checks, coordination and limits. Native desktop delegation is exposed;
 installed CLI 0.114.0 separately reports multi_agent disabled. Profiles are reusable
 instructions, not a claim of automatic CLI loading or access-control isolation.
 
 Setup PR must remain **open and unmerged**. Final delivery stops there. Do not begin V0.7.
+
+## Interrupted-session recovery (2026-11-24)
+
+Recovered branch `chore/multiagent-foundation` at
+`7d7181050165375459796619c8650dc226a5adcf`. No staged or unstaged changes and no
+pending cherry-pick were present. The completed untracked `multiagent-pilot.md`
+was preserved for inclusion. All three specialist worktrees were clean and retained.
+Exact binary diff comparison across the five foundation commits proved each specialist
+patch was integrated once; all seven owned file blobs still matched the original
+specialist commits. No recreation, reset, cleanup, history rewrite or release action
+was needed. See the [pilot integration table](multiagent-pilot.md).
+
+The recovered `.test-work/foundation-checks.log` ends with **305 passed / 18 deselected
+in 216.13s**, following successful Ruff lint/format and 37-package lock checks.
+Product source, tests, scripts, workflows, package metadata, dependency lock and frozen
+fixtures are unchanged from stable V0.6.0. The later architecture integration changed
+documentation only; this full regression therefore covers the final executable tree.
+Fresh resumed Ruff lint/format (67 files) and lock checks also passed.
+
+Integrated documentation checks resolved **199 relative destinations**, parsed all four
+role TOML definitions, verified the original architecture text remains an exact suffix,
+and confirmed unchanged product/tests/lock/workflows and historical audits. Scoped
+inventory reviewed **146 tracked/new files plus frozen ZIP members**, with no conventional
+credential-pattern or private-output-path findings. This is not universal secret/PII
+detection or a forensic audit of Git history.
+
+The resumed package phase returned **exit 0**: wheel/sdist build and inventory,
+isolated installed 0.6.0 import/distribution/CLI, reviewed export metadata, standalone
+dependency installation with AutoQA absent, validation and complete collection all
+passed. Independent case/pack/all each returned 0 with one passed invocation and two
+actual operations. Log: `.test-work/foundation-package.log`; acceptance directory:
+`.test-work/release-gate-51v6wlf3`. No new browser, client or live-AI execution.
+
+Fresh fetch and remote ref inspection confirmed main and the annotated stable tag
+unchanged at the recorded release, no setup branch and no active PR before publication.
+Publication details are recorded in the setup PR; final PR HEAD is recorded there and
+in the external handoff rather than embedding this document's own commit SHA.
