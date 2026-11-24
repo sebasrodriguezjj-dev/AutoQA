@@ -156,7 +156,7 @@ def test_risk_is_exact_explainable_and_unknown_expectations_are_not_invented():
     )
     plan = build_plan(
         document([req], [mapping(review_status="pending")]),
-        context([case()], workflow_ids=["WF-1"]),
+        context([case()], workflow_ids=["WF-1"], workflow_provenance={"WF-1": "OBSERVED"}),
     )
     risk = plan.findings[0].risk
     assert risk.factors == {
@@ -239,6 +239,8 @@ def test_logically_identical_reordered_inputs_produce_identical_snapshot_without
         ],
         workflow_ids=["WF-2", "WF-1"],
         evidence_ids=["OBS-2", "OBS-1"],
+        workflow_provenance={"WF-2": "OBSERVED", "WF-1": "OBSERVED"},
+        evidence_provenance={"OBS-2": "OBSERVED", "OBS-1": "OBSERVED"},
         suite_id="Owner Suite",
         suite_state="CURRENT",
         suite_digest="d" * 64,
@@ -390,3 +392,54 @@ def test_stale_unsupported_mapping_keeps_both_limitations_visible():
 def test_rejected_relationship_is_not_execution_feasibility_evidence():
     plan = build_plan(document(mappings=[mapping(review_status="rejected")]), context([case()]))
     assert plan.findings[0].risk.factors["execution_feasibility"] == 0
+
+
+@pytest.mark.parametrize("reference_kind", ["workflow", "evidence"])
+@pytest.mark.parametrize(
+    "provenance", ["SOURCE", "INFERRED", "VERIFIED_REQUIREMENT", "UNKNOWN", None]
+)
+def test_declared_reference_without_observed_provenance_never_confirms(reference_kind, provenance):
+    reference = "WF-1" if reference_kind == "workflow" else "OBS-1"
+    requirement_field = "workflow_ids" if reference_kind == "workflow" else "observed_evidence_ids"
+    context_field = "workflow_ids" if reference_kind == "workflow" else "evidence_ids"
+    provenance_field = (
+        "workflow_provenance" if reference_kind == "workflow" else "evidence_provenance"
+    )
+    fields = {context_field: [reference]}
+    if provenance is not None:
+        fields[provenance_field] = {reference: provenance}
+    plan = build_plan(
+        document([requirement(**{requirement_field: [reference]})], [mapping()]),
+        context([case()], **fields),
+    )
+    finding = plan.findings[0]
+    assert finding.confirmed_case_ids == []
+    assert set(finding.states) == {"PROPOSED_MAPPING", "INSUFFICIENT_EVIDENCE"}
+    assert finding.risk.factors["observed_functionality"] == 0
+    assert finding.risk.factors["uncertainty"] == 10
+    assert plan.summary.confirmed_mapped_requirements == 0
+    assert plan.summary.uncertain_requirements == 1
+
+
+def test_only_actual_observed_references_support_mapping_and_risk():
+    req = requirement(workflow_ids=["WF-1"], observed_evidence_ids=["OBS-1"])
+    actual = context(
+        [case()],
+        workflow_ids=["WF-1"],
+        evidence_ids=["OBS-1"],
+        workflow_provenance={"WF-1": "OBSERVED"},
+        evidence_provenance={"OBS-1": "OBSERVED"},
+    )
+    observed_plan = build_plan(document([req], [mapping()]), actual)
+    assert observed_plan.findings[0].confirmed_case_ids == ["TC-UI"]
+    assert observed_plan.findings[0].risk.factors["observed_functionality"] == 10
+    for field in ["workflow_provenance", "evidence_provenance"]:
+        values = actual.model_dump()
+        values[field] = {key: "SOURCE" for key in values[field]}
+        source_plan = build_plan(
+            document([req], [mapping()]), PlanningContext.model_validate(values)
+        )
+        assert source_plan.id != observed_plan.id
+        assert source_plan.findings[0].confirmed_case_ids == []
+        assert "INSUFFICIENT_EVIDENCE" in source_plan.findings[0].states
+        assert source_plan.findings[0].risk.factors["observed_functionality"] == 0

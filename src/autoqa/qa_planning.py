@@ -64,8 +64,16 @@ def _observed(requirement, context):
     known = set(requirement.workflow_ids) <= set(context.workflow_ids) and set(
         requirement.observed_evidence_ids
     ) <= set(context.evidence_ids)
+    actual_observed = all(
+        context.workflow_provenance.get(identity) == "OBSERVED"
+        for identity in requirement.workflow_ids
+    ) and all(
+        context.evidence_provenance.get(identity) == "OBSERVED"
+        for identity in requirement.observed_evidence_ids
+    )
     declared = bool(requirement.workflow_ids or requirement.observed_evidence_ids)
-    return known, declared and known
+    sufficient = known and actual_observed
+    return sufficient, declared and sufficient
 
 
 def _risk(requirement, *, confirmed, observed, feasible, uncertain):
@@ -175,7 +183,7 @@ def _finding(requirement, mappings, context):
     if uncertain:
         states.append("INSUFFICIENT_EVIDENCE")
         reasons.append(
-            "Requirement is pending, expected behavior is unknown, or declared observed references are unavailable."
+            "Requirement is pending, expected behavior is unknown, or declared observed references are unavailable or lack OBSERVED provenance."
         )
     if any(case_id in cases and not cases[case_id].enabled for case_id in confirmed + proposed):
         reasons.append(
