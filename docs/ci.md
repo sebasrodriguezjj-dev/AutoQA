@@ -33,7 +33,8 @@ standalone dependency installation/validation/collection. `--phase checks` and
 `--phase package` run the two bounded stages separately. Paths are derived from
 the checkout; outputs use a fresh ignored `.test-work/release-gate-*` directory.
 Any failed subprocess exits nonzero. No browser, external application or live AI
-is contacted by the package stage; its synthetic API endpoint is collection-only.
+is contacted by the package stage. V0.6 additionally executes single/pack/full selections
+against its owned synthetic loopback API and checks actual outcomes and operations.
 
 The PR workflow also runs the package stage. V0.5 API regression starts owned
 loopback servers with synthetic data/credentials, including healthy/defect/restored

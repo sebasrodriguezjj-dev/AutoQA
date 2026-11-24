@@ -1,12 +1,12 @@
 # AutoQA roadmap
 
-## V0.6 current candidate - 0.6.0rc1
+## V0.6.0 stable release scope
 
 Read-only bounded framework analyzer; reviewed suite/pack metadata; stable-ID case,
 pack, suite, tag and full execution; independent exported selection; scope/accounting
 reports. See [candidate audit](v06-release-candidate.md) for actual evidence and limits.
 One managed suite per project initially. No automatic client source refactoring,
-universal framework understanding or stable-release claim.
+universal framework understanding. Stable publication requires the [V0.6 gate](v06-stable-release-gate.md).
 
 ## V0.5.0 retained official baseline
 
@@ -48,4 +48,4 @@ External functional execution remains unvalidated after the documented dependenc
 7. Design explicit per-origin dependency permissions with DNS/redirect validation before expanding SPA scope; no wildcard permissions.
 8. Validate hosted CI, optional live AI and authenticated staging only under explicit authorization and client data policy.
 
-FastAPI, React, MCP and cloud identity are possible future interface concerns, not delivered dependencies or capabilities. V0.5.0 is the official stable baseline and V0.6 is a release candidate within its verified scope; these deferred interface/platform capabilities are not included.
+FastAPI, React, MCP and cloud identity are possible future interface concerns, not delivered dependencies or capabilities. V0.6.0 promotion retains the V0.5 baseline within its verified scope; these deferred interface/platform capabilities are not included.

@@ -1,4 +1,4 @@
-# AutoQA Agent 0.6.0rc1
+# AutoQA Agent 0.6.0
 
 A private professional QA engineering tool supporting its owner's QA Automation Engineering services. The source repository may be public; client workspaces and evidence remain private. It is a local Python CLI, with no SaaS or subscription offering. AutoQA explores an authorized application, records visible UI evidence, proposes reviewable scenarios, generates approved Playwright tests, executes them with Pytest, and renders actual results as HTML or JSON. It works offline; optional AI produces review-only recommendations.
 
@@ -6,11 +6,11 @@ The retained V0.2 foundation includes passive functional control discovery, brow
 
 V0.3 adds versioned domain contracts, storage/reporting boundaries, project-bound discovery and planning services, approval receipts, shared generation/execution services and an in-process application engine. New suites require receipts matching the reviewed scenario at generation and execution. Historical generated suites retain legacy checks. See [final delivery](docs/v03-final-delivery.md), [audit](docs/v03-release-audit.md) and [release verification](docs/v03-release-finalization.md).
 
-## V0.6 release candidate
+## V0.6.0 stable release scope
 
 V0.6 adds read-only static framework inspection, reviewed suite/pack membership,
 stable-ID single/pack/suite/tag/full execution, independent exported selection and
-scope-aware accounting. This is **0.6.0rc1**, not a stable release. See the
+scope-aware accounting. Stable promotion is governed by the [stable release gate](docs/v06-stable-release-gate.md). See the historical
 [candidate audit](docs/v06-release-candidate.md), [architecture](docs/v06-architecture.md),
 [analyzer limits](docs/v06-framework-analyzer.md) and [test management examples](docs/v06-test-management.md).
 
