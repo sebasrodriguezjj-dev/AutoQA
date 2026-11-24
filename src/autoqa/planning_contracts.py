@@ -7,6 +7,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=2000)]
+Label = Annotated[str, Field(max_length=2000)]
 Identity = Annotated[str, Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$")]
 RequirementID = Annotated[str, Field(pattern=r"^REQ-[A-Za-z0-9_-]{1,60}$")]
 CaseID = Annotated[str, Field(pattern=r"^TC-[A-Za-z0-9_-]{1,60}$")]
@@ -161,8 +162,8 @@ class PlanningCase(Contract):
     kind: Literal["heading", "link", "manual", "functional", "api"]
     title: Text
     enabled: bool = True
-    pack_ids: list[Text] = Field(default_factory=list, max_length=100)
-    tags: list[Text] = Field(default_factory=list, max_length=100)
+    pack_ids: list[Label] = Field(default_factory=list, max_length=100)
+    tags: list[Label] = Field(default_factory=list, max_length=100)
 
 
 class PlanningContext(Contract):
@@ -170,7 +171,7 @@ class PlanningContext(Contract):
     cases: list[PlanningCase] = Field(default_factory=list, max_length=1000)
     workflow_ids: list[Identity] = Field(default_factory=list, max_length=2000)
     evidence_ids: list[Identity] = Field(default_factory=list, max_length=5000)
-    suite_id: Text | None = None
+    suite_id: Label | None = None
     suite_state: Literal["ABSENT", "CURRENT", "STALE"] = "ABSENT"
     suite_digest: Digest | None = None
 
