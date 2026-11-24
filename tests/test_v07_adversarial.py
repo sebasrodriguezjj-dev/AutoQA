@@ -910,3 +910,17 @@ def test_observation_provenance_drift_invalidates_existing_planning_review(
     assert downgraded.review_state == "STALE"
     assert all(p.review_status == "pending" for p in downgraded.proposals)
     assert file_snapshot(project.root) == before
+
+
+def test_conflicting_categories_for_one_evidence_id_are_rejected_atomically(
+    reviewed_planning_project,
+):
+    project, authorization, source = reviewed_planning_project
+    discovery = project.storage.read_json("discovery/workflow-map.json")
+    original = next(e for e in discovery["evidence_records"] if e["id"] == "OBS-UI")
+    discovery["evidence_records"].append({**original, "category": "SOURCE"})
+    project.storage.write_json("discovery/workflow-map.json", discovery)
+    before = file_snapshot(project.root)
+    with pytest.raises(ValueError):
+        planning_service(project, authorization).analyze(source)
+    assert file_snapshot(project.root) == before
