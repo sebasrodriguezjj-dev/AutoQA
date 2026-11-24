@@ -860,3 +860,53 @@ def test_proposal_identity_changes_only_with_its_requirement_or_hint_content():
         p.id for p in second.proposals if p.requirement_id == "REQ-API"
     }
     assert all(p.review_status == "pending" for p in second.proposals)
+
+
+@pytest.mark.parametrize("record_kind", ["workflow", "evidence"])
+@pytest.mark.parametrize("provenance", ["SOURCE", "INFERRED", "UNKNOWN"])
+def test_non_observed_provenance_cannot_confirm_observed_support(
+    reviewed_planning_project, record_kind, provenance
+):
+    project, authorization, source = reviewed_planning_project
+    discovery = project.storage.read_json("discovery/workflow-map.json")
+    workflow = next(w for w in discovery["workflows"] if w["id"] == "WF-API")
+    evidence = next(e for e in discovery["evidence_records"] if e["id"] == "OBS-API")
+    workflow["status"], evidence["category"] = "OBSERVED", "OBSERVED"
+    if record_kind == "workflow":
+        workflow["status"] = provenance
+    else:
+        evidence["category"] = provenance
+    project.storage.write_json("discovery/workflow-map.json", discovery)
+    before = file_snapshot(project.root)
+    plan = planning_service(project, authorization).analyze(source)
+    row = finding(plan, "REQ-API")
+    assert row.risk.factors["observed_functionality"] == 0
+    assert "INSUFFICIENT_EVIDENCE" in row.states
+    assert not row.confirmed_case_ids
+    assert plan.summary.confirmed_mapped_requirements == 1
+    assert plan.execution_coverage == "NOT_ASSESSED"
+    assert file_snapshot(project.root) == before
+
+
+def test_observation_provenance_drift_invalidates_existing_planning_review(
+    reviewed_planning_project,
+):
+    project, authorization, source = reviewed_planning_project
+    discovery = project.storage.read_json("discovery/workflow-map.json")
+    workflow = next(w for w in discovery["workflows"] if w["id"] == "WF-API")
+    evidence = next(e for e in discovery["evidence_records"] if e["id"] == "OBS-API")
+    workflow["status"], evidence["category"] = "OBSERVED", "OBSERVED"
+    project.storage.write_json("discovery/workflow-map.json", discovery)
+    service = planning_service(project, authorization)
+    service.import_requirements(source)
+    observed = service.analyze()
+    assert observed.summary.confirmed_mapped_requirements == 2
+    service.review(observed.id, [observed.proposals[0].id], "accepted")
+    evidence["category"] = "SOURCE"
+    project.storage.write_json("discovery/workflow-map.json", discovery)
+    before = file_snapshot(project.root)
+    downgraded = service.analyze()
+    assert downgraded.id != observed.id
+    assert downgraded.review_state == "STALE"
+    assert all(p.review_status == "pending" for p in downgraded.proposals)
+    assert file_snapshot(project.root) == before
