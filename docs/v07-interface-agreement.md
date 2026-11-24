@@ -138,3 +138,5 @@ honestly. QA may integrate dependency commits into its own worktree after Lead s
 SHAs, then commit only its assigned test diff. Lead runs full non-browser/frozen/H01/H02,
 Ruff/lock/build/install/UI-API standalone gates, links/security inventory and exact-head CI.
 Browser acceptance only if actual browser logic changes. Never weaken existing tests.
+
+Contract clarification: existing V0.6 pack IDs/tags/suite IDs may contain spaces; PlanningCase pack_ids/tags and PlanningContext suite_id use bounded Text, not restrictive new identity syntax. Source values are data and remain unmodified.

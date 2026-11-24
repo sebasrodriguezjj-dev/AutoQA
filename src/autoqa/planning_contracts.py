@@ -161,8 +161,8 @@ class PlanningCase(Contract):
     kind: Literal["heading", "link", "manual", "functional", "api"]
     title: Text
     enabled: bool = True
-    pack_ids: list[Identity] = Field(default_factory=list, max_length=100)
-    tags: list[Identity] = Field(default_factory=list, max_length=100)
+    pack_ids: list[Text] = Field(default_factory=list, max_length=100)
+    tags: list[Text] = Field(default_factory=list, max_length=100)
 
 
 class PlanningContext(Contract):
@@ -170,7 +170,7 @@ class PlanningContext(Contract):
     cases: list[PlanningCase] = Field(default_factory=list, max_length=1000)
     workflow_ids: list[Identity] = Field(default_factory=list, max_length=2000)
     evidence_ids: list[Identity] = Field(default_factory=list, max_length=5000)
-    suite_id: Identity | None = None
+    suite_id: Text | None = None
     suite_state: Literal["ABSENT", "CURRENT", "STALE"] = "ABSENT"
     suite_digest: Digest | None = None
 
