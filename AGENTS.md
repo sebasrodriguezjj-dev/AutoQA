@@ -20,8 +20,10 @@ PRs and exact-head CI before treating it as current. Read the local Git state to
 Before work: confirm origin, branch, clean/dirty state and authorization boundaries;
 identify the active roadmap milestone; define acceptance criteria and file ownership.
 Never discard owner edits. A future milestone in the roadmap is not implementation
-authorization. Current authorization ends at unmerged foundation delivery and independent
-audit; do not begin V0.7 until the owner explicitly requests it.
+authorization. The approved foundation PR #5 was merged at
+`57a133626cc9c1b09ddf3039c6521e65ac5fdcc7`; V0.6.0 remains the stable product release.
+Current work is post-merge documentation reconciliation and independent audit only;
+do not begin V0.7 until the owner explicitly requests it.
 
 ## Organization and isolation
 
@@ -75,5 +77,7 @@ mandatory CI jobs associated with its exact current HEAD. Record actual executed
 and platform scope; never substitute earlier/pending CI. The Lead cannot declare success
 unless GitHub reflects the verified implementation or an explicit blocker. When blocked,
 publish safe verified work to a draft PR when possible and report the exact blocker.
-Merge/tag only when explicitly authorized and after gates pass. This foundation PR
-must remain unmerged. Record residual risks and stop at the authorized boundary.
+Roadmap changes, releases and merge/tag actions require explicit owner authorization;
+successful gates alone do not grant it. PR #5's approved merge does not authorize
+merging subsequent PRs. The context-reconciliation PR must remain unmerged for
+independent audit. Record residual risks and stop at the authorized boundary.

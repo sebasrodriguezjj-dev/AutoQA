@@ -9,7 +9,7 @@ are separated below. Do not treat historical authorization statements as new per
 ## Verified stable release (GitHub and Git observations)
 
 - Repository: [sebasrodriguezjj-dev/AutoQA](https://github.com/sebasrodriguezjj-dev/AutoQA).
-- Latest verified stable: **V0.6.0**. Official main/release SHA:
+- Latest verified stable: **V0.6.0**. Stable product release/tag target:
   [`bbd54ad0821cb6962c09d8a1149a0f40b936764b`](https://github.com/sebasrodriguezjj-dev/AutoQA/commit/bbd54ad0821cb6962c09d8a1149a0f40b936764b).
 - [PR #4](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/4) merged using a merge
   commit with parents V0.5 main `590832c229f9177c20eb4b928f78beac42488523` and promoted
@@ -17,13 +17,13 @@ are separated below. Do not treat historical authorization statements as new per
 - Approved candidate `6669f3911723cbb73f494196e4312ccdae321980` remains an ancestor.
 - Annotated [v0.6.0 tag](https://github.com/sebasrodriguezjj-dev/AutoQA/tree/v0.6.0):
   tag object `bea83dc984687dcde97416a8fa57bd2849f8aa0f`; remote peeled target equals
-  official main above. Verified through git ls-remote and local tag type/target.
+  stable release SHA above. Verified through git ls-remote and local tag type/target.
 - [Release-head CI run 45296528515](https://github.com/sebasrodriguezjj-dev/AutoQA/actions/runs/45296528515)
   completed success, verify job 138118224986, all steps successful. Run is associated
   with exact promoted PR head; checkout was synthetic merge `f091d87d86afa8aa40543225639de53adbd7a6ed`.
   Linux/Python 3.14.4: 304 passed / 1 expected native-Windows skip / 18 deselected in
   41.93s, plus package/install/export/independent collection and case/pack/full execution.
-- Integrated main has exactly the verified promoted tree `c5b09d92111b0f3b7ce0ec60c66a15e45afa4c6f`,
+- At V0.6.0 release integration, main had the verified promoted tree `c5b09d92111b0f3b7ce0ec60c66a15e45afa4c6f`,
   expected parents, version 0.6.0 and clean checkout. Fresh integrated compatibility,
   reliability and H01/H02 regression: **92 passed in 37.91s**.
 - Existing workflow runs on pull_request, not main/tag pushes. No separate hosted
@@ -33,22 +33,38 @@ are separated below. Do not treat historical authorization statements as new per
 
 Release branches feat/v04-development, feat/v05-development and feat/v06-development
 are preserved. feat/v06-development remains at promoted 530e436; it is merged, not an
-active candidate. Historical feat/v03-batch-* local refs remain untouched. main is the
-verified release SHA above at this observation.
+active candidate. Historical feat/v03-batch-* local refs remain untouched.
 
-Current integration branch: **chore/multiagent-foundation**, based on that stable main.
-The setup PR URL, final branch HEAD and associated exact-head hosted verification are
-recorded in the setup delivery section below and in that PR. The final commit is reported
-outside itself to avoid a self-referential SHA. Local pilot branches codex/pilot-product,
-codex/pilot-architecture and codex/pilot-qa-security are isolated review branches, not
-extra official PRs. Verify fresh remote active PR inventory at the next handoff.
+Current verified main: **`57a133626cc9c1b09ddf3039c6521e65ac5fdcc7`**, the approved
+foundation merge. [PR #5](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/5) is
+**merged/closed**, with parents stable V0.6.0 `bbd54ad0821cb6962c09d8a1149a0f40b936764b`
+and audited foundation HEAD `3ca20958420f4f76daf2dff77439170d7c4adeab`. Its integrated
+tree `e56b8327aa78ac464477dc39ffdd458148b27b27` equals the audited/CI-tested tree.
+The [exact foundation-head CI run 45398766348](https://github.com/sebasrodriguezjj-dev/AutoQA/actions/runs/45398766348)
+and [verify job 138461518035](https://github.com/sebasrodriguezjj-dev/AutoQA/actions/runs/45398766348/job/138461518035)
+passed all steps: Linux/Python 3.14.4, 304 passed / 1 expected native-Windows skip /
+18 deselected in 32.42s, plus package/install/independent export and execution.
+The tested synthetic merge was `dce49090ad2442b95146843b4432a4fdbaff6b52`; no new
+push-main CI is inferred. The owner approved the independent audit and explicitly
+authorized the subsequent merge. The stable V0.6.0 tag remains at its release SHA.
 
-Active milestone: **permanent engineering foundation on V0.6.0**. This task authorizes
-context/governance/review and its unmerged setup PR only. Next authorized objective
-is the owner's independent audit trigger **"Audita al dev"**. V0.7 Intelligent QA
-Planning and coverage-gap analysis is the next proposed product milestone, not currently
-authorized development. Do not implement it or alter the owner roadmap without explicit
-authorization. See [roadmap](roadmap.md) and [workflow](multiagent-workflow.md).
+Current documentation branch: **codex/docs-post-merge-context**, based on verified main.
+Fresh GitHub inspection found no open PR before this reconciliation's publication.
+The focused [documentation PR #6](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/6)
+targets main and must remain unmerged for independent audit. Its final
+HEAD, verification results and CI links are recorded in that PR and the external handoff;
+this document cannot embed its own eventual commit SHA. Verify fresh GitHub state at
+the next handoff. The original `chore/multiagent-foundation` branch is preserved at the
+audited HEAD. Local pilot branches codex/pilot-product, codex/pilot-architecture and
+codex/pilot-qa-security and all three clean specialist worktrees are preserved.
+
+Active work: **post-merge engineering-context reconciliation**, documentation only.
+The foundation is integrated; its original delivery and recovery records below are
+historical. Next action is independent audit of this reconciliation ("Audita al dev").
+V0.7 Intelligent QA Planning and coverage-gap analysis remains the next planned product
+milestone, **not implemented** and not authorized by this task. The owner must explicitly
+initiate its development. Roadmap changes, releases and PR merges also require explicit
+owner authorization. See [roadmap](roadmap.md) and [workflow](multiagent-workflow.md).
 
 ## Implemented source-controlled facts
 
@@ -90,7 +106,39 @@ code execution, session acquisition/refresh and remote setup/teardown. Roadmap o
 remain proposed; some historical opportunities were superseded by later delivered scope,
 so read the latest implementation map rather than assuming every old proposal shipped.
 
-## Verification evidence and setup delivery
+## Current reconciliation verification (2026-11-24)
+
+The complete reusable release gate returned **exit 0** on the documentation branch:
+**305 passed / 18 deselected in 193.72s**, Ruff lint/format (67 files), 37-package lock,
+frozen compatibility, wheel/sdist inventory, installed 0.6.0 import/distribution/CLI,
+approved export metadata and independent dependencies with AutoQA absent. Standalone
+validation and complete collection passed; case/pack/all each executed successfully
+with one passed invocation and two actual operations. Log:
+`.test-work/context-reconciliation-gates.log`; disposable package acceptance:
+`.test-work/release-gate-d_nxhu7y`. No browser, client or live-AI benchmark was repeated.
+
+Consistency checks passed for 201 relative Markdown destinations and four role TOML
+definitions. Exact comparisons preserve the owner-defined future roadmap, ten-stage
+product workflow, mandatory gate commands, historical architecture and original
+recovery/publication evidence. Only seven current context/instruction files change;
+product code, dependencies, tests, workflows, specialist roles, pilot records and
+compatibility fixtures are unchanged. Scoped inventory reviewed 146 tracked files
+plus frozen ZIP members, with no conventional credential/private-output findings;
+this does not establish universal secret detection or a forensic history audit.
+
+The [PR #6 checks view](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/6/checks)
+tracks the final published HEAD. Exact-HEAD CI and inspected job logs remain a post-commit
+delivery requirement, recorded in that PR and the handoff after execution. The PR
+must remain unmerged for independent audit; these local checks do not authorize merge.
+
+## Historical foundation verification and setup delivery
+
+The remaining sections preserve the original release/foundation delivery and recovery
+observations as dated historical evidence. Their pre-audit instructions to leave PR #5
+unmerged, and the then-current branch/main descriptions, were superseded by the approved
+merge recorded above. They do not revoke that merge or authorize future development.
+The [original audited handoff](https://github.com/sebasrodriguezjj-dev/AutoQA/blob/3ca20958420f4f76daf2dff77439170d7c4adeab/docs/project-state.md)
+retains the complete pre-merge record at its immutable commit.
 
 [Stable release gate](v06-stable-release-gate.md) records local full checks:
 305 passed / 18 deselected in 235.66s; Ruff 67 files; 37-package lock with root-version-only
@@ -105,7 +153,9 @@ worktrees, commits, checks, coordination and limits. Native desktop delegation i
 installed CLI 0.114.0 separately reports multi_agent disabled. Profiles are reusable
 instructions, not a claim of automatic CLI loading or access-control isolation.
 
-Setup PR must remain **open and unmerged**. Final delivery stops there. Do not begin V0.7.
+Original pre-audit delivery boundary: setup PR must remain **open and unmerged**.
+That historical boundary was satisfied before the owner's subsequent merge authorization.
+V0.7 remains outside this reconciliation's scope.
 
 ## Interrupted-session recovery (2026-11-24)
 
@@ -144,7 +194,7 @@ unchanged at the recorded release, no setup branch and no active PR before publi
 Publication details are recorded in the setup PR; final PR HEAD is recorded there and
 in the external handoff rather than embedding this document's own commit SHA.
 
-## Setup publication handoff
+## Setup publication handoff (historical, before approved merge)
 
 The single setup [PR #5](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/5) targets
 main from `chore/multiagent-foundation` and remains **open and unmerged**. Fresh remote

@@ -9,11 +9,14 @@ workflow and the [project state](project-state.md) for the current verified hand
 
 V0.6.0 is the latest verified stable release, integrated by PR #4 at
 `bbd54ad0821cb6962c09d8a1149a0f40b936764b`; annotated `v0.6.0` targets that commit.
-The foundation setup is documentation/governance work based on that release, not
-V0.7 development. Deliver one reviewed setup PR and leave it unmerged. The next
-owner action is independent audit triggered by "Audita al dev". A later V0.7
-startup requires explicit owner authorization and fresh GitHub verification.
-These publication observations were verified by the Lead on 2026-11-23,
+The approved foundation [PR #5](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/5)
+is merged at `57a133626cc9c1b09ddf3039c6521e65ac5fdcc7`, the currently verified main.
+This engineering-context integration is separate from the stable product release;
+it implements no V0.7 features. Current authorized work is post-merge documentation
+reconciliation, followed by independent audit of its unmerged documentation PR.
+V0.7 remains the next planned milestone; startup requires explicit owner authorization
+and fresh GitHub verification. Releases also require explicit owner authorization.
+These publication observations were verified by the Lead on 2026-11-24,
 America/Costa_Rica; they are a dated snapshot, not a live GitHub query.
 
 ## Owner-defined future milestones (proposed, not implemented)
