@@ -446,6 +446,12 @@ def test_combined_cookie_ui_api_independent(project, api_server, tmp_path):
     ui = plan(project, authorization=ctx)
     approve(project, [ui[0].id], authorization=ctx)
     prepare(project, tmp_path / "api.json", [spec(origin)])
+    from autoqa.framework_runtime.management import TestPack
+    from autoqa.management import approve_suite, propose
+
+    membership = propose(project)
+    membership.packs = [TestPack(id="SMOKE", case_ids=[ui[0].id])]
+    approve_suite(project, membership, ctx)
     export = tmp_path / "combined"
     ApplicationEngine(project, ctx).build_framework(export)
     manifest = validate(export)
@@ -488,6 +494,24 @@ def test_combined_cookie_ui_api_independent(project, api_server, tmp_path):
         result = json.loads(latest.read_text())
         assert process.returncode == (1 if missing else 0), process.stdout + process.stderr
         assert result["counts"] == ({"PASSED": 1, "ERROR": 1} if missing else {"PASSED": 2})
+    for arguments in [["--case", ui[0].id], ["--pack", "SMOKE"]]:
+        process = subprocess.run(
+            [str(python), "-m", "qa_runtime.runner", "run", *arguments],
+            cwd=export,
+            env=clean,
+            capture_output=True,
+            text=True,
+            timeout=50,
+        )
+        assert process.returncode == 0, process.stdout + process.stderr
+        latest = max(
+            (export / "artifacts").glob("*/results.json"), key=lambda p: p.stat().st_mtime_ns
+        )
+        result = json.loads(latest.read_text())
+        assert result["counts"] == {"PASSED": 1}
+        assert result["scope"] == "SELECTED_SCOPE"
+        assert result["accounting"]["ui"] == 1 and result["accounting"]["api"] == 0
+        assert len(result["steps"]) == 2
     for path in (export / "artifacts").rglob("*"):
         if path.is_file():
             assert "synthetic-cookie" not in path.read_text(encoding="utf-8")

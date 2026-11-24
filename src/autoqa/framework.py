@@ -234,7 +234,7 @@ def compile_blueprint(project):
     cases = [c for c in project.cases() if c.review_status == "approved"]
     if not cases:
         raise ValueError("No approved scenarios; review and approve before building")
-    has_ui = any(c.kind != "api" for c in cases)
+    has_ui = any(c.kind != "api" and c.feasible for c in cases)
     scope = Scope(project.config.application_url, project.config) if has_ui else None
     discovery = project.discovery() if has_ui else None
     pages, scenarios, unsupported, selected, api_scenarios = {}, [], {}, [], []
@@ -380,6 +380,10 @@ class FrameworkService:
         destination = checked_destination(self.project, destination)
         blueprint, cases = compile_blueprint(self.project)
         files = _render(blueprint)
+        from autoqa.management import export_inventory
+
+        inventory = export_inventory(self.project, cases, blueprint.unsupported)
+        files["review/management.json"] = encoded(inventory.model_dump())
         requirements = _requirements()
         config = self.project.config.model_dump(
             exclude={"repository", "ai_provider", "ai_model", "auth_reference"}
@@ -422,6 +426,10 @@ class FrameworkService:
             "version": __version__,
             "files": {name: sha(text) for name, text in files.items()},
             "cases": {case.id: case_signature(case) for case in cases},
+            "operation_counts": {
+                **{s.id: len(s.methods) for s in blueprint.scenarios},
+                **{s.id: 2 for s in blueprint.api_scenarios},
+            },
         }
         if protected:
             manifest["privacy"] = "summary_only"
@@ -449,7 +457,7 @@ class FrameworkService:
             "unsupported": blueprint.unsupported,
         }
 
-    def run(self, destination: Path):
+    def run(self, destination: Path, selection=None):
         require_authorization(self.authorization, self.project.root, "execute")
         manifest = validate(destination)
         current = {case.id: case for case in self.project.cases()}
@@ -458,6 +466,29 @@ class FrameworkService:
             if not case or case.review_status != "approved" or case_signature(case) != signature:
                 raise ValueError("Project approvals changed; review and build a new framework")
             verify_approval_binding(self.project, case)
+        from autoqa.framework_runtime.management import TestSelection, load_inventory, select
+
+        plan = select(load_inventory(destination, manifest), selection or TestSelection())
+        from autoqa.management import export_inventory
+
+        current_suite = export_inventory(self.project, [current[i] for i in manifest["cases"]], {})
+        if self.project.storage.path("test-cases/management.json").exists():
+            from autoqa.framework_runtime.management import digest
+
+            if digest(current_suite) != digest(load_inventory(destination, manifest)):
+                raise ValueError("Current suite membership changed; export again")
+        self.project.audit("Framework selection " + plan.model_dump_json())
+        arguments = []
+        if "review/management.json" not in manifest["files"]:
+            if plan.selection.mode != "all":
+                raise ValueError(
+                    "Historical export has no selective runner; re-export after review"
+                )
+        elif plan.selection.mode == "all":
+            arguments = ["--all"]
+        else:
+            for value in plan.selection.values:
+                arguments += ["--" + plan.selection.mode, value]
         import os
         import subprocess
         import sys
@@ -468,7 +499,7 @@ class FrameworkService:
             if k.upper() not in {"PYTHONPATH", "PYTEST_ADDOPTS", "PYTEST_PLUGINS"}
         }
         completed = subprocess.run(
-            [sys.executable, "-m", "qa_runtime.runner", "run"],
+            [sys.executable, "-m", "qa_runtime.runner", "run", *arguments],
             cwd=destination,
             env=environment,
             timeout=self.project.config.overall_timeout_seconds + 60,
@@ -491,11 +522,22 @@ uv run playwright install chromium
 uv run python -m qa_runtime.runner validate
 uv run python -m qa_runtime.runner collect
 uv run python -m qa_runtime.runner run
+uv run python -m qa_runtime.runner run --case TC-EXAMPLE
+uv run python -m qa_runtime.runner run --pack SMOKE
+uv run python -m qa_runtime.runner run --all
 ```
 
 Alternatively create a Python 3.14 virtual environment and pip install -r requirements.txt,
 then run the same python -m commands. Run from this directory. Dependency versions are
 pinned to the builder environment; uv resolves transitive dependencies into its own lock.
+V0.6 adds --case, --pack, --suite, --tag and --all (one mode per invocation).
+Repeat --case/--pack/--tag within a mode; overlapping membership executes once.
+Use source suite-propose and suite-approve before export to review membership.
+No selection flag preserves default approved-enabled regression selection. Unknown,
+disabled, unapproved or empty selections fail without falling back to all tests.
+Reports distinguish logical cases from parameter row invocations and selected scope
+from full regression. Unsupported approved-enabled cases make regression incomplete.
+A suite snapshot/digest and timestamps are retained in every run's results.json.
 The runner collects before executing; collection and test failures return nonzero.
 Use the runner rather than direct pytest to retain unique runs and integrity checks.
 

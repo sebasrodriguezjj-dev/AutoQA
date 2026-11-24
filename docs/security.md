@@ -44,3 +44,30 @@ management; no automated age-based purge or full screenshot/trace redaction is c
 The subprocess remains unsandboxed, receipts unsigned, filesystem trusted and storage
 single-writer. Local Windows/Chromium and loopback HTTP evidence do not certify arbitrary
 client services, public HTTPS infrastructure or other platforms. See [V0.5 audit](v05-release-candidate.md).
+
+
+## V0.6 inspection, selection and accounting
+
+Framework analysis is static and bounded, never executes repository source or
+installs its dependencies. Inspected links/junctions/traversal, unreadable traversal
+and resource budget exhaustion block complete analysis. Excluded vendor/cache/data
+scope and heuristic AST/config detection are disclosed; this is not coverage proof.
+No automatic changes to existing client source are implemented. Suite review writes
+only explicit AutoQA metadata and retains approval snapshots; scenario review remains
+separate. Receipts and hashes are unsigned, single-writer trusted-local safeguards.
+
+Selections use exact stable case/pack/suite IDs or reviewed tags, generate argument
+lists internally and never accept shell commands or arbitrary Pytest expressions.
+Overlaps deduplicate; unknown/empty/disabled/pending selections fail without fallback.
+Current source membership changes require a new export. Independent snapshots cannot
+observe source revocation. Full scope includes approved-enabled unsupported cases,
+which make execution incomplete rather than disappearing from a pass.
+
+Run reports retain snapshot/digest, identities, UTC timestamps and actual JUnit/step
+references. Missing/duplicate/malformed/foreign evidence, incomplete expected operation
+counts, skipped or unsupported scope cannot become a successful complete run.
+API network/authentication/privacy restrictions are retained. Tags and manually
+reviewed metadata are not universally redacted; never put secrets or client PII there.
+No OS sandbox, multi-user identity, signed approval, concurrent writers or complete
+cross-platform browser guarantee is added. The historical V0.5 intermittent incident
+remains independently unroot-caused. See [current audit](v06-release-candidate.md).
