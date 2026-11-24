@@ -171,6 +171,15 @@ class PlanningContext(Contract):
     cases: list[PlanningCase] = Field(default_factory=list, max_length=1000)
     workflow_ids: list[Identity] = Field(default_factory=list, max_length=2000)
     evidence_ids: list[Identity] = Field(default_factory=list, max_length=5000)
+    workflow_provenance: dict[
+        Identity,
+        Literal[
+            "OBSERVED", "SOURCE", "INFERRED", "VERIFIED_REQUIREMENT", "REQUIRES_REVIEW", "UNKNOWN"
+        ],
+    ] = Field(default_factory=dict, max_length=2000)
+    evidence_provenance: dict[
+        Identity, Literal["OBSERVED", "SOURCE", "INFERRED", "VERIFIED_REQUIREMENT", "UNKNOWN"]
+    ] = Field(default_factory=dict, max_length=5000)
     suite_id: Label | None = None
     suite_state: Literal["ABSENT", "CURRENT", "STALE"] = "ABSENT"
     suite_digest: Digest | None = None
@@ -180,6 +189,10 @@ class PlanningContext(Contract):
         unique([c.id for c in self.cases], "case IDs")
         unique(self.workflow_ids, "workflow IDs")
         unique(self.evidence_ids, "observed evidence IDs")
+        if not self.workflow_provenance.keys() <= set(
+            self.workflow_ids
+        ) or not self.evidence_provenance.keys() <= set(self.evidence_ids):
+            raise ValueError("Provenance must reference known inventory identities")
         return self
 
 
