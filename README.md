@@ -1,4 +1,4 @@
-# AutoQA Agent 0.7.0rc1
+# AutoQA Agent 0.7.0
 
 A private professional QA engineering tool supporting its owner's QA Automation Engineering services. The source repository may be public; client workspaces and evidence remain private. It is a local Python CLI, with no SaaS or subscription offering. AutoQA explores an authorized application, records visible UI evidence, proposes reviewable scenarios, generates approved Playwright tests, executes them with Pytest, and renders actual results as HTML or JSON. It works offline; optional AI produces review-only recommendations.
 
@@ -6,7 +6,7 @@ The retained V0.2 foundation includes passive functional control discovery, brow
 
 V0.3 adds versioned domain contracts, storage/reporting boundaries, project-bound discovery and planning services, approval receipts, shared generation/execution services and an in-process application engine. New suites require receipts matching the reviewed scenario at generation and execution. Historical generated suites retain legacy checks. See [final delivery](docs/v03-final-delivery.md), [audit](docs/v03-release-audit.md) and [release verification](docs/v03-release-finalization.md).
 
-## V0.7 intelligent planning candidate
+## V0.7.0 intelligent planning
 
 V0.7 adds bounded supplied-requirement JSON, explicit reviewed requirement-to-case
 mappings, missing/uncertain/unsupported/stale coverage findings, explained risk and
@@ -24,7 +24,8 @@ uv run autoqa requirements-import examples/v07_requirements.json --project proje
 uv run autoqa plan-review PLAN_ID --accept PROP_ID --project projects/owned
 ```
 
-This is **0.7.0rc1**, not stable V0.7.0. Stable v0.6.0 remains preserved. See
+This is **0.7.0**, promoted from the independently approved RC1. Earlier stable tags
+remain preserved. See the [V0.7 stable release gate](docs/v07-stable-release-gate.md),
 [planning guide](docs/v07-intelligent-planning.md), [candidate evidence](docs/v07-release-candidate.md)
 and [dated project state](docs/project-state.md). Owner authorization controls merges,
 releases and future roadmap changes; no V0.8 maintenance is included.

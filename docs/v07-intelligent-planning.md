@@ -1,9 +1,10 @@
 # V0.7 Intelligent QA Planning and Coverage Gap Analysis
 
-The V0.7 candidate adds bounded deterministic planning over explicitly supplied JSON
+V0.7 adds bounded deterministic planning over explicitly supplied JSON
 requirements and current local QA inventory. It does not ingest arbitrary documents,
 execute inspected code, modify client applications or create executable tests from
 proposals. See [contract/interface agreement](v07-interface-agreement.md) and
+[stable release gate](v07-stable-release-gate.md) and
 [current dated handoff](project-state.md) for implementation/verification status.
 
 ## Input and provenance

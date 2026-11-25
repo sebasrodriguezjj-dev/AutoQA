@@ -11,14 +11,14 @@ The owner-approved sequence below is enduring product direction. Current impleme
 scope, stable release, candidate, active branch/PR, authorization and verification
 belong in dated [project state](project-state.md) and version-specific delivery records.
 Verify live GitHub before relying on status. A roadmap milestone is not automatic
-permission to implement, merge or release. The owner has explicitly initiated V0.7;
+permission to implement, merge or release. V0.7 delivered scope and stable publication are recorded in project-state;
 V0.8 remains the next milestone after V0.7, without authorizing its implementation.
 
-## Owner-defined future milestones (proposed, not implemented)
+## Owner-defined milestone sequence
 
 | Milestone | Intended objective | Status and authorization boundary |
 | --- | --- | --- |
-| V0.7 | Intelligent QA Planning and coverage-gap analysis. | Authorized development milestone; current delivery status is recorded in project-state. |
+| V0.7 | Intelligent QA Planning and coverage-gap analysis. | Delivered planning scope; stable publication evidence is recorded in project-state. |
 | V0.8 | Maintenance, diagnosis, reliability, reviewed repairs, safe manual-code reconciliation and test-data foundations. | Owner-approved future direction; exact implementation requires separate authorization, with no automatic repair/self-healing claim. |
 | V0.9 | QA Operations, local UI, project/developer setup, repository management, test-data UI, VS Code skills, dashboards, history and CI integrations. | Approximate owner-approved allocation; current CLI/artifacts are the baseline, not delivery of these future interfaces. |
 | V1.0 | Integrated professional workflow validation for a supervised end-to-end QA Engineering agent. | Owner-approved validation objective; no arbitrary client certification or SaaS conversion. |

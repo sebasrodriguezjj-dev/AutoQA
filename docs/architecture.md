@@ -15,6 +15,12 @@ case_signature, verify_approval_binding and export_inventory over one read snaps
 Typed context preserves actual workflow/evidence provenance; only OBSERVED supports
 declared observation references, ambiguous evidence categories fail, and provenance
 participates in the canonical plan digest.
+[ADR 0005](decisions/0005-reviewed-semantic-observation-bindings.md) adds versioned
+semantic observation fingerprints and explicit independently reviewed requirement
+bindings. Same-ID semantic drift invalidates planning disposition; accepting a plan
+cannot refresh a stale requirement relationship. Only hash maps enter context, with
+volatile metadata excluded and conflicting observations rejected.
+
 It reuses current project-bound plan/review intent and LocalProjectStorage for two
 new sidecars. Read-only analysis does not persist or append events. Explicit import
 writes requirements-v07.json; explicit accepted/rejected planning review writes

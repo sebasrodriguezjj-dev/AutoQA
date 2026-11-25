@@ -1,5 +1,54 @@
 # Permanent project state and engineering handoff
 
+## V0.7.0 stable release handoff — 2026-11-25 (America/Costa_Rica)
+
+The owner independently approved candidate b3a709cd944779a83beda69e7ec3ca0d94140893
+and explicitly authorized metadata promotion, fresh gates, PR #7 merge by merge commit,
+and annotated v0.7.0 publication at verified official main. This supersedes the dated
+candidate-only restrictions below; their original evidence remains historical.
+
+This tree contains stable **0.7.0** metadata and the audited V0.7 functionality, including
+accepted H03 semantic identity/explicit relationship bindings, original provenance and
+D02 context corrections. There is no runtime change from the approved candidate.
+See [stable release gate](v07-stable-release-gate.md) for verification and retained risks.
+Historical RC1 evidence remains in [candidate record](v07-release-candidate.md).
+
+Stable promotion local gate: exit 0, **506 passed / 18 deselected**, no Windows skips
+or failures; Ruff, lock/frozen compatibility, H01/H02/provenance/H03, build/install,
+four planning commands, independent COMPLETE collection and actual case/pack/full
+execution passed. Documentation/roles/history and scoped inventory checks passed.
+Stable CI must certify the new promotion HEAD; prior RC1 CI is historical evidence.
+
+Authoritative publication evidence is the [PR #7 handoff](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/7),
+its exact-promotion-HEAD checks and the annotated
+[v0.7.0 tag](https://github.com/sebasrodriguezjj-dev/AutoQA/tree/v0.7.0).
+The release transaction records promotion HEAD, CI run/job/actual checkout, official
+merge commit/tree and tag object/peeled target there after each verified step. Verify
+those live refs before relying on publication; metadata alone does not establish it.
+This avoids self-referential SHAs or another context-reconciliation PR. Earlier stable
+tags, original specialist worktrees and dirty copies are preserved.
+
+V0.7 delivers bounded supplied-requirement planning, reviewed mappings, explicit gaps,
+explained risk and manual proposals; it remains read-only except explicit V0.7 import/
+planning disposition. Accepted proposals never approve scenarios/suites or execution.
+Coverage remains SUPPLIED_REQUIREMENTS_ONLY and execution coverage NOT_ASSESSED.
+AGENTS and all four role profiles remain enduring instructions on integrated main.
+
+Next proposed milestone: **V0.8 — Maintenance, Diagnosis and Reliability**, subject to
+separate Product Owner authorization. No implementation is authorized here. ADR 0004's
+future professional workflow vision/allocation remains unchanged. Stop after verified
+stable publication; the owner will request the final independent release audit: "Audita".
+
+Trusted local filesystem/operator, single-writer storage, unsigned records, no OS
+sandbox/universal secret or PII redaction, manual retention, limited browser/platform
+validation, unroot-caused historical V0.5 evidence incident and unverified automatic
+agent-profile loading remain. Fingerprints protect recorded meaning, not authenticated
+identity or complete application behavior. No new browser/client/live-AI claim.
+
+---
+
+# Historical V0.7 candidate handoff (superseded by stable promotion)
+
 Last verification: **2026-11-24, America/Costa_Rica**. This is a dated handoff, not live
 GitHub. Verify current refs/PRs/checks before trusting it; enduring rules are in AGENTS.
 
