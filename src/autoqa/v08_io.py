@@ -2,7 +2,7 @@
 
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 from autoqa.domain import artifact_reference
 from autoqa.v08_contracts import AutomationRevision, SourceFile, digest
@@ -11,8 +11,24 @@ MAX_BYTES = 1_000_000
 MAX_TOTAL = 5_000_000
 
 
+def _local_path(value):
+    raw = str(value)
+    normalized = raw.replace("\\", "/")
+    drive = PureWindowsPath(raw).drive
+    tail = raw[len(drive) :] if drive else raw
+    if (
+        normalized.startswith("//")
+        or "://" in raw
+        or ":" in tail
+        or (drive and not PureWindowsPath(raw).is_absolute())
+        or any(ord(c) < 32 for c in raw)
+    ):
+        raise ValueError("Only explicit local filesystem paths are supported")
+    return Path(value).absolute()
+
+
 def checked_root(path):
-    root = Path(path).absolute()
+    root = _local_path(path)
     if ".." in root.parts or any(p.is_symlink() or p.is_junction() for p in [root, *root.parents]):
         raise ValueError("Invalid local source root")
     if not root.is_dir():
@@ -21,7 +37,7 @@ def checked_root(path):
 
 
 def read_bytes(path, limit=MAX_BYTES):
-    candidate = Path(path).absolute()
+    candidate = _local_path(path)
     if ".." in candidate.parts or any(
         p.is_symlink() or p.is_junction() for p in [candidate, *candidate.parents]
     ):
