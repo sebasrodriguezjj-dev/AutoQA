@@ -97,3 +97,11 @@ executable code. No plan action grants mutation or execution authority. These re
 are unsigned local data, not a second scenario-approval system or an identity boundary.
 Trusted filesystem/single-writer assumptions and concurrent check/use limitations remain.
 See [planning guide](v07-intelligent-planning.md) and [ADR 0003](decisions/0003-additive-requirement-planning.md).
+
+V0.7 observation provenance is retained explicitly in planning context. A known SOURCE,
+INFERRED, VERIFIED_REQUIREMENT or UNKNOWN ID cannot satisfy declared observed support
+or earn the observed-functionality risk contribution. Missing provenance is unknown;
+conflicting categories for one evidence ID fail without writes. Provenance drift changes
+the plan digest and makes planning disposition stale, rather than silently retaining
+acceptance. These safeguards were added after failing independent regressions, not
+inferred from an earlier passing gate.

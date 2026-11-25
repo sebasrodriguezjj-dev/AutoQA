@@ -71,6 +71,38 @@ left every original project file byte-identical; repeating analysis returned the
 snapshot. Actual JSON is in ignored .test-work/v07-planning-example-2lxci1yg/plan.json.
 The example is declarative fixture evidence, not proof of arbitrary client behavior.
 
+## Interrupted recovery and reproduced provenance defect
+
+Recovered Lead HEAD538f20f with13modified tracked files and5untracked candidate records;
+all preserved in checkpoint0d8d6e6. Existing specialist branches/worktrees were inspected,
+not recreated. Backend fix c23de59 was recovered as9dcc88d. Missing QA ambiguity repro
+8a1fd2d was recovered as ef97669. Framework adapter/test and QA fixture changes remained
+uncommitted in their original worktrees; exact patches were retained and integrated as
+**dd12809** after inspection and focused verification. Original working copies remain
+untouched. All initial specialist patches occur exactly once in the integration history.
+
+Initial pre-correction full regression passed **444 /18deselected in210.88s**, and its
+package/installed planning/independent execution gates completed. That result did not
+cover the later corrections and was not accepted as final candidate certification.
+
+Lead review found actual provenance erasure: known SOURCE/INFERRED references could
+receive observed-functionality risk and confirm explicitly observed support; provenance
+drift could preserve accepted planning disposition. Independent QA reproduced **7failed /
+81deselected in4.89s** on the Lead tree (.test-work/v07-provenance-before.log), plus a
+separate failing ambiguous-category regression. Backend independently reproduced11new
+failures before its bounded pure-planner repair. No failing assertion was removed.
+
+The correction preserves workflow.status/evidence.category in typed context, requires
+OBSERVED for declared observation support, treats missing provenance as unknown, rejects
+conflicting evidence categories and includes all provenance in the plan digest. Positive
+fixtures now explicitly declare OBSERVED support; negative SOURCE/INFERRED/UNKNOWN/
+VERIFIED_REQUIREMENT/missing cases remain independent regressions. Same-category evidence
+repetitions deduplicate; provenance drift makes old review stale and rejects stale writes.
+
+Recovered focused provenance gate: **39passed /141deselected in5.54s**. Complete V0.7
+planning/integration/adversarial slice: **180passed in13.29s**. No product-runtime
+change followed that verified correction; the final complete gate below certifies it.
+
 ## Final release-quality gates
 
 Full gates, package/install/independent framework acceptance, documentation/inventory

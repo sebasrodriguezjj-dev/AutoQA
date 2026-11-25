@@ -18,7 +18,9 @@ Add independent strict schema 0.7 DTOs, a pure deterministic planner and a focus
 service. Explicit source/requirement/evidence/mapping data is the reviewed inventory;
 missing, uncertain, unsupported and stale relationships stay visible. Confirmation
 requires explicit exact-signature mapping and the existing case receipt, never inferred
-semantic equivalence. Outputs cover supplied requirements only, show counts without
+semantic equivalence. Retain actual observation provenance: known SOURCE/INFERRED/
+UNKNOWN facts are not OBSERVED support. Reject conflicting categories and bind review
+to provenance-sensitive snapshots. Outputs cover supplied requirements only, show counts without
 percentages and always state executed coverage NOT_ASSESSED.
 
 Read-only analysis uses current cases/receipts/discovery/suite state without persistence.

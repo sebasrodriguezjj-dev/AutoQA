@@ -85,6 +85,54 @@ only explicit import/review writes new sidecars. Accepted proposals do not appro
 or suite membership. Execution coverage is NOT_ASSESSED; no percentages are fabricated.
 See [planning guide](v07-intelligent-planning.md) for the exact workflow and boundaries.
 
+## Owner-approved V1.0 product requirements (future scope)
+
+The owner approved this expanded direction during the interrupted V0.7 cycle. It is
+**private, local-first, code-first, human-supervised, evidence-driven professional QA
+Engineering**, not SaaS. Private client projects/data remain private regardless of source
+repository visibility. These requirements do not expand V0.7 beyond Intelligent QA
+Planning and Coverage Gap Analysis. Later implementation needs separate authorization.
+
+- **Local application/workspace:** one-time Application Setup, multiple independent QA
+  projects, guided per-project setup, environment/dependency validation and Developer
+  Mode with direct VS Code integration. The current CLI/project registry is a foundation,
+  not an implemented guided desktop/UI experience.
+- **Repository Management:** independent per-project Application Repository and Automation
+  Repository. Client application source is read-only by default; automation source is
+  independently editable and version-controlled. Support local Git creation and optional
+  explicitly authorized private GitHub publication, branches/commits/diffs/synchronization/
+  PRs/CI, application-change tracking and evidence-grounded impact analysis. Never
+  automatically modify the client's application repository. Exported frameworks remain
+  usable independently of AutoQA. Engineering-agent Git tools are not a delivered product
+  Repository Management interface.
+- **Professional automation engineering:** readable source with stable case IDs,
+  descriptions, useful comments, steps and Page Objects; manual VS Code development,
+  requested AI assistance and hybrid UI/IDE workflows. Safely reconcile manually edited
+  automation, propose maintenance for review, preserve assertions/expected behavior and
+  support traceable imports of manually executed results. Existing integrity guards must
+  not be bypassed to simulate this future capability.
+- **Test Data Manager:** credentials, documents, datasets and environment-specific
+  references; secure secrets outside tracked source; references usable by manually
+  authored and generated tests; reusable fixtures, data versioning/relevant change tracking,
+  evidence privacy and sensitive-data protection. Current environment credential references
+  and deterministic fixtures do not constitute the full future manager.
+- **Dashboards:** Quality Overview, Coverage & Traceability, Execution History, Test
+  Stability and Release Readiness. Every view must distinguish actual verified results,
+  predictions, static mappings and incomplete evidence. Planning mappings are never
+  relabeled as executed coverage.
+- **VS Code Agent Skills:** three preinstalled repository-level skills named
+  `test-case-engineer`, `test-data-engineer` and `test-debugger`, used by the selected coding
+  assistant directly in VS Code. AutoQA manages installation/configuration/updates. Verify
+  each provider's compatibility and installation conventions before implementation; do
+  not build a duplicate coding chat inside AutoQA. V0.7 neither installs these skills
+  nor claims cross-provider support.
+
+Approximate allocation: V0.8 maintenance/reliability/manual-code reconciliation/test-data
+foundations; V0.9 local UI, project/developer setup, repository management, test-data UI,
+VS Code skill installation and dashboards; V1.0 integrated professional workflow
+validation. Exact later-version scope remains subject to separate owner authorization.
+See [roadmap](roadmap.md) and [ADR 0004](decisions/0004-owner-approved-professional-workflow-vision.md).
+
 ## Operating limits that must remain visible
 
 V0.6.0 requires a trusted local operator/filesystem and single-writer storage. Intent

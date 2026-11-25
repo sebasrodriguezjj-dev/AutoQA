@@ -12,6 +12,9 @@ manual-review proposals without IO/network/provider calls.
 [intelligent_planning_service.py](../src/autoqa/intelligent_planning_service.py) reads
 bounded confined current cases/receipts/discovery/suite data, adapting existing
 case_signature, verify_approval_binding and export_inventory over one read snapshot.
+Typed context preserves actual workflow/evidence provenance; only OBSERVED supports
+declared observation references, ambiguous evidence categories fail, and provenance
+participates in the canonical plan digest.
 It reuses current project-bound plan/review intent and LocalProjectStorage for two
 new sidecars. Read-only analysis does not persist or append events. Explicit import
 writes requirements-v07.json; explicit accepted/rejected planning review writes
@@ -29,6 +32,19 @@ See [operator guide](v07-intelligent-planning.md), [shared interface](v07-interf
 [ADR 0003](decisions/0003-additive-requirement-planning.md) and version-specific candidate
 evidence for exact bounds and verification. No web service, frontend, model-provider
 dependency, arbitrary document parser or client-source execution is introduced.
+
+## Approved future architecture concerns (not implemented in V0.7)
+
+The owner-approved [professional workflow vision](product-vision.md) introduces future
+local application/setup and per-project guided/Developer Mode interfaces, separate
+Application/Automation Repository roles, reviewed manual-code reconciliation, Test Data
+Manager, evidence-truthful dashboards and provider-specific VS Code skills management.
+[ADR 0004](decisions/0004-owner-approved-professional-workflow-vision.md) records the scope.
+Application source remains read-only by default, automation stays independently runnable,
+secrets stay outside tracked code and manual-result imports need traceable provenance.
+These are future design constraints, not implemented adapters/services in the module map.
+No local UI, repository manager, data manager, skill installer, duplicate coding chat or
+manual-code trust bypass is added to V0.7. Concrete designs need separate authorization.
 
 ## Retained V0.6 architecture and earlier history
 

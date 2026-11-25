@@ -15,7 +15,10 @@ independently authenticated. Requirements include stable REQ-* IDs, description,
 source_id, review_status, kind, optional expected_behavior, priority, business_criticality
 and user_impact (1..5). Evidence references point to supplied source records. Optional
 related_ids reference declared requirements. Workflow/observed-evidence IDs refer only
-to the actual current discovery inventory; unknown IDs remain insufficient evidence.
+to the actual current discovery inventory. Context preserves workflow_provenance and
+evidence_provenance; only OBSERVED supports these explicitly observed references.
+SOURCE, INFERRED, UNKNOWN, VERIFIED_REQUIREMENT and missing provenance remain
+insufficient for observation-based confirmation/risk even when the ID is known.
 
 Mappings explicitly bind requirement_id to an existing TC-* case, its case_signature,
 a review_status and rationale. Copy exact current signatures from intelligent-plan's
@@ -54,6 +57,9 @@ it remains MANUAL_REVIEW. Implement an executable scenario only through the exis
 reviewed UI/API workflow, then explicitly approve it and review suite membership.
 
 Review binds the exact deterministic PLAN-* input/context digest and stable PROP-* IDs.
+Provenance maps participate in that digest: downgrading observation to source invalidates
+prior planning acceptance. Conflicting categories for one evidence ID fail; identical
+same-category repetitions may deduplicate.
 Changed requirements, current cases/signatures/review/receipt validity, observed evidence or suite
 context invalidate prior planning decisions. Stale reviews remain disclosed and cannot
 silently carry acceptance forward. Unknown/empty/duplicate review IDs and stale plan

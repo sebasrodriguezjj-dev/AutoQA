@@ -30,27 +30,49 @@ See [ADR 0002](decisions/0002-enduring-instructions-and-dated-state.md).
 V0.6 architecture, approvals, schemas and security remain the compatibility baseline.
 The historical V0.5 intermittent incident remains unroot-caused.
 
-## Interrupted V0.7 recovery checkpoint
+## Current V0.7 recovery handoff (2026-11-24)
 
-Recovered Lead HEAD `538f20f` on feat/v07-development, with 13 modified tracked files
-and five untracked candidate/docs/example files; no staged changes or active cherry-pick.
-All were preserved. Main still baa776d; stable v0.6.0 unchanged; no remote V0.7 branch
-or open PR at refresh. Existing six specialist worktrees remain available.
+- Initial recovered Lead HEAD: `538f20fe35a23657949db60b97ce6149a2698ca9`.
+  Thirteen modified tracked files and five untracked files were preserved in atomic
+  checkpoint `0d8d6e6`; no reset/clean/worktree deletion or new team was used.
+- Completed specialist implementation was recovered exactly once: Backend0865d1c ->
+  0338095, Framework054ec18 ->d45a800, QA0afa310 ->001e5d3. Provenance repro d6133f4
+  already existed as538f20f; missing ambiguity repro8a1fd2d ->ef97669; Backend correction
+  c23de59 ->9dcc88d. Recovered Framework/QA pending patches integrated as
+  `dd128091a13534c0b6fb9f6dd431032453f90e00`, byte-matching original working copies.
+- Active provenance blocker is repaired and passes focused verification:39passed /
+  141deselected in5.54s; all V0.7 planning/integration/adversarial tests180passed in13.29s.
+  Typed context retains actual provenance; only OBSERVED supports observation claims,
+  conflicting categories fail, and provenance drift makes planning acceptance stale.
+- Initial full gate444passed /18deselected in210.88s plus package/install/independent
+  execution is pre-correction historical evidence, not final candidate certification.
+  Complete corrected runtime is committed atdd12809; the final full gate is running
+  against that stable runtime. Inspect `.test-work/v07-final-release.log` before rerunning.
+- Root working changes now cover documentation only. Original Framework worktree retains
+  its two recovered uncommitted files and QA worktree retains its recovered test-file
+  edits; they were preserved rather than discarded. All six specialist worktrees remain.
+- Logs: `.test-work/v07-provenance-before.log` (7failed repro),
+  `v07-provenance-after.log` (39passed), `v07-provenance-recovered.log` (180passed),
+  `v07-full-release.log` (initial gate), `v07-final-release.log` (corrected complete gate).
+  Exact recovery patches remain under ignored `.test-work/v07-recovered-*.patch`.
+- Candidate metadata is internally0.7.0rc1; 37dependency resolutions are unchanged apart
+  from root version. Stable mainbaa776d and annotated v0.6.0 remain unchanged. No
+  V0.7 remote branch/PR existed at the recovery fetch; final publication remains required.
+- Next action: finish the one corrected complete gate, finalize documentation/results,
+  validate links/security inventory, commit/push existing feature branch, open one PR,
+  inspect exact-final-head CI and stop for independent audit. No merge/stable tag/V0.8.
 
-Initial pre-correction full gate logged 444 passed / 18 deselected in210.88s plus
-successful package/install/independent execution. It does NOT certify the corrected
-candidate. Provenance repro log records7failed /81deselected in4.89s. Additional
-ambiguous-category regression is committed as8a1fd2d. Backend correction c23de59 is
-committed but not yet integrated at this checkpoint. Framework adapter/test changes
-and QA positive-fixture/provenance tests are uncommitted in their own worktrees;
-exact patches are preserved under ignored .test-work/v07-recovered-*.patch.
+## Newly approved future product requirements
 
-Next: integrate only missing commits/patches, run focused provenance and V0.7 tests,
-then one complete final release gate after the code is stable. No completed team is
-recreated. Logs: .test-work/v07-provenance-before.log and v07-full-release.log.
-The owner also approved additional future V1.0 requirements for documentation only;
-record them without expanding V0.7 runtime scope. Final current handoff supersedes
-this recovery checkpoint once verification/publication completes.
+The owner approved the expanded local-first/code-first professional workflow vision,
+recorded in [product vision](product-vision.md), [roadmap](roadmap.md) and
+[ADR 0004](decisions/0004-owner-approved-professional-workflow-vision.md). It covers local
+application/project/developer setup, separate application/automation repositories,
+manual/AI-assisted IDE workflows and reviewed reconciliation, Test Data Manager,
+truthful dashboards and provider-verified VS Code skills. It is documentation-only
+future scope: approximate V0.8 foundations, V0.9 interfaces/managers/skills/dashboard,
+V1.0 integrated validation. Exact later implementation requires separate authorization.
+V0.7 remains Intelligent QA Planning and Coverage Gap Analysis only.
 
 ## Historical foundation and reconciliation handoff
 
