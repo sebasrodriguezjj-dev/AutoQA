@@ -15,6 +15,13 @@ merged after approved foundation PR #5). Fresh recovery query found no open PR o
 published V0.7 branch before this task's publication. Final branch HEAD/PR/CI are
 recorded in its live GitHub review and external handoff, without self-referential SHA.
 
+The single [V0.7 development PR #7](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/7)
+targets main from feat/v07-development and must remain **open and unmerged** for audit.
+Its [checks view](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/7/checks) is the
+canonical final-head verification link. Final run/job IDs and the inspected synthetic
+merge checkout are recorded in the PR after post-commit CI completes. Do not substitute
+its initial publication commit or an earlier/pending check for the current PR HEAD.
+
 Stable product remains **v0.6.0**, target bbd54ad0821cb6962c09d8a1149a0f40b936764b,
 annotated tag object bea83dc984687dcde97416a8fa57bd2849f8aa0f. No tag/main/history
 rewrite, visibility change or worktree deletion. Domain 0.3, API 0.5, management 0.6,
