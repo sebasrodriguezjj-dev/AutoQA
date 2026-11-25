@@ -36,21 +36,24 @@ def _local_path(value):
     return Path(value).absolute()
 
 
+def checked_path(path):
+    candidate = _local_path(path)
+    if ".." in candidate.parts or any(
+        p.is_symlink() or p.is_junction() for p in [*reversed(candidate.parents), candidate]
+    ):
+        raise ValueError("Invalid linked local path")
+    return candidate
+
+
 def checked_root(path):
-    root = _local_path(path)
-    if ".." in root.parts or any(p.is_symlink() or p.is_junction() for p in [root, *root.parents]):
-        raise ValueError("Invalid local source root")
+    root = checked_path(path)
     if not root.is_dir():
         raise ValueError("Invalid local source root")
     return root
 
 
 def read_bytes(path, limit=MAX_BYTES):
-    candidate = _local_path(path)
-    if ".." in candidate.parts or any(
-        p.is_symlink() or p.is_junction() for p in [candidate, *candidate.parents]
-    ):
-        raise ValueError("Invalid local source file")
+    candidate = checked_path(path)
     if not candidate.is_file() or candidate.stat().st_size > limit:
         raise ValueError("Invalid or oversized local source file")
     with candidate.open("rb") as stream:
