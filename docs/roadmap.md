@@ -20,7 +20,7 @@ the sequence itself grants no implementation or release permission.
 | Milestone | Intended objective | Status and authorization boundary |
 | --- | --- | --- |
 | V0.7 | Intelligent QA Planning and coverage-gap analysis. | Delivered planning scope; stable publication evidence is recorded in project-state. |
-| V0.8 | Maintenance, diagnosis, reliability, reviewed repairs, safe manual-code reconciliation and test-data foundations. | Bounded development authorized as recorded in project-state; no automatic repair/self-healing claim or stable-release authorization. |
+| V0.8 | Maintenance, diagnosis, reliability, reviewed repairs, safe manual-code reconciliation and test-data foundations. | Bounded candidate delivered as recorded in project-state; no automatic repair/self-healing claim or stable-release authorization. |
 | V0.9 | QA Operations, local UI, project/developer setup, repository management, test-data UI, VS Code skills, dashboards, history and CI integrations. | Approximate owner-approved allocation; current CLI/artifacts are the baseline, not delivery of these future interfaces. |
 | V1.0 | Integrated professional workflow validation for a supervised end-to-end QA Engineering agent. | Owner-approved validation objective; no arbitrary client certification or SaaS conversion. |
 

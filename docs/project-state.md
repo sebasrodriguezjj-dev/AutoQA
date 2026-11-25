@@ -1,3 +1,42 @@
+# V0.8 candidate delivery handoff — 2026-11-25 (America/Costa_Rica)
+
+Owner-authorized0.8.0rc1 on feat/v08-development delivers the bounded diagnosis,
+locator repair/manual reconciliation, potential-only impact and reusable test-data
+foundations. Original specialist work was recovered and integrated once; actual native
+delegation was demonstrated, role TOMLs explicitly read, automatic loading unverified.
+See [candidate evidence](v08-release-candidate.md), [guide](v08-maintenance-guide.md),
+[ADR0006 threat model](decisions/0006-bounded-maintenance-and-untrusted-source.md),
+[independent review](v08-independent-review.md) and [recovery checkpoint](v08-checkpoint.md).
+
+Corrected complete native Windows gate: exit0,681passed/19deselected in414.36s; Ruff88,
+locked37packages, frozen/H01/H02/H03, wheel/sdist/isolated installed0.8.0rc1, all new
+installed workflows, AutoQA-absent collection/case/pack/full and actual alias consumption
+passed. Affected153 and Framework23 tests passed, the latter including actual owned
+Chromium healthyPASS/locatorFAIL/repairedPASS/genuine-defectFAIL with assertions preserved.
+Old full-run CLI inventory failures remain recorded; all legacy signatures/options
+and frozen fixtures were retained, explicit new names added, compatibility57passed.
+
+Publication is ONE development PR from this branch into unchanged stable main. Its live
+GitHub handoff is authoritative for final HEAD/PR URL, exact-head CI/run/job/actual
+checkout/tree after post-commit verification; consult it before trusting current status.
+Local checks do not substitute for hosted CI. No merge/tag/stable0.8/V0.9 permission.
+Stable main/v0.7.0 target2243611658accb05afc39593ff6d21fd1e4ba369, annotated object
+4395f8a1b9ab2c8bf870bd17052337b730e08328 and all earlier tags remain preserved.
+All historical and V0.8 worktrees/dirty copies remain, no reset/clean/force-push/deletion.
+
+Supported limits: locator-only declarative repairs and narrow Page Object literal
+reconciliation, provided static inventory impact, synthetic API rows and existing bearer/
+cookie environment references. Unsupported Python/repairs/data stay manual. Imported
+records are unauthenticated hypotheses, never confirmed root cause or application
+coverage. Review/apply/scenario/suite approval remain separate. Trusted local filesystem/
+operator, single writer, unsigned records, no OS sandbox/universal PII/secret redaction,
+manual retention and limited platforms remain; historical V0.5 incident is unroot-caused.
+ADR0004 future vision and ADR0005 protections preserved. No new dependencies/providers,
+UI/repository manager/skills/dashboards/self-healing/AI Software Factory. Stop after
+verified candidate publication for owner-triggered independent audit: "Audita al dev".
+
+---
+
 # V0.8 resumed candidate verification — 2026-11-25
 
 This dated handoff supersedes earlier in-progress checkpoint text below. Existing

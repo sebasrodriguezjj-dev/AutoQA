@@ -104,6 +104,39 @@ The complete compatibility slice then passed **57 tests in3.07s**. The original 
 full run is retained and is not certified; a corrected complete final gate remains
 mandatory before publication.
 
+### Final corrected local gate
+
+The complete reusable script returned **exit0**, native Windows/Python3.14.3,
+against implementation commit c85c4735b1fba209c9ff350895d89efdd9f73fe4 (tree
+add40d0317ab16a834c6bd74ceeff16a3d0b5ee1): **681 passed /19 deselected in414.36s**,
+no skips or failures. The first attempted full run ended **9 failed /672 passed /
+19 deselected in440.39s**, solely the explicit CLI inventory expectation already fixed;
+that log remains historical. No failing assertion was removed or frozen file changed.
+
+| Mandatory gate | Observed final result |
+| --- | --- |
+| uv sync --locked / metadata | Passed; import/distribution/root lock/package0.8.0rc1 |
+| Ruff lint/format | Passed,88 source/test/script files |
+| Full non-browser regression |681 passed;19 browser cases deselected; live AI excluded |
+| Frozen/legacy/H01/H02/H03 | Passed; archive/member hashes, signatures, receipts, scope accounting and semantic observation protections preserved |
+| Lock |37 packages; parsed resolution identical to stable after normalizing only root version |
+| Build/archive/isolated install | Wheel/sdist/private-output inventory and site-packages version/CLI passed |
+| Installed V0.7 | Four planning/import/disposition commands and stale refusal retained and passed |
+| Installed V0.8 | Diagnosis, impact, data inspect/import/validate/bind, reconciliation, propose/review/apply and renewed fresh trusted export passed |
+| Independent exports | AutoQA absent, validation/COMPLETE collection, genuine case/pack/full each exit0/one passed invocation/two operations |
+| Reusable data consumption | Fresh AutoQA-absent API export actually sends and asserts the aliased synthetic value; exit0 |
+| Actual owned Chromium | Separate23-test Framework run passed; healthy0/locator-failure1/repaired0/preserved-defect1; assertions/manual source unchanged |
+| Docs/roles/history/inventory | Relative destinations resolve, four profiles parse; historical context/ADR004/005 and protected sources unchanged;184 files plus ZIP members with no conventional credential/private-output findings |
+
+Final complete log: `.test-work/v08-final-release-corrected.log`; durable exit file:
+`.test-work/v08-final-release-corrected.exit` contains0. Fresh package evidence:
+`.test-work/release-gate-n0quoh_8`. Full initial failure and successful isolated-package
+investigation logs remain. Final result recording changes documentation only; final
+published HEAD, exact hosted run/job, actual checkout and tested-tree comparison are
+recorded in the official development PR handoff after observed post-commit verification.
+No earlier-head CI or separate main/tag CI is substituted or claimed. Stable main and
+all release tags remain unchanged; leave the candidate PR unmerged for independent audit.
+
 ## Supported limits and deferred capabilities
 
 See [guide](v08-maintenance-guide.md), [frozen interface](v08-interface-agreement.md),

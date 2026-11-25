@@ -100,3 +100,18 @@ Exact next action: inspect both actual exits/logs; fix actual failures; run ONE 
 final-tree gate after inputs settle; final docs/inventory review, commit/push and ONEPR,
 then exact-head hosted CI/logs/tree. New scripts/docs/version files may remain dirty;
 preserve them. No GitHub branch/PR has been published yet. Stable main/tag untouched.
+
+
+## Verified local candidate, publication next
+
+Implementation commitc85c4735b1fba209c9ff350895d89efdd9f73fe4,
+tested treeadd40d0317ab16a834c6bd74ceeff16a3d0b5ee1. Corrected complete gateexit0:
+681passed/19deselected414.36s, no skips/failures. All mandatory build/install/installed
+V0.7+V0.8/independent/data consumption gates passed; freshrelease-gate-n0quoh_8.
+Logs .test-work/v08-final-release-corrected.log and .exit preserve completion. Initial
+full9failed672passed log is retained (missing explicit new command inventory only).
+No supported-functional or local quality blocker remains. Final evidence recording
+changes documentation only. Exact next action: commit handoff/docs after link/inventory/
+diff checks, fetch unchanged stable refs, push existingfeat/v08-development, create ONEPR,
+inspect exact-final-HEAD hosted CI and actual logs/merge tree, update PR with evidence and
+STOP. Do not merge/tag. Preserve all branches/worktrees and original dirty copies.
