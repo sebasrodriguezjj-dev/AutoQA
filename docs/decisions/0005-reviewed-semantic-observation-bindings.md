@@ -34,7 +34,10 @@ The existing 5 MB source limit, typed discovery parsing and inventory bounds rem
 | Evidence record | ID, category, description, page association; corresponding page hash when available and same-ID element hash when present. |
 | Workflow | All typed fields except evidence paths; current page hash and linked element hashes. Workflow step sequence remains meaningful. |
 
-Dictionary keys and unordered collections are canonicalized. Element/record timestamps,
+Dictionary keys and unordered collections are canonicalized: element locators/options/
+components, page headings/elements and workflow elements/element_ids/preconditions.
+Their collection order is outside this model; only workflow steps preserve sequence.
+Element/record timestamps,
 screenshot/artifact/evidence paths, discovery timestamp, page depth, readiness and
 dynamic telemetry are excluded. Attributes/components remain conservatively semantic;
 incidental recorded changes there may require review. Text inside descriptions remains

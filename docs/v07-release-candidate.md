@@ -159,3 +159,57 @@ single-writer/sandbox/privacy/retention/platform limits remain. Historical V0.5 
 API/evidence/JUnit incident remains unroot-caused. Scoped credential scans are not
 universal PII/secret detection or a forensic audit of history. Stable 0.7 promotion,
 merge/tag and V0.8 are not authorized. Stop at one verified development PR for audit.
+
+
+## H03 evidence identity drift remediation
+
+This section supersedes earlier candidate verification for H03. The owner requested
+remediation of the static finding against audited HEAD
+8b6f71eea1c726607159e5e77ff7d1e0a9923e0e; existing accepted D02/provenance/compatibility/
+ADR 0004 work was preserved. PR #7 remains the only development PR and stays unmerged.
+
+Before production edits, corrected synthetic reproductions recorded **6 failed /
+1 passed in 6.41s**: workflow/page reassociation and required/min/max changes kept an
+accepted plan CURRENT, and conflicting same-ID observations did not fail. The passing
+case exercised the legacy element generator and proved ID reuse across validation
+changes. The first fixture lacked a locator stub; its failure is not counted as a
+product defect. Actual local logs are preserved:
+`.test-work/v07-h03-before.log` and
+`.test-work/v07-h03-before-corrected-fixture.log`.
+
+[ADR 0005](decisions/0005-reviewed-semantic-observation-bindings.md) specifies the
+versioned semantic hash projection and explicit reviewed requirement bindings.
+Same-ID drift now changes the plan digest, resets prior disposition and refuses
+outdated review writes. Conflicting observations fail generically; equivalent evidence
+and reordered collections deduplicate/canonicalize. Timestamps and disposable artifact
+paths do not cause drift. Hash-only context avoids exposing raw discovery content.
+Actual OBSERVED provenance remains mandatory. Accepting a current plan cannot refresh
+stale requirement bindings; explicit independent relationship review is required.
+No historical discovery ID/schema/signature/receipt/runtime/frozen fixture changed.
+
+| H03 corrected-candidate gate | Actual result |
+| --- | --- |
+| Focused H03 plus all affected V0.7 tests | **201 passed in 17.27s**; 21 additional regressions, existing assertions preserved |
+| Full Windows/Python 3.14.3 release script | **Exit 0**; `.test-work/v07-h03-final-release.log` |
+| Full non-browser regression, live AI excluded | **506 passed / 18 deselected in 218.17s**; no skips/failures |
+| Ruff lint/format | Passed, 75 src/tests/scripts files |
+| Lock, version and frozen compatibility | Passed, root 0.7.0rc1 only; historical hashes/contracts and V0.6 H01/H02 preserved |
+| Build/install/archive inventory | Wheel/sdist built; isolated installed import/distribution/CLI 0.7.0rc1 passed; private output excluded |
+| Installed planning CLI workflow | All four commands, read-only analysis, import, planning disposition and stale refusal passed |
+| Independent framework | AutoQA absent; approved validation and COMPLETE collection; zero unsupported/missing/duplicate/unexpected |
+| Actual independent case/pack/full | All exit 0, one passed invocation and two actual operations each |
+| Docs/roles/history/inventory | Local Markdown links resolve, four TOML roles parse, complete historical suffixes/protected legacy files preserved; 163 files plus frozen ZIP members scanned without conventional credential/private-output findings |
+
+Fresh package evidence is `.test-work/release-gate-xhi70uf3`. The final handoff changes
+only documentation after the complete runtime gates; exact final published HEAD must
+also pass hosted CI. Run/job, inspected logs and tested synthetic merge/tree equality
+are recorded in the live PR after post-commit verification, avoiding a self-referential
+commit SHA. Historical earlier counts are not substituted for H03 results.
+
+Residual limits: conservative projections cover recorded meaning, not complete behavior
+or authenticated identity; hashes are not encryption or universal secret protection.
+ID-only declared observation links require explicit bindings for confirmation. Existing
+trusted-local/unsigned/single-writer/privacy/retention/platform limitations and the
+unroot-caused historical V0.5 incident remain. No browser logic changed; no new browser,
+client or live-AI benchmark is claimed. No stable tag/promotion, merge or future scope.
+Stop after verified PR publication for another independent owner audit.

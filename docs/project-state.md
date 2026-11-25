@@ -15,8 +15,10 @@ reviewed requirement bindings prevent reused IDs from transferring reviewed supp
 Planning disposition and relationship review remain distinct. See
 [ADR 0005](decisions/0005-reviewed-semantic-observation-bindings.md) and
 [candidate H03 evidence](v07-release-candidate.md#h03-evidence-identity-drift-remediation).
-The affected V0.7 slice passed 201 tests. Complete corrected-candidate gates and exact
-final-head CI are recorded in candidate evidence and the live PR handoff. Historical
+The affected V0.7 slice passed 201 tests. The complete Windows release script passed
+(exit 0): 506 tests passed / 18 deselected, Ruff/lock/frozen/build/install and genuine
+independent case/pack/full execution passed. Final links/roles/history/inventory checks
+passed. Exact final-head CI is recorded in the live PR after post-commit verification. Historical
 verification below predates H03. Stable V0.6, main, all worktrees, historical contracts
 and frozen archives are preserved. No merge, stable promotion or V0.8 work authorized.
 
