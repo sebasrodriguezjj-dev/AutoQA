@@ -120,7 +120,9 @@ def inventory(project, **definition):
 
 def test_diagnosis_is_historical_and_suppressed(project, tmp_path):
     case = api_case(project)
-    source = write(tmp_path / "run.json", recorded(case))
+    value = recorded(case)
+    value.update(exit_code=1, overall_status="INCOMPLETE_OR_FAILED")
+    source = write(tmp_path / "run.json", value)
     service = DiagnosisService(project)
     before = files(project)
     first = service.analyze(source)

@@ -191,11 +191,17 @@ class DiagnosisService:
         exit_code = raw.get("exit_code")
         if exit_code is not None and type(exit_code) is not int:
             raise ValueError("Invalid recorded exit status")
+        has_failed_outcome = any(
+            record.get("status")
+            in {"FAILED", "ERROR", "NOT_EXECUTED", "INTERRUPTED", "SKIPPED", "UNSUPPORTED"}
+            for record in records
+            if isinstance(record, dict)
+        )
         run_incomplete = (
-            (exit_code is not None and exit_code != 0)
+            (exit_code is not None and exit_code != 0 and not has_failed_outcome)
             or raw.get("status") == "INCOMPLETE"
             or bool(raw.get("reconciliation_errors"))
-            or raw.get("overall_status") == "INCOMPLETE_OR_FAILED"
+            or (raw.get("overall_status") == "INCOMPLETE_OR_FAILED" and not has_failed_outcome)
         )
         recorded_cases = set()
         for record in records:
