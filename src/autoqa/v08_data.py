@@ -18,7 +18,7 @@ from autoqa.v08_contracts import (
     canonical,
     digest,
 )
-from autoqa.v08_io import MAX_BYTES, checked_root, read_bytes, read_json
+from autoqa.v08_io import MAX_BYTES, checked_path, checked_root, read_bytes, read_json
 
 INVENTORY = "test-cases/test-data-v08.json"
 BINDINGS = "test-cases/test-data-bindings-v08.json"
@@ -117,7 +117,7 @@ class TestDataService:
     def inspect(self, input_path=None):
         """Parse declared inventory; do not resolve files or credential values."""
         try:
-            return self._inventory(input_path)
+            return self._current()[0] if input_path is None else self._inventory(input_path)
         except ValueError, TypeError, OSError, RecursionError, OverflowError:
             raise ValueError("Invalid bounded test-data inventory") from None
 
@@ -140,7 +140,7 @@ class TestDataService:
                     artifact_reference(definition.reference)
                     matches = []
                     for root in roots:
-                        candidate = root / definition.reference
+                        candidate = checked_path(root / definition.reference)
                         # Ancestor/entry links and regular-file checks occur before read.
                         if candidate.exists() or candidate.is_symlink() or candidate.is_junction():
                             raw = read_bytes(candidate)

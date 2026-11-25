@@ -184,6 +184,19 @@ class DiagnosisService:
             raise ValueError("Invalid recorded selected scope")
         selected = {_identity(identity) for identity in selected}
         explicit_scope = "selected_case_ids" in raw or bool(snapshots)
+        declared_invocations = {
+            _identity(record.get("id")) for record in records if isinstance(record, dict)
+        }
+        orphan = any(step["test_id"] not in declared_invocations for step in steps)
+        exit_code = raw.get("exit_code")
+        if exit_code is not None and type(exit_code) is not int:
+            raise ValueError("Invalid recorded exit status")
+        run_incomplete = (
+            (exit_code is not None and exit_code != 0)
+            or raw.get("status") == "INCOMPLETE"
+            or bool(raw.get("reconciliation_errors"))
+            or raw.get("overall_status") == "INCOMPLETE_OR_FAILED"
+        )
         recorded_cases = set()
         for record in records:
             if not isinstance(record, dict):
@@ -206,7 +219,9 @@ class DiagnosisService:
             invocation_steps = [step for step in steps if step["test_id"] == identity]
             snapshot = snapshots.get(case_id)
             foreign = explicit_scope and case_id not in selected
-            integrity = foreign or any(step["run_id"] != run_id for step in invocation_steps)
+            integrity = (
+                orphan or foreign or any(step["run_id"] != run_id for step in invocation_steps)
+            )
             sequences = [step["sequence"] for step in invocation_steps]
             integrity |= sequences != list(range(1, len(invocation_steps) + 1))
             integrity |= any(type(sequence) is not int for sequence in sequences)
@@ -223,6 +238,11 @@ class DiagnosisService:
                 for index, step in enumerate(invocation_steps, 1)
             )
             complete = bool(invocation_steps) and not integrity
+            failure_without_operation = status in {"FAILED", "ERROR"} and not any(
+                step["status"] in {"FAILED", "ERROR", "INTERRUPTED"} for step in invocation_steps
+            )
+            if failure_without_operation:
+                complete = False
             if snapshot and snapshot["operation_count"] is not None:
                 integrity |= len(invocation_steps) > snapshot["operation_count"]
                 if status == "PASSED":
@@ -243,6 +263,11 @@ class DiagnosisService:
                     "INSUFFICIENT_EVIDENCE",
                     "Invocation lacks sufficient historical snapshot or operation evidence.",
                 )
+            elif failure_without_operation or (status == "PASSED" and run_incomplete):
+                category, fact = (
+                    "INCOMPLETE_EXECUTION",
+                    "Run outcome or failed-operation evidence is incomplete; recorded passes do not establish a healthy run.",
+                )
             elif status == "PASSED":
                 category, fact = (
                     "HEALTHY_RECORDED_EXECUTION",
@@ -259,8 +284,13 @@ class DiagnosisService:
                 missing.append("Historical case is not recorded as approved.")
             if not complete:
                 missing.append("A complete consistent ordered operation sequence is unavailable.")
+            if run_incomplete:
+                missing.append(
+                    "The recorded process or run-level reconciliation did not establish successful completion."
+                )
             next_check = "Review the original selected run and approved snapshot locally; verify the symptom independently before repair or defect attribution."
             semantic = {
+                "project_id": project_id,
                 "run_id": run_id,
                 "case_id": case_id,
                 "invocation_id": identity,
@@ -331,6 +361,7 @@ class DiagnosisService:
             or selected - recorded_cases
             or raw.get("reconciliation_errors")
             or raw.get("status") == "INCOMPLETE"
+            or run_incomplete
         ):
             category = (
                 "COLLECTION_FAILURE"
@@ -354,7 +385,7 @@ class DiagnosisService:
             key=lambda finding: (finding.case_id or "", finding.invocation_id or "", finding.id)
         )
         run_digest = digest(
-            ["autoqa-diagnosis-input-v1", run_id, [f.model_dump() for f in projected]]
+            ["autoqa-diagnosis-input-v1", project_id, run_id, [f.model_dump() for f in projected]]
         )
         return DiagnosticReport(
             id="RUN-" + run_digest,
