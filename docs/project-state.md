@@ -1,3 +1,18 @@
+# V0.8 resumed candidate verification — 2026-11-25
+
+This dated handoff supersedes earlier in-progress checkpoint text below. Existing
+feat/v08-development recovered at78298c8; no work discarded or team recreated.
+Backend/Framework source and independent QA checkpoints are integrated exactly once;
+see [recovery checkpoint](v08-checkpoint.md) and [candidate evidence](v08-release-candidate.md).
+Supported A-J acceptance passed:153 integrated affected tests and23 Framework tests
+including actual Chromium healthy/failure/repaired-pass/preserved-defect execution.
+Package metadata is now0.8.0rc1; full final regression/build/install/installed V0.8/
+independent execution gates are in progress, not yet certified. Stable v0.7.0/main stay
+unchanged. Publication requires the actual final gate and exact-new-HEAD hosted CI.
+No merge/stable V0.8/V0.9 authorization; stop for "Audita al dev" after candidate PR.
+
+---
+
 # V0.8 active development authorization (2026-11-25, America/Costa_Rica)
 
 Owner approved V0.8 Maintenance, Diagnosis and Reliability after independent final

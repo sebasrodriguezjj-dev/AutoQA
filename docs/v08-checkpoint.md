@@ -47,3 +47,56 @@ installed V0.8 gate and final candidate metadata remain pending. No candidate-re
 Exact next action: inspect/integrate verified Backend/Framework owned commits; supply
 SHAs to QA for independent service acceptance; extend installed gate and run actual
 owned browser workflow; only then prepare0.8.0rc1 and complete final gates/publication.
+
+
+## Resumed exact state and final-candidate gate in progress
+
+Recovery confirmed clean feat/v08-development at78298c8; that ancestor-first fix was
+committed, not pending. Backendcac4b7e had already integratedcb0763c. The old71-pass
+backend log preceded78298 and did not certify it. Native old specialist follow-up hit
+thread/usage limits; Lead finished only pending Backend defects and Framework harness,
+and one existing QA session resumed the unfinished independent work, not a new team.
+No reset, cleanup, worktree deletion or duplicate deliverable integration occurred.
+
+Recovered Frameworkb334fa0 integratedb2ab887; QAa1df470 integrated747f6b3 and QA818346c
+integrated4af7585. Shared dependencies from specialist branches were excluded. Lead
+correctionseae44d8/80fd1df protect stored data bindings and incomplete versus genuinely
+failed evidence;6544172 fixes only browser test API handling. All original worktrees,
+V0.8 branches/commits and dirty historical copies remain preserved.
+
+Verified:83 ancestor/no-remote/shared security tests in4.38s;153 integrated Backend/QA/
+CLI/adversarial tests in122.95s; Framework23 in184.31s including actual owned Chromium
+healthyPASS/locatorFAIL/repairedPASS/genuine-defectFAIL, with assertions/manual source
+preserved. See v08-release-candidate.md and independent-review.md for failing repro logs.
+No unresolved supported-functional acceptance blocker. Known limitations remain explicit.
+
+Metadata prepared0.8.0rc1 only after supported A-J acceptance. Full final candidate gate
+now running; log .test-work/v08-final-release.log. Last observed lint/format88files,
+lock37packages and metadata passed; full regression/package outcomes still pending.
+Scoped inventory184files plus ZIP members passed; historical/roles/lock/link review passed.
+Working final verification inputs include extended installed V0.8 workflow gate and
+candidate/operator documentation. Do not assume the release script exited successfully
+merely from this checkpoint. Inspect actual process/log/exit before publication.
+Exact next action: finish complete gate, resolve actual failures if any, record outcomes,
+commit/push existing branch, open ONE PR, verify exact-head CI/logs/tree, preserve stable
+main/tag and STOP. No stable0.8 tag/merge/V0.9/AI Software Factory.
+
+
+## Final-gate investigation checkpoint
+
+Functional/independent acceptance remains verified:153 affected tests and23 Framework
+including genuine Chromium; all83 ancestor/no-remote tests pass onLead. Source fixes
+and QA owned deliverables integrated exactly once through4af7585. Metadata is0.8.0rc1.
+The first complete gate .test-work/v08-final-release.log has nine early compatibility
+failures: the exact additive CLI command inventory omitted five authorized V0.8 command/
+group names. All original legacy signature/option/behavior assertions remain unchanged;
+only the explicit new-name expectation was added. Targeted compatibility now57passed
+in3.07s (.test-work/v08-cli-compatibility-after.log). No frozen fixture changed.
+
+Do not treat that initial complete run as passing. The installed-package phase is
+separately running at .test-work/v08-installed-workflows.log so workflow defects can be
+found before a final complete rerun. Current local output root release-gate-si7zdlhm.
+Exact next action: inspect both actual exits/logs; fix actual failures; run ONE complete
+final-tree gate after inputs settle; final docs/inventory review, commit/push and ONEPR,
+then exact-head hosted CI/logs/tree. New scripts/docs/version files may remain dirty;
+preserve them. No GitHub branch/PR has been published yet. Stable main/tag untouched.
