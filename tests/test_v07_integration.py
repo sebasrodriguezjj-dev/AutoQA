@@ -345,3 +345,143 @@ def test_import_rejects_normalized_document_that_exceeds_stored_read_bound(proje
     with pytest.raises(ValueError, match="Serialized planning input exceeds"):
         service.import_requirements(source)
     assert tree(project) == before
+
+
+def discovery_value(*, workflow_status=None, evidence_category=None, page_element=False):
+    value = {"workflows": [], "evidence_records": [], "pages": []}
+    if workflow_status is not None:
+        value["workflows"] = [
+            {
+                "id": "WF-OWNED",
+                "name": "Owned workflow",
+                "page_url": "http://127.0.0.1:8123",
+                "elements": [],
+                "evidence": [],
+                "steps": [],
+                "status": workflow_status,
+            }
+        ]
+    if evidence_category is not None:
+        value["evidence_records"] = [
+            {
+                "id": "EL-OWNED",
+                "category": evidence_category,
+                "description": "Synthetic reference",
+                "timestamp": "2026-11-24T00:00:00+00:00",
+            }
+        ]
+    if page_element:
+        value["pages"] = [
+            {
+                "url": "http://127.0.0.1:8123",
+                "title": "Owned UI",
+                "headings": [],
+                "elements": [{"id": "EL-OWNED", "kind": "heading"}],
+                "screenshot": "synthetic.png",
+                "depth": 0,
+            }
+        ]
+    return value
+
+
+@pytest.mark.parametrize(
+    "status",
+    ["SOURCE", "INFERRED", "VERIFIED_REQUIREMENT", "REQUIRES_REVIEW", "UNKNOWN", "OBSERVED"],
+)
+def test_actual_workflow_provenance_controls_observation_claims(project, tmp_path, status):
+    cases = inventory(project)
+    value = document(cases)
+    value["requirements"][0]["workflow_ids"] = ["WF-OWNED"]
+    project.storage.write_json(
+        "discovery/workflow-map.json", discovery_value(workflow_status=status)
+    )
+    source = input_file(tmp_path, value)
+    before = tree(project)
+    snapshot = IntelligentPlanningService(project).analyze(source)
+    assert snapshot.context.workflow_ids == ["WF-OWNED"]
+    assert snapshot.context.workflow_provenance == {"WF-OWNED": status}
+    finding = next(f for f in snapshot.findings if f.requirement_id == "REQ-UI")
+    assert ("CONFIRMED_REVIEWED_MAPPING" in finding.states) == (status == "OBSERVED")
+    assert finding.risk.factors["observed_functionality"] == (10 if status == "OBSERVED" else 0)
+    assert tree(project) == before
+
+
+@pytest.mark.parametrize(
+    "category", ["SOURCE", "INFERRED", "VERIFIED_REQUIREMENT", "UNKNOWN", "OBSERVED"]
+)
+def test_actual_evidence_provenance_controls_observation_claims(project, tmp_path, category):
+    cases = inventory(project)
+    value = document(cases)
+    value["requirements"][0]["observed_evidence_ids"] = ["EL-OWNED"]
+    project.storage.write_json(
+        "discovery/workflow-map.json", discovery_value(evidence_category=category)
+    )
+    source = input_file(tmp_path, value)
+    before = tree(project)
+    snapshot = IntelligentPlanningService(project).analyze(source)
+    assert snapshot.context.evidence_ids == ["EL-OWNED"]
+    assert snapshot.context.evidence_provenance == {"EL-OWNED": category}
+    finding = next(f for f in snapshot.findings if f.requirement_id == "REQ-UI")
+    assert ("CONFIRMED_REVIEWED_MAPPING" in finding.states) == (category == "OBSERVED")
+    assert finding.risk.factors["observed_functionality"] == (10 if category == "OBSERVED" else 0)
+    assert tree(project) == before
+
+
+@pytest.mark.parametrize("changed_status", ["INFERRED", "OBSERVED"])
+def test_provenance_drift_changes_snapshot_and_invalidates_review(
+    project, tmp_path, changed_status
+):
+    cases = inventory(project)
+    value = document(cases)
+    value["requirements"][0]["workflow_ids"] = ["WF-OWNED"]
+    source = input_file(tmp_path, value)
+    project.storage.write_json(
+        "discovery/workflow-map.json", discovery_value(workflow_status="SOURCE")
+    )
+    service = IntelligentPlanningService(project, authorization(project, "plan", "review"))
+    service.import_requirements(source)
+    first = service.analyze()
+    service.review(first.id, [first.proposals[0].id], "accepted")
+    project.storage.write_json(
+        "discovery/workflow-map.json", discovery_value(workflow_status=changed_status)
+    )
+    before = tree(project)
+    changed = service.analyze()
+    assert changed.id != first.id
+    assert changed.review_state == "STALE"
+    assert all(proposal.review_status == "pending" for proposal in changed.proposals)
+    with pytest.raises(ValueError, match="snapshot changed"):
+        service.review(first.id, [first.proposals[0].id], "accepted")
+    assert tree(project) == before
+
+
+def test_evidence_same_provenance_deduplicates_and_page_elements_are_observed(project, tmp_path):
+    value = discovery_value(evidence_category="OBSERVED", page_element=True)
+    value["evidence_records"].append(dict(value["evidence_records"][0]))
+    project.storage.write_json("discovery/workflow-map.json", value)
+    source = input_file(tmp_path, document())
+    before = tree(project)
+    context = IntelligentPlanningService(project).analyze(source).context
+    assert context.evidence_ids == ["EL-OWNED"]
+    assert context.evidence_provenance == {"EL-OWNED": "OBSERVED"}
+    assert tree(project) == before
+
+
+@pytest.mark.parametrize("page_collision", [False, True])
+def test_conflicting_same_id_provenance_fails_without_writes_or_echo(
+    project, tmp_path, page_collision
+):
+    value = discovery_value(evidence_category="SOURCE", page_element=page_collision)
+    if not page_collision:
+        value["evidence_records"].append(value["evidence_records"][0] | {"category": "OBSERVED"})
+    value["evidence_records"][0]["description"] = "private-fixture-not-for-error-output"
+    project.storage.write_json("discovery/workflow-map.json", value)
+    source = input_file(tmp_path, document())
+    before = tree(project)
+    result = CliRunner().invoke(
+        app, ["intelligent-plan", "--requirements", str(source), "--project", str(project.root)]
+    )
+    assert result.exit_code == 1
+    assert "Invalid current planning context" in result.stdout
+    assert "private-fixture-not-for-error-output" not in result.stdout
+    assert tree(project) == before

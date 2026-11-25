@@ -120,6 +120,8 @@ def supplied_context():
         ],
         "workflow_ids": ["WF-UI", "WF-API"],
         "evidence_ids": ["OBS-UI", "OBS-API"],
+        "workflow_provenance": {"WF-UI": "OBSERVED", "WF-API": "OBSERVED"},
+        "evidence_provenance": {"OBS-UI": "OBSERVED", "OBS-API": "OBSERVED"},
         "suite_id": "REVIEWED",
         "suite_state": "CURRENT",
         "suite_digest": "c" * 64,
@@ -284,6 +286,8 @@ def test_semantically_reordered_inputs_produce_identical_full_logical_plans():
     context["cases"].reverse()
     context["workflow_ids"].reverse()
     context["evidence_ids"].reverse()
+    for field in ["workflow_provenance", "evidence_provenance"]:
+        context[field] = dict(reversed(list(context[field].items())))
     for case in context["cases"]:
         case["pack_ids"].reverse()
         case["tags"].reverse()
@@ -478,13 +482,14 @@ def reviewed_planning_project(project, tmp_path):
                     elements=[],
                     evidence=[],
                     steps=[],
-                    status="SOURCE",
+                    # Positive mapping acceptance needs genuine observed support.
+                    status="OBSERVED",
                 ),
             ],
             evidence_records=[
                 EvidenceReference(id="OBS-UI", category="OBSERVED", description="Owned screen"),
                 EvidenceReference(
-                    id="OBS-API", category="SOURCE", description="Owned API declaration"
+                    id="OBS-API", category="OBSERVED", description="Owned synthetic API observation"
                 ),
             ],
         ).model_dump(),
@@ -863,7 +868,7 @@ def test_proposal_identity_changes_only_with_its_requirement_or_hint_content():
 
 
 @pytest.mark.parametrize("record_kind", ["workflow", "evidence"])
-@pytest.mark.parametrize("provenance", ["SOURCE", "INFERRED", "UNKNOWN"])
+@pytest.mark.parametrize("provenance", ["SOURCE", "INFERRED", "UNKNOWN", "VERIFIED_REQUIREMENT"])
 def test_non_observed_provenance_cannot_confirm_observed_support(
     reviewed_planning_project, record_kind, provenance
 ):
@@ -924,3 +929,21 @@ def test_conflicting_categories_for_one_evidence_id_are_rejected_atomically(
     with pytest.raises(ValueError):
         planning_service(project, authorization).analyze(source)
     assert file_snapshot(project.root) == before
+
+
+@pytest.mark.parametrize("field", ["workflow_provenance", "evidence_provenance"])
+def test_known_id_without_observed_provenance_is_insufficient(field):
+    context = supplied_context()
+    context[field] = {}
+    plan = snapshot(context=context)
+    assert plan.summary.confirmed_mapped_requirements == 0
+    assert all("INSUFFICIENT_EVIDENCE" in row.states for row in plan.findings)
+    assert all(row.risk.factors["observed_functionality"] == 0 for row in plan.findings)
+
+
+@pytest.mark.parametrize("field", ["workflow_provenance", "evidence_provenance"])
+def test_provenance_cannot_reference_a_nonexistent_known_id(field):
+    context = supplied_context()
+    context[field]["ABSENT-ID"] = "OBSERVED"
+    with pytest.raises(ValueError):
+        PlanningContext.model_validate(context)

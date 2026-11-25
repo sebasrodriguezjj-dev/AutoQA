@@ -130,6 +130,7 @@ class IntelligentPlanningService:
                 raise ValueError("Duplicate case identity")
         raw_discovery = self._optional(DISCOVERY, SOURCE_LIMIT)
         workflow_ids, evidence_ids = [], []
+        workflow_provenance, evidence_provenance = {}, {}
         if raw_discovery is not None:
             discovery = Discovery.model_validate(raw_discovery)
             if len(discovery.workflows) > 2000:
@@ -137,17 +138,23 @@ class IntelligentPlanningService:
             workflow_ids = [workflow.id for workflow in discovery.workflows]
             if len(set(workflow_ids)) != len(workflow_ids):
                 raise ValueError("Duplicate workflow identity")
-            evidence_ids = sorted(
-                {record.id for record in discovery.evidence_records if record.id}
-                | {
-                    element.id
-                    for page in discovery.pages
-                    for element in page.elements
-                    if element.id
-                }
-            )
-            if len(evidence_ids) > 5000:
-                raise ValueError("Too many observed evidence identities")
+            workflow_provenance = {workflow.id: workflow.status for workflow in discovery.workflows}
+
+            def add_evidence(identity, provenance):
+                if not identity:
+                    return
+                if identity in evidence_provenance and evidence_provenance[identity] != provenance:
+                    raise ValueError("Conflicting evidence provenance")
+                evidence_provenance[identity] = provenance
+                if len(evidence_provenance) > 5000:
+                    raise ValueError("Too many evidence identities")
+
+            for record in discovery.evidence_records:
+                add_evidence(record.id, record.category)
+            for page in discovery.pages:
+                for element in page.elements:
+                    add_evidence(element.id, "OBSERVED")
+            evidence_ids = sorted(evidence_provenance)
         receipts = self._optional(RECEIPTS, SIDECAR_LIMIT)
         membership = self._optional(MEMBERSHIP, SIDECAR_LIMIT)
         membership_receipt = self._optional(MEMBERSHIP_RECEIPT, SIDECAR_LIMIT)
@@ -219,6 +226,8 @@ class IntelligentPlanningService:
             cases=context_cases,
             workflow_ids=sorted(workflow_ids),
             evidence_ids=evidence_ids,
+            workflow_provenance=dict(sorted(workflow_provenance.items())),
+            evidence_provenance=dict(sorted(evidence_provenance.items())),
             suite_id=suite_id,
             suite_state=suite_state,
             suite_digest=suite_digest,
