@@ -266,3 +266,82 @@ def test_source_file_count_limit_is_real_and_fail_closed(tmp_path):
     with pytest.raises(ValueError):
         source_revision(root)
     assert len(list(root.iterdir())) == 1001
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        r"\\server\share\private.json",
+        "//server/share/private.json",
+        r"\\?\C:\private.json",
+        r"\\.\pipe\owned",
+        "C:relative.json",
+        "C:",
+        "owned.json:private",
+        "https://remote.test/data.json",
+        "owned\x00.json",
+        "owned\n.json",
+        "NUL",
+        "CON",
+        "C:/NUL",
+    ],
+)
+@pytest.mark.parametrize("operation", [checked_root, read_bytes, read_json])
+def test_remote_device_and_ambiguous_paths_fail_before_filesystem_access(
+    value, operation, monkeypatch
+):
+    def forbidden(*args, **kwargs):
+        pytest.fail("Disallowed path reached the filesystem")
+
+    for name in [
+        "absolute",
+        "resolve",
+        "is_file",
+        "is_dir",
+        "is_symlink",
+        "is_junction",
+        "stat",
+        "open",
+    ]:
+        monkeypatch.setattr(Path, name, forbidden)
+    with pytest.raises(ValueError):
+        operation(value)
+
+
+def test_new_cli_refuses_remote_project_before_legacy_project_selection(monkeypatch):
+    from autoqa import v08_cli
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("Remote project path reached legacy selection")
+
+    monkeypatch.setattr(v08_cli, "select_project", forbidden)
+    with pytest.raises(ValueError):
+        v08_cli.engine(Path(r"\\server\share\private-project"))
+
+
+@pytest.mark.parametrize("operation", [checked_root, read_bytes, read_json, source_revision])
+@pytest.mark.parametrize("link_kind", ["is_symlink", "is_junction"])
+def test_linked_ancestor_is_rejected_before_any_child_metadata_probe(
+    tmp_path, monkeypatch, operation, link_kind
+):
+    linked = tmp_path / "linked-parent"
+    child = linked / "nested" / "input.json"
+    probes = []
+
+    def protect(name, original):
+        def inspect(path, *args, **kwargs):
+            probes.append((name, path))
+            if path != linked and path.is_relative_to(linked):
+                pytest.fail("Linked ancestor was traversed before rejection")
+            if path == linked and name == link_kind:
+                return True
+            return original(path, *args, **kwargs)
+
+        return inspect
+
+    for name in ["is_symlink", "is_junction", "is_file", "is_dir", "stat", "open", "resolve"]:
+        monkeypatch.setattr(Path, name, protect(name, getattr(Path, name)))
+    with pytest.raises(ValueError):
+        operation(child)
+    assert any(name == link_kind and path == linked for name, path in probes)
+    assert all(path == linked or not path.is_relative_to(linked) for _, path in probes)
