@@ -14,3 +14,5 @@ V0.3–V0.6 architecture/release documents, not retroactively reclassified as ne
 [ADR 0003](0003-additive-requirement-planning.md) records additive V0.7 planning and conservative mapping evidence.
 
 [ADR 0004](0004-owner-approved-professional-workflow-vision.md) records owner-approved future professional workflow requirements without expanding V0.7.
+
+[ADR 0005](0005-reviewed-semantic-observation-bindings.md) records reproduced H03 remediation and separate semantic observation relationship review.

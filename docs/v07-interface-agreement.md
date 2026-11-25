@@ -142,3 +142,18 @@ Browser acceptance only if actual browser logic changes. Never weaken existing t
 Contract clarification: existing V0.6 tags may contain spaces and are preserved exactly with bounded Label fields. Source V0.6 suite/pack IDs still obey their original validated syntax; the context DTO does not relax source validation. Source labels are data and remain unmodified.
 
 Provenance correction after integration review: PlanningContext now retains workflow_provenance and evidence_provenance maps for known IDs. Only OBSERVED supports explicitly observed/workflow references and the observed_functionality risk factor. SOURCE/INFERRED/UNKNOWN/VERIFIED_REQUIREMENT remain known references but cannot become observed support; missing provenance is unknown. All provenance participates in plan digest, so drift invalidates planning decisions. Adapter records actual workflow.status/evidence.category; page element IDs are OBSERVED. Conflicting provenance for one evidence ID fails safely; identical repeated evidence IDs may deduplicate. Positive fixtures must explicitly supply real OBSERVED test provenance; independent negative tests retain SOURCE/INFERRED cases.
+
+
+## H03 semantic binding amendment
+
+PlanningContext adds bounded workflow_fingerprints/evidence_fingerprints maps (2000/
+5000 lowercase SHA-256 values). Requirement adds workflow_bindings/evidence_bindings
+maps (20 each), with keys restricted to declared workflow_ids/observed_evidence_ids.
+Missing bindings preserve parsing but cannot confirm declared observation support.
+Current OBSERVED provenance plus exact reviewed semantic bindings are required.
+Drifted bindings make active mappings stale; accepting a proposal never updates a
+requirement relationship. Fingerprints enter the plan digest and stale prior decisions.
+Only hashes are output, with deterministic unordered collections and meaningful workflow
+step sequence. Conflicting evidence identities fail; equivalent evidence deduplicates.
+[ADR 0005](decisions/0005-reviewed-semantic-observation-bindings.md) specifies the
+projection, excluded volatile metadata and unchanged compatibility/trust boundaries.

@@ -152,11 +152,17 @@ def test_risk_is_exact_explainable_and_unknown_expectations_are_not_invented():
         user_impact=5,
         priority="Critical",
         workflow_ids=["WF-1"],
+        workflow_bindings={"WF-1": SIGNATURE},
         review_status="pending",
     )
     plan = build_plan(
         document([req], [mapping(review_status="pending")]),
-        context([case()], workflow_ids=["WF-1"], workflow_provenance={"WF-1": "OBSERVED"}),
+        context(
+            [case()],
+            workflow_ids=["WF-1"],
+            workflow_provenance={"WF-1": "OBSERVED"},
+            workflow_fingerprints={"WF-1": SIGNATURE},
+        ),
     )
     risk = plan.findings[0].risk
     assert risk.factors == {
@@ -405,11 +411,30 @@ def test_declared_reference_without_observed_provenance_never_confirms(reference
     provenance_field = (
         "workflow_provenance" if reference_kind == "workflow" else "evidence_provenance"
     )
-    fields = {context_field: [reference]}
+    fields = {
+        context_field: [reference],
+        ("workflow_fingerprints" if reference_kind == "workflow" else "evidence_fingerprints"): {
+            reference: SIGNATURE
+        },
+    }
     if provenance is not None:
         fields[provenance_field] = {reference: provenance}
     plan = build_plan(
-        document([requirement(**{requirement_field: [reference]})], [mapping()]),
+        document(
+            [
+                requirement(
+                    **{
+                        requirement_field: [reference],
+                        (
+                            "workflow_bindings"
+                            if reference_kind == "workflow"
+                            else "evidence_bindings"
+                        ): {reference: SIGNATURE},
+                    }
+                )
+            ],
+            [mapping()],
+        ),
         context([case()], **fields),
     )
     finding = plan.findings[0]
@@ -422,13 +447,20 @@ def test_declared_reference_without_observed_provenance_never_confirms(reference
 
 
 def test_only_actual_observed_references_support_mapping_and_risk():
-    req = requirement(workflow_ids=["WF-1"], observed_evidence_ids=["OBS-1"])
+    req = requirement(
+        workflow_ids=["WF-1"],
+        observed_evidence_ids=["OBS-1"],
+        workflow_bindings={"WF-1": SIGNATURE},
+        evidence_bindings={"OBS-1": SIGNATURE},
+    )
     actual = context(
         [case()],
         workflow_ids=["WF-1"],
         evidence_ids=["OBS-1"],
         workflow_provenance={"WF-1": "OBSERVED"},
         evidence_provenance={"OBS-1": "OBSERVED"},
+        workflow_fingerprints={"WF-1": SIGNATURE},
+        evidence_fingerprints={"OBS-1": SIGNATURE},
     )
     observed_plan = build_plan(document([req], [mapping()]), actual)
     assert observed_plan.findings[0].confirmed_case_ids == ["TC-UI"]

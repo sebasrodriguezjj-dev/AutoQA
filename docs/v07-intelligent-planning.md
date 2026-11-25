@@ -20,6 +20,19 @@ evidence_provenance; only OBSERVED supports these explicitly observed references
 SOURCE, INFERRED, UNKNOWN, VERIFIED_REQUIREMENT and missing provenance remain
 insufficient for observation-based confirmation/risk even when the ID is known.
 
+H03 also requires explicit reviewed semantic bindings for declared observations.
+Inspect actual local evidence and its requirement relationship, then supply
+`workflow_bindings: {"WF-001": "<current lowercase SHA-256>"}` and
+`evidence_bindings: {"EV-PAGE-001": "<current hash>"}` in the requirement, using
+context.workflow_fingerprints / context.evidence_fingerprints from current analysis.
+Keys must occur in workflow_ids / observed_evidence_ids; each map allows 20 keys.
+Do not copy hashes without reviewing the relationship. ID-only inputs still parse,
+but missing bindings remain INSUFFICIENT_EVIDENCE. Changed bound meaning makes active
+mappings STALE_MAPPING. Accepting a proposal never rebinds changed observations.
+Explicitly review and import revised requirements to restore the relationship.
+See [ADR 0005](decisions/0005-reviewed-semantic-observation-bindings.md) for the exact
+projection, exclusions, conflict handling and trust limitations.
+
 Mappings explicitly bind requirement_id to an existing TC-* case, its case_signature,
 a review_status and rationale. Copy exact current signatures from intelligent-plan's
 context.cases after reviewing the requirement-to-case relationship. No title matching
@@ -61,7 +74,9 @@ reviewed UI/API workflow, then explicitly approve it and review suite membership
 Review binds the exact deterministic PLAN-* input/context digest and stable PROP-* IDs.
 Provenance maps participate in that digest: downgrading observation to source invalidates
 prior planning acceptance. Conflicting categories for one evidence ID fail; identical
-same-category repetitions may deduplicate.
+same-category repetitions deduplicate only when semantic content is equivalent.
+Semantic hashes also participate: changed workflows, page associations or validation
+attributes invalidate review even when IDs and provenance stay unchanged.
 Changed requirements, current cases/signatures/review/receipt validity, observed evidence or suite
 context invalidate prior planning decisions. Stale reviews remain disclosed and cannot
 silently carry acceptance forward. Unknown/empty/duplicate review IDs and stale plan

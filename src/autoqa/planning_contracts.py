@@ -92,10 +92,16 @@ class Requirement(Contract):
     evidence_ids: list[Identity] = Field(default_factory=list, max_length=20)
     workflow_ids: list[Identity] = Field(default_factory=list, max_length=20)
     observed_evidence_ids: list[Identity] = Field(default_factory=list, max_length=20)
+    workflow_bindings: dict[Identity, Digest] = Field(default_factory=dict, max_length=20)
+    evidence_bindings: dict[Identity, Digest] = Field(default_factory=dict, max_length=20)
     design_hints: list[DesignHint] = Field(default_factory=list, max_length=10)
 
     @model_validator(mode="after")
     def unique_hints(self):
+        if not self.workflow_bindings.keys() <= set(
+            self.workflow_ids
+        ) or not self.evidence_bindings.keys() <= set(self.observed_evidence_ids):
+            raise ValueError("Reviewed bindings must reference declared observations")
         unique(
             [json.dumps(h.model_dump(), sort_keys=True) for h in self.design_hints], "design hints"
         )
@@ -171,6 +177,8 @@ class PlanningContext(Contract):
     cases: list[PlanningCase] = Field(default_factory=list, max_length=1000)
     workflow_ids: list[Identity] = Field(default_factory=list, max_length=2000)
     evidence_ids: list[Identity] = Field(default_factory=list, max_length=5000)
+    workflow_fingerprints: dict[Identity, Digest] = Field(default_factory=dict, max_length=2000)
+    evidence_fingerprints: dict[Identity, Digest] = Field(default_factory=dict, max_length=5000)
     workflow_provenance: dict[
         Identity,
         Literal[
@@ -186,6 +194,10 @@ class PlanningContext(Contract):
 
     @model_validator(mode="after")
     def identities(self):
+        if not self.workflow_fingerprints.keys() <= set(
+            self.workflow_ids
+        ) or not self.evidence_fingerprints.keys() <= set(self.evidence_ids):
+            raise ValueError("Fingerprints must reference known inventory identities")
         unique([c.id for c in self.cases], "case IDs")
         unique(self.workflow_ids, "workflow IDs")
         unique(self.evidence_ids, "observed evidence IDs")

@@ -72,7 +72,23 @@ def _observed(requirement, context):
         for identity in requirement.observed_evidence_ids
     )
     declared = bool(requirement.workflow_ids or requirement.observed_evidence_ids)
-    sufficient = known and actual_observed
+    bound = all(
+        identity in bindings and bindings[identity] == fingerprints.get(identity)
+        for identities, bindings, fingerprints in (
+            (
+                requirement.workflow_ids,
+                requirement.workflow_bindings,
+                context.workflow_fingerprints,
+            ),
+            (
+                requirement.observed_evidence_ids,
+                requirement.evidence_bindings,
+                context.evidence_fingerprints,
+            ),
+        )
+        for identity in identities
+    )
+    sufficient = known and actual_observed and bound
     return sufficient, declared and sufficient
 
 
@@ -104,6 +120,14 @@ def _finding(requirement, mappings, context):
     cases = {case.id: case for case in context.cases}
     confirmed, proposed, stale, unsupported = [], [], [], []
     known_observations, observed = _observed(requirement, context)
+    drifted_binding = any(
+        fingerprints.get(identity) != digest
+        for bindings, fingerprints in (
+            (requirement.workflow_bindings, context.workflow_fingerprints),
+            (requirement.evidence_bindings, context.evidence_fingerprints),
+        )
+        for identity, digest in bindings.items()
+    )
     uncertain = (
         requirement.review_status == "pending"
         or requirement.expected_behavior is None
@@ -130,7 +154,8 @@ def _finding(requirement, mappings, context):
         if unsupported_case:
             unsupported.append(case.id)
         if (
-            case is None
+            drifted_binding
+            or case is None
             or (mapping.case_signature is not None and mapping.case_signature != case.signature)
             or case.review_status == "rejected"
             or (case.review_status == "approved" and not case.receipt_valid)
@@ -166,7 +191,7 @@ def _finding(requirement, mappings, context):
         (
             stale,
             "STALE_MAPPING",
-            "Referenced case is missing, changed, rejected or lacks a valid current approval receipt.",
+            "Reviewed observation binding drifted, or referenced case is missing, changed, rejected or lacks a valid current approval receipt.",
         ),
         (
             unsupported,
@@ -183,7 +208,7 @@ def _finding(requirement, mappings, context):
     if uncertain:
         states.append("INSUFFICIENT_EVIDENCE")
         reasons.append(
-            "Requirement is pending, expected behavior is unknown, or declared observed references are unavailable or lack OBSERVED provenance."
+            "Requirement is pending, expected behavior is unknown, or declared observations lack current OBSERVED provenance and matching reviewed semantic bindings."
         )
     if any(case_id in cases and not cases[case_id].enabled for case_id in confirmed + proposed):
         reasons.append(

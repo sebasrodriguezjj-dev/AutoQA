@@ -3,6 +3,23 @@
 Last verification: **2026-11-24, America/Costa_Rica**. This is a dated handoff, not live
 GitHub. Verify current refs/PRs/checks before trusting it; enduring rules are in AGENTS.
 
+## H03 audit remediation handoff (2026-11-24)
+
+The owner authorized correction of independently identified H03 on existing PR #7,
+audited at 8b6f71eea1c726607159e5e77ff7d1e0a9923e0e. D02, earlier provenance work,
+compatibility and future ADR 0004 documentation were accepted, not reopened.
+Six corrected synthetic reproductions failed before production edits; the legacy
+validation-insensitive element ID behavior was independently exercised and confirmed.
+Semantic hashes now bind current workflow/page/element meaning to the plan; explicit
+reviewed requirement bindings prevent reused IDs from transferring reviewed support.
+Planning disposition and relationship review remain distinct. See
+[ADR 0005](decisions/0005-reviewed-semantic-observation-bindings.md) and
+[candidate H03 evidence](v07-release-candidate.md#h03-evidence-identity-drift-remediation).
+The affected V0.7 slice passed 201 tests. Complete corrected-candidate gates and exact
+final-head CI are recorded in candidate evidence and the live PR handoff. Historical
+verification below predates H03. Stable V0.6, main, all worktrees, historical contracts
+and frozen archives are preserved. No merge, stable promotion or V0.8 work authorized.
+
 ## Current authorized objective and release state
 
 The owner authorized V0.7 Intelligent QA Planning and Coverage Gap Analysis plus D02,

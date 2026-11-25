@@ -19,6 +19,7 @@ from autoqa.planning_contracts import (
     PlanningReview,
     PlanningSnapshot,
 )
+from autoqa.planning_identity import discovery_identity
 
 REQUIREMENTS = "test-cases/requirements-v07.json"
 REVIEWS = "test-cases/planning-review-v07.json"
@@ -131,6 +132,7 @@ class IntelligentPlanningService:
         raw_discovery = self._optional(DISCOVERY, SOURCE_LIMIT)
         workflow_ids, evidence_ids = [], []
         workflow_provenance, evidence_provenance = {}, {}
+        workflow_fingerprints, evidence_fingerprints = {}, {}
         if raw_discovery is not None:
             discovery = Discovery.model_validate(raw_discovery)
             if len(discovery.workflows) > 2000:
@@ -139,21 +141,11 @@ class IntelligentPlanningService:
             if len(set(workflow_ids)) != len(workflow_ids):
                 raise ValueError("Duplicate workflow identity")
             workflow_provenance = {workflow.id: workflow.status for workflow in discovery.workflows}
-
-            def add_evidence(identity, provenance):
-                if not identity:
-                    return
-                if identity in evidence_provenance and evidence_provenance[identity] != provenance:
-                    raise ValueError("Conflicting evidence provenance")
-                evidence_provenance[identity] = provenance
-                if len(evidence_provenance) > 5000:
-                    raise ValueError("Too many evidence identities")
-
-            for record in discovery.evidence_records:
-                add_evidence(record.id, record.category)
-            for page in discovery.pages:
-                for element in page.elements:
-                    add_evidence(element.id, "OBSERVED")
+            workflow_fingerprints, evidence_fingerprints, evidence_provenance = discovery_identity(
+                discovery
+            )
+            if len(evidence_provenance) > 5000:
+                raise ValueError("Too many evidence identities")
             evidence_ids = sorted(evidence_provenance)
         receipts = self._optional(RECEIPTS, SIDECAR_LIMIT)
         membership = self._optional(MEMBERSHIP, SIDECAR_LIMIT)
@@ -228,6 +220,8 @@ class IntelligentPlanningService:
             evidence_ids=evidence_ids,
             workflow_provenance=dict(sorted(workflow_provenance.items())),
             evidence_provenance=dict(sorted(evidence_provenance.items())),
+            workflow_fingerprints=workflow_fingerprints,
+            evidence_fingerprints=evidence_fingerprints,
             suite_id=suite_id,
             suite_state=suite_state,
             suite_digest=suite_digest,

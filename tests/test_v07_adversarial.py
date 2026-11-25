@@ -48,6 +48,8 @@ def supplied_requirements():
                 "user_impact": 5,
                 "evidence_ids": ["SUP-UI"],
                 "workflow_ids": ["WF-UI"],
+                "workflow_bindings": {"WF-UI": "d" * 64},
+                "evidence_bindings": {"OBS-UI": "e" * 64},
                 "observed_evidence_ids": ["OBS-UI"],
                 "related_ids": ["REQ-API"],
                 "design_hints": [
@@ -69,6 +71,8 @@ def supplied_requirements():
                 "expected_behavior": "Reviewed healthy response",
                 "evidence_ids": ["SUP-API"],
                 "workflow_ids": ["WF-API"],
+                "workflow_bindings": {"WF-API": "d" * 64},
+                "evidence_bindings": {"OBS-API": "e" * 64},
                 "observed_evidence_ids": ["OBS-API"],
             },
         ],
@@ -119,6 +123,8 @@ def supplied_context():
             },
         ],
         "workflow_ids": ["WF-UI", "WF-API"],
+        "workflow_fingerprints": {"WF-UI": "d" * 64, "WF-API": "d" * 64},
+        "evidence_fingerprints": {"OBS-UI": "e" * 64, "OBS-API": "e" * 64},
         "evidence_ids": ["OBS-UI", "OBS-API"],
         "workflow_provenance": {"WF-UI": "OBSERVED", "WF-API": "OBSERVED"},
         "evidence_provenance": {"OBS-UI": "OBSERVED", "OBS-API": "OBSERVED"},
@@ -173,6 +179,8 @@ def test_missing_mapping_and_unknown_observations_stay_visible():
     document = supplied_requirements()
     document["mappings"] = []
     document["requirements"][0]["workflow_ids"] = ["WF-NOT-OBSERVED"]
+    document["requirements"][0]["workflow_bindings"] = {}
+    document["requirements"][0]["evidence_bindings"] = {}
     document["requirements"][0]["observed_evidence_ids"] = ["OBS-NOT-OBSERVED"]
     plan = snapshot(document)
     ui = finding(plan)
@@ -225,6 +233,7 @@ def test_invalid_relationships_cannot_become_confirmed_automation(change, expect
         case["supported"] = False
     elif change == "unknown_evidence":
         requirement["observed_evidence_ids"] = ["OBS-MISSING"]
+        requirement["evidence_bindings"] = {}
     elif change == "unknown_expectation":
         requirement["expected_behavior"] = None
     row = finding(snapshot(document, context))
@@ -499,6 +508,15 @@ def reviewed_planning_project(project, tmp_path):
     suite.packs[0].case_ids = ["TC-UI"]
     approve_suite(project, suite, authorization)
     document = supplied_requirements()
+    # Synthetic operator explicitly reviews the current semantic relationships.
+    current = planning_service(project)._context()
+    for req in document["requirements"]:
+        req["workflow_bindings"] = {
+            key: current.workflow_fingerprints[key] for key in req["workflow_ids"]
+        }
+        req["evidence_bindings"] = {
+            key: current.evidence_fingerprints[key] for key in req["observed_evidence_ids"]
+        }
     cases = {c.id: c for c in project.cases()}
     for mapping in document["mappings"]:
         mapping["case_signature"] = case_signature(cases[mapping["case_id"]])

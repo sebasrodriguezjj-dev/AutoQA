@@ -395,6 +395,8 @@ def test_actual_workflow_provenance_controls_observation_claims(project, tmp_pat
     project.storage.write_json(
         "discovery/workflow-map.json", discovery_value(workflow_status=status)
     )
+    current = IntelligentPlanningService(project)._context()
+    value["requirements"][0]["workflow_bindings"] = current.workflow_fingerprints
     source = input_file(tmp_path, value)
     before = tree(project)
     snapshot = IntelligentPlanningService(project).analyze(source)
@@ -416,6 +418,8 @@ def test_actual_evidence_provenance_controls_observation_claims(project, tmp_pat
     project.storage.write_json(
         "discovery/workflow-map.json", discovery_value(evidence_category=category)
     )
+    current = IntelligentPlanningService(project)._context()
+    value["requirements"][0]["evidence_bindings"] = current.evidence_fingerprints
     source = input_file(tmp_path, value)
     before = tree(project)
     snapshot = IntelligentPlanningService(project).analyze(source)
