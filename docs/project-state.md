@@ -1,78 +1,125 @@
 # Permanent project state and engineering handoff
 
-Last verification: 2026-11-24, America/Costa_Rica. Dated observation, not live GitHub.
-Verify origin, branches, PRs and exact-head CI before trusting historical status.
+Last verification: **2026-11-24, America/Costa_Rica**. This is a dated handoff, not live
+GitHub. Verify current refs/PRs/checks before trusting it; enduring rules are in AGENTS.
 
-## Active authorized objective
+## Current authorized objective and release state
 
-The owner explicitly authorized V0.7 Intelligent QA Planning and Coverage Gap Analysis,
-including D02, using one Lead and three isolated specialists. Work on
-`feat/v07-development`; no merge, stable promotion/tag or V0.8 implementation.
-Verified starting/current main: `baa776d2253831f08dc7d630cf0e67d0a22d4b8f`.
-PR #5 merged at 57a1336 and PR #6 merged at baa776d; fresh GitHub search found no open PR.
-Stable product release remains v0.6.0 at bbd54ad0821cb6962c09d8a1149a0f40b936764b,
-annotated tag object bea83dc984687dcde97416a8fa57bd2849f8aa0f. Existing pilot worktrees
-and all history are preserved. Candidate version is not claimed until acceptance passes.
+The owner authorized V0.7 Intelligent QA Planning and Coverage Gap Analysis plus D02,
+then authorized resuming interrupted work and recording expanded future product vision.
+Development branch: **feat/v07-development**. Candidate: **0.7.0rc1**, with completed
+local acceptance below. Deliver one verified development PR and stop for independent
+audit ("Audita al dev"). No merge, stable V0.7 tag, V0.8 or unrelated product work.
+Starting/current verified main: **baa776d2253831f08dc7d630cf0e67d0a22d4b8f** (PR #6
+merged after approved foundation PR #5). Fresh recovery query found no open PR or
+published V0.7 branch before this task's publication. Final branch HEAD/PR/CI are
+recorded in its live GitHub review and external handoff, without self-referential SHA.
 
-## Environment and delegation
+Stable product remains **v0.6.0**, target bbd54ad0821cb6962c09d8a1149a0f40b936764b,
+annotated tag object bea83dc984687dcde97416a8fa57bd2849f8aa0f. No tag/main/history
+rewrite, visibility change or worktree deletion. Domain 0.3, API 0.5, management 0.6,
+legacy signatures/receipts/readers and standalone runtime remain compatible.
 
-Native spawn/send/followup/wait tools are exposed with four active slots including
-Lead. The current native tool schema has no custom-profile selection/loading result;
-automatic .codex/agents TOML discovery cannot be verified in this session. Read those
-profiles and provide explicit role/common-context briefings instead. Installed
-codex-cli 0.114.0 reports multi_agent=false and child_agents_md=false. No global setting
-is changed and no automatic-profile-loading success is claimed. Actual specialist
-creation, worktrees, commits and checks will be recorded in the V0.7 handoff.
+## Delivered V0.7 behavior and boundaries
 
-D02 is the first structural task: enduring rules live in AGENTS and role/workflow/gate
-instructions, owner direction in roadmap, dated facts here, live state in GitHub.
-See [ADR 0002](decisions/0002-enduring-instructions-and-dated-state.md).
-V0.6 architecture, approvals, schemas and security remain the compatibility baseline.
-The historical V0.5 intermittent incident remains unroot-caused.
+Strict additive schema 0.7 DTOs; bounded explicit JSON source/requirement/evidence/mapping
+input; deterministic snapshots/proposals; explained seven-factor risk; confirmed,
+proposed, missing, unsupported, insufficient, stale and rejected/excluded mapping states.
+Read-only intelligent-plan/coverage-report; explicit requirements-import and plan-review
+write only new V0.7 sidecars under existing project-bound plan/review intent. Accepted
+planning proposals remain MANUAL_REVIEW and cannot approve cases or suites, change
+receipts/signatures, generate executable code or authorize execution. Coverage is only
+the supplied partial inventory; no percentages and execution_coverage=NOT_ASSESSED.
 
-## Current V0.7 recovery handoff (2026-11-24)
+Actual workflow/evidence provenance is retained. Only OBSERVED supports declared
+observation references/risk; source/inferred/unknown/missing provenance cannot be inflated.
+Conflicting categories fail; provenance drift changes plan ID and makes review stale.
+See [operator guide](v07-intelligent-planning.md), [contract](v07-interface-agreement.md),
+[candidate evidence](v07-release-candidate.md) and [ADR 0003](decisions/0003-additive-requirement-planning.md).
 
-- Initial recovered Lead HEAD: `538f20fe35a23657949db60b97ce6149a2698ca9`.
-  Thirteen modified tracked files and five untracked files were preserved in atomic
-  checkpoint `0d8d6e6`; no reset/clean/worktree deletion or new team was used.
-- Completed specialist implementation was recovered exactly once: Backend0865d1c ->
-  0338095, Framework054ec18 ->d45a800, QA0afa310 ->001e5d3. Provenance repro d6133f4
-  already existed as538f20f; missing ambiguity repro8a1fd2d ->ef97669; Backend correction
-  c23de59 ->9dcc88d. Recovered Framework/QA pending patches integrated as
-  `dd128091a13534c0b6fb9f6dd431032453f90e00`, byte-matching original working copies.
-- Active provenance blocker is repaired and passes focused verification:39passed /
-  141deselected in5.54s; all V0.7 planning/integration/adversarial tests180passed in13.29s.
-  Typed context retains actual provenance; only OBSERVED supports observation claims,
-  conflicting categories fail, and provenance drift makes planning acceptance stale.
-- Initial full gate444passed /18deselected in210.88s plus package/install/independent
-  execution is pre-correction historical evidence, not final candidate certification.
-  Complete corrected runtime is committed atdd12809; the final full gate is running
-  against that stable runtime. Inspect `.test-work/v07-final-release.log` before rerunning.
-- Root working changes now cover documentation only. Original Framework worktree retains
-  its two recovered uncommitted files and QA worktree retains its recovered test-file
-  edits; they were preserved rather than discarded. All six specialist worktrees remain.
-- Logs: `.test-work/v07-provenance-before.log` (7failed repro),
-  `v07-provenance-after.log` (39passed), `v07-provenance-recovered.log` (180passed),
-  `v07-full-release.log` (initial gate), `v07-final-release.log` (corrected complete gate).
-  Exact recovery patches remain under ignored `.test-work/v07-recovered-*.patch`.
-- Candidate metadata is internally0.7.0rc1; 37dependency resolutions are unchanged apart
-  from root version. Stable mainbaa776d and annotated v0.6.0 remain unchanged. No
-  V0.7 remote branch/PR existed at the recovery fetch; final publication remains required.
-- Next action: finish the one corrected complete gate, finalize documentation/results,
-  validate links/security inventory, commit/push existing feature branch, open one PR,
-  inspect exact-final-head CI and stop for independent audit. No merge/stable tag/V0.8.
+## Recovery and integration evidence
 
-## Newly approved future product requirements
+Recovered initial HEAD **538f20fe35a23657949db60b97ce6149a2698ca9**, with 13 modified
+tracked files and five untracked candidate/docs/example files. All preserved in checkpoint
+0d8d6e6; no active cherry-pick or verification process required restart/cleanup. No new
+team was spawned. Exact binary diff checks prove each original patch integrated once:
 
-The owner approved the expanded local-first/code-first professional workflow vision,
+| Original specialist/repro commit | Lead integration |
+| --- | --- |
+| Backend 0865d1c5b27bfb822f0832b67dda604f58951ba7 | 0338095 |
+| Framework 054ec1804b988bd57bd1de44e1a0dc4452b83f9e | d45a800 |
+| QA 0afa31031bf5eefbc5511ff85810913c0de50282 | 001e5d3 |
+| Provenance repro d6133f4ee906e71afbcb69a9cd8491d233db4268 | 538f20f |
+| Ambiguity repro 8a1fd2d8445dd08ca7e165b8d0273bf1e93a63d3 | ef97669 |
+| Backend correction c23de59d8978415d34a23e414dd017986757ad6c | 9dcc88d |
+
+Recovered Framework adapter/test and QA fixture/provenance changes were uncommitted in
+specialist worktrees. Exact saved patches were reviewed, applied and tested, then committed
+as **dd128091a13534c0b6fb9f6dd431032453f90e00**. Final owned files match preserved
+specialist commits/working copies; none lost. Original three foundation worktrees and
+three V0.7 worktrees remain. Framework retains its two original uncommitted files;
+QA retains its original uncommitted test edits. They were not discarded or rewritten.
+Lead working changes after the corrected runtime commit were documentation only.
+
+D02 was the first commit, d03c74d: enduring instructions in AGENTS/roles/workflow/gates,
+product purpose in vision, owner direction in roadmap, dated facts here and authoritative
+live state in GitHub. [ADR 0002](decisions/0002-enduring-instructions-and-dated-state.md).
+One Lead/three real specialists used explicit common context from 45188e3. Native tools
+were exercised; automatic TOML role loading is unverified, profiles read explicitly.
+CLI 0.114.0 has multi_agent=false. A thread-limit issue was handled by reassigning an
+existing session to QA, not adding orchestration or claiming new automatic discovery.
+
+## Actual final local verification
+
+Corrected runtime complete gate **exit 0**, Windows/Python 3.14.3:
+**485 passed / 18 deselected in 215.74s**, no unexpected failures or skips. Ruff
+lint/format 73 files, lock 37 packages with root-version-only change, frozen archive/member/
+CLI/import/approval compatibility and V0.6 H01/H02 passed. Wheel/sdist and isolated
+installed import/distribution/CLI assert 0.7.0rc1. All four new installed commands pass
+read-only/import/review/stale-refusal checks. Standalone framework has AutoQA absent,
+validates and reconciles complete collection; genuine owned-loopback single/pack/full
+each pass with one invocation/two operations. UI independent export/collection and API
+healthy/defect/restored execution remain in regression. No browser logic changed;
+no new browser/client/live-AI benchmark is claimed.
+
+Focused provenance: 39 passed / 141 deselected in 5.54s. Complete V0.7 slice: 180 passed
+in 13.29s. Initial gate 444 passed / 18 deselected in 210.88s and its package results are
+**pre-correction history**, not final certification. Independent 7-failure provenance
+and separate ambiguity repros remain, with before/after logs. All evidence lives in
+ignored `.test-work`: v07-provenance-before.log, v07-provenance-after.log,
+v07-provenance-recovered.log, v07-full-release.log (initial), v07-final-release.log
+(corrected complete gate), v07-example-final.log; exact recovery patches are retained.
+Fresh package directory: release-gate-o299otnx. Corrected synthetic plan artifact:
+v07-planning-example-ginusuav/plan.json (5 requirements, 2 confirmed UI/API mappings,
+2 missing, 1 unsupported, 1 uncertain, 25 manual proposals; executed coverage NOT_ASSESSED).
+
+Documentation links/roles/D02/history checks and scoped inventory passed: all current
+relative destinations, four TOML profiles and exact historical architecture/state
+suffixes; 160 tracked files plus frozen ZIP members had no conventional credential or
+private-output findings. This is not universal PII/secret detection or history forensics.
+The final exact-HEAD hosted result and inspected logs are required post-commit before
+delivery; run/job IDs, tested checkout and final HEAD are recorded in the PR/handoff.
+No earlier/pending check substitutes for it. Root is committed before publication.
+
+## Future owner-approved requirements and residual risks
+
+Expanded private/local-first/code-first/supervised/evidence-driven V1.0 requirements are
 recorded in [product vision](product-vision.md), [roadmap](roadmap.md) and
-[ADR 0004](decisions/0004-owner-approved-professional-workflow-vision.md). It covers local
-application/project/developer setup, separate application/automation repositories,
-manual/AI-assisted IDE workflows and reviewed reconciliation, Test Data Manager,
-truthful dashboards and provider-verified VS Code skills. It is documentation-only
-future scope: approximate V0.8 foundations, V0.9 interfaces/managers/skills/dashboard,
-V1.0 integrated validation. Exact later implementation requires separate authorization.
-V0.7 remains Intelligent QA Planning and Coverage Gap Analysis only.
+[ADR 0004](decisions/0004-owner-approved-professional-workflow-vision.md): local Application
+Setup/guided projects/Developer Mode, separate application/automation repositories,
+manual/AI-assisted IDE development and safe reviewed reconciliation, Test Data Manager,
+five truthful dashboards and three provider-verified VS Code Agent Skills. Documentation
+only: approximate V0.8 foundations, V0.9 interfaces/managers/skills/dashboards, V1.0
+integrated validation. Exact future scope needs separate authorization; V0.7 is unchanged.
+
+No current reproduced local mandatory blocker remains after the provenance repair.
+Planning is not unrestricted document/NLP ingestion, semantic correctness certification,
+automatic executable case compilation or complete application coverage. Declared review
+and mappings remain human assertions; feasibility is recorded case metadata, not a new
+compiler certification. Trusted-local/single-writer/unsigned-record, sandbox, privacy,
+manual retention and platform limits remain. Historical V0.5 intermittent API/evidence/
+JUnit incident is still unroot-caused. Provider-specific skill compatibility is deferred
+and unverified. No V0.8 code, manager/UI/skills runtime or stable release is implemented.
 
 ## Historical foundation and reconciliation handoff
 
