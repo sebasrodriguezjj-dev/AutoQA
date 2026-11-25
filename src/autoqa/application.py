@@ -108,6 +108,68 @@ class ApplicationEngine:
             },
         )
 
+    def diagnose_run(self, run_file: Path):
+        from autoqa.v08_diagnosis import DiagnosisService
+
+        return DiagnosisService(self.project).analyze(run_file)
+
+    def impact_review(self, before: Path, after: Path):
+        from autoqa.v08_impact import ImpactService
+
+        return ImpactService(self.project).compare(before, after)
+
+    def inspect_test_data(self, input_path: Path | None = None):
+        from autoqa.v08_data import TestDataService
+
+        return TestDataService(self.project, self.authorization).inspect(input_path)
+
+    def import_test_data(self, path: Path, authorized_roots=()):
+        from autoqa.v08_data import TestDataService
+
+        return TestDataService(self.project, self.authorization).import_inventory(
+            path, authorized_roots
+        )
+
+    def validate_test_data(self, alias: str, environment: str):
+        from autoqa.v08_data import TestDataService
+
+        return TestDataService(self.project, self.authorization).validate_alias(alias, environment)
+
+    def bind_test_data(self, alias: str, case_id: str, environment: str):
+        from autoqa.v08_data import TestDataService
+
+        return TestDataService(self.project, self.authorization).bind_case(
+            alias, case_id, environment
+        )
+
+    def propose_maintenance(
+        self, source: Path, case_id: str, element_id: str, locator, manual_source=None
+    ):
+        from autoqa.v08_maintenance import MaintenanceService
+
+        return MaintenanceService(self.project, self.authorization).propose(
+            source, case_id, element_id, locator, manual_source
+        )
+
+    def review_maintenance(self, source: Path, proposal, decision: str, manual_source=None):
+        from autoqa.v08_maintenance import MaintenanceService
+
+        return MaintenanceService(self.project, self.authorization).review(
+            source, proposal, decision, manual_source
+        )
+
+    def apply_maintenance(self, source: Path, proposal, manual_source=None):
+        from autoqa.v08_maintenance import MaintenanceService
+
+        return MaintenanceService(self.project, self.authorization).apply(
+            source, proposal, manual_source
+        )
+
+    def reconcile_source(self, baseline: Path, current: Path):
+        from autoqa.v08_reconciliation import ReconciliationService
+
+        return ReconciliationService(self.project).inspect(baseline, current)
+
 
 class InProcessAdapter:
     """Test adapter exposing the same operations as an interface adapter."""
