@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 from pathlib import Path, PureWindowsPath
 
 from autoqa.domain import artifact_reference
@@ -16,8 +17,16 @@ def _local_path(value):
     normalized = raw.replace("\\", "/")
     drive = PureWindowsPath(raw).drive
     tail = raw[len(drive) :] if drive else raw
+    reserved = any(
+        re.fullmatch(
+            r"CON|PRN|AUX|NUL|CLOCK\$|CONIN\$|CONOUT\$|COM[1-9¹²³]|LPT[1-9¹²³]",
+            part.split(".", 1)[0].strip(" ").upper(),
+        )
+        for part in normalized.split("/")
+    )
     if (
-        normalized.startswith("//")
+        reserved
+        or normalized.startswith("//")
         or "://" in raw
         or ":" in tail
         or (drive and not PureWindowsPath(raw).is_absolute())

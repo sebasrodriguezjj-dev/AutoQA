@@ -10,7 +10,7 @@ from autoqa.application import ApplicationEngine
 from autoqa.authorization import AuthorizationContext
 from autoqa.core import select_project
 from autoqa.v08_contracts import LocatorSpec, MaintenanceProposal, canonical
-from autoqa.v08_io import read_json
+from autoqa.v08_io import checked_root, read_bytes, read_json
 
 
 def bounded_command(function):
@@ -32,7 +32,22 @@ def bounded_command(function):
 
 
 def engine(project, *operations):
-    selected = select_project(project)
+    if project is None:
+        current = checked_root(Path.cwd())
+        config = current / "config.yaml"
+        if config.is_symlink() or config.is_junction():
+            raise ValueError("Linked project configuration")
+        if config.is_file():
+            root = current
+        else:
+            active = read_json(current / "projects/.autoqa/active.json")
+            if not isinstance(active, dict) or not isinstance(active.get("path"), str):
+                raise ValueError("Invalid active project")
+            root = checked_root(active["path"])
+    else:
+        root = checked_root(project)
+    read_bytes(root / "config.yaml")
+    selected = select_project(root)
     context = AuthorizationContext(selected.root, frozenset(operations)) if operations else None
     return ApplicationEngine(selected, context)
 
