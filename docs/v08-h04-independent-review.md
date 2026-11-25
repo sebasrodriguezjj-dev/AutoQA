@@ -50,3 +50,27 @@ assertions, signatures, schemas and frozen fixtures remain intact. Receipts and 
 maintenance bindings remain unsigned trusted-local records; no sandbox, identity or
 universal redaction claim is made. Independent historical exports cannot observe later
 source revocation and remain immutable. The historical V0.5 incident remains unroot-caused.
+
+## Additional audited-source boundary evidence
+
+The shared/unrelated operation experiment produced **3 failed / 1 passed / 5 deselected
+in 74.88s**, `.test-work/v08-h04-unrelated-before.log`. The passing control repairs one
+case with a disjoint control while both cases share a Page Object. The failures show:
+
+1. A single reviewed repair silently changes another approved case sharing its observed
+   element, demonstrated by expanded per-case blueprint operation comparison.
+2. Unrelated assertion-locator drift in the same case enters the newly compiled output.
+3. Unrelated control-locator drift in another case enters the newly compiled output.
+
+A further managed-boundary run produced **2 failed / 10 deselected in 18.15s**,
+`.test-work/v08-h04-managed-bypasses-before.log`. Direct blueprint compilation accepts
+`amount-other`, and source-backed FrameworkService.run reaches its subprocess despite
+post-approval discovery drift. Both source-backed and legacy execution checks stop with
+fatal probes before an application is contacted. These are distinct bypass checks,
+not claims of new browser execution. No prior assertion was removed or relaxed.
+
+The owned Chromium H04 test has been drafted to observe all three actual unique locators,
+record healthy/controlled locator failure/exact repaired pass/genuine application defect,
+and reject the third locator before scenario approval. It will run only after the
+Lead supplies the production fix and the static boundary regressions pass. Current
+pre-fix failures remain release blockers; no H04 resolution is claimed by this checkpoint.
