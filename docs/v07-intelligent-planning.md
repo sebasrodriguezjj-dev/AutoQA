@@ -30,6 +30,8 @@ approved requirement is operator-supplied review state, not an authenticated ide
 Limits: 256000 input bytes, 100 requirements, 100 sources, 1000 supplied evidence
 records, 2000 mapping pairs, 20 reference IDs of each kind per requirement and 10
 explicit design hints. IDs/text/collections and current context are bounded. Extra
+Explicit import applies the same byte bound to normalized stored JSON; a raw document
+near the limit may need to be reduced before import even when read-only analysis accepts it.
 fields, malformed/future schemas, duplicate JSON keys/IDs, invalid declared references,
 nonfinite numbers, unsafe control characters and conventional credential material fail.
 Do not place secrets/PII in descriptions or tags; this is not universal redaction.
