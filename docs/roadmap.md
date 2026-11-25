@@ -5,34 +5,53 @@ authorized engagements, supporting its owner's services. It is not SaaS or
 multi-tenant. Read the [product vision](product-vision.md) for the complete intended
 workflow and the [project state](project-state.md) for the current verified handoff.
 
-## Current authorized work and verified baseline
+## Development direction and status
 
-V0.6.0 is the latest verified stable release, integrated by PR #4 at
-`bbd54ad0821cb6962c09d8a1149a0f40b936764b`; annotated `v0.6.0` targets that commit.
-The approved foundation [PR #5](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/5)
-is merged at `57a133626cc9c1b09ddf3039c6521e65ac5fdcc7`, the currently verified main.
-This engineering-context integration is separate from the stable product release;
-it implements no V0.7 features. Current authorized work is post-merge documentation
-reconciliation, followed by independent audit of its unmerged documentation PR.
-V0.7 remains the next planned milestone; startup requires explicit owner authorization
-and fresh GitHub verification. Releases also require explicit owner authorization.
-These publication observations were verified by the Lead on 2026-11-24,
-America/Costa_Rica; they are a dated snapshot, not a live GitHub query.
+The owner-approved sequence below is enduring product direction. Current implemented
+scope, stable release, candidate, active branch/PR, authorization and verification
+belong in dated [project state](project-state.md) and version-specific delivery records.
+Verify live GitHub before relying on status. A roadmap milestone is not automatic
+permission to implement, merge or release. V0.7 delivered scope and stable publication are recorded in project-state;
+V0.8 remains the next milestone after V0.7, without authorizing its implementation.
 
-## Owner-defined future milestones (proposed, not implemented)
+## Owner-defined milestone sequence
 
 | Milestone | Intended objective | Status and authorization boundary |
 | --- | --- | --- |
-| V0.7 | Intelligent QA Planning and coverage-gap analysis. | Next product milestone; no feature implementation authorized by the foundation task. |
-| V0.8 | Maintenance, diagnosis, reliability and reviewed repairs. | Proposed expansion beyond current conservative diagnosis; no automatic repair/self-healing claim. |
-| V0.9 | QA Operations, dashboards, history and CI integrations. | Proposed operations layer; current per-run artifacts and local workflow generation are the retained baseline. |
-| V1.0 | Professionally validated supervised end-to-end QA agent. | Validation objective, not a statement of arbitrary client readiness or a SaaS conversion. |
+| V0.7 | Intelligent QA Planning and coverage-gap analysis. | Delivered planning scope; stable publication evidence is recorded in project-state. |
+| V0.8 | Maintenance, diagnosis, reliability, reviewed repairs, safe manual-code reconciliation and test-data foundations. | Owner-approved future direction; exact implementation requires separate authorization, with no automatic repair/self-healing claim. |
+| V0.9 | QA Operations, local UI, project/developer setup, repository management, test-data UI, VS Code skills, dashboards, history and CI integrations. | Approximate owner-approved allocation; current CLI/artifacts are the baseline, not delivery of these future interfaces. |
+| V1.0 | Integrated professional workflow validation for a supervised end-to-end QA Engineering agent. | Owner-approved validation objective; no arbitrary client certification or SaaS conversion. |
 
 Future roadmap changes require explicit owner authorization. Keep every proposed
 scope distinguishable from implemented behavior and deferred ideas. Prioritize
 reliability, maintainability, reproducibility, security, accurate reporting,
 compatibility and practical QA engineering value over feature count. Human review
 remains mandatory for sensitive, mutating or uncertain actions.
+
+## Newly approved future requirements and scope boundary
+
+The owner approved the expanded [V1.0 product requirements](product-vision.md) in the
+V0.7 resume instruction: local Application Setup and independent guided projects;
+environment validation and VS Code Developer Mode; separate read-only-by-default
+Application Repository and editable Automation Repository; local Git and optional
+explicitly authorized private GitHub operations; application change tracking/impact
+analysis; readable stable-ID automation, manual/AI-assisted hybrid IDE workflows,
+reviewed manual-code reconciliation and traceable manual-result imports; a privacy-aware
+Test Data Manager; the five named quality/coverage/history/stability/readiness dashboards;
+and provider-verified VS Code skill installation/configuration/update management.
+
+The repository skills are `test-case-engineer`, `test-data-engineer`, `test-debugger`.
+The selected VS Code assistant uses them; no duplicate in-application coding chat.
+Provider-specific conventions must be verified before future implementation. Standalone
+framework independence, assertion/expected-behavior preservation, secure external secrets
+and truthful evidence levels remain mandatory. See
+[ADR 0004](decisions/0004-owner-approved-professional-workflow-vision.md).
+
+These are approved future requirements, not delivered V0.7 features. The allocation
+above is approximate, and exact later scope needs separate owner authorization.
+V0.7 remains bounded Intelligent QA Planning and Coverage Gap Analysis; V0.8 remains
+the next milestone, without permission to begin its implementation in this task.
 
 ## V0.6.0 stable release scope
 

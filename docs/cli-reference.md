@@ -136,3 +136,19 @@ Standalone: `python -m qa_runtime.runner run` and `collect` accept equivalent op
 AutoQA need not be installed. Arbitrary Pytest expressions/node IDs are not accepted.
 See [management semantics/examples](v06-test-management.md), [analyzer limits](v06-framework-analyzer.md)
 and [historical candidate evidence](v06-release-candidate.md) and [stable gate](v06-stable-release-gate.md). V0.5 examples remain valid.
+
+## V0.7 intelligent planning
+
+- `requirements-import FILE --project PATH`: explicit bounded JSON import into a new
+  V0.7 sidecar; never scenario or suite approval.
+- `intelligent-plan [--requirements FILE] --project PATH`: read-only full planning JSON,
+  or the explicitly stored inventory when FILE is omitted.
+- `coverage-report [--requirements FILE] --project PATH`: read-only supplied-inventory
+  scope, counts/findings and current context; executed coverage is NOT_ASSESSED.
+- `plan-review PLAN_ID --accept PROP_ID --project PATH` or `--reject PROP_ID`: repeat
+  IDs within exactly one decision mode; bind planning disposition to the current plan.
+
+Missing inventory, invalid/stale IDs, invalid input and unauthorized writes fail nonzero.
+Accepted proposals remain MANUAL_REVIEW and cannot bypass existing plan/suite approval.
+Read the [full operator guide](v07-intelligent-planning.md) for JSON bounds, signatures,
+review workflow, coverage semantics and known limits. Old command interfaces remain.

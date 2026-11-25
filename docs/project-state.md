@@ -1,5 +1,210 @@
 # Permanent project state and engineering handoff
 
+## V0.7.0 stable release handoff — 2026-11-25 (America/Costa_Rica)
+
+The owner independently approved candidate b3a709cd944779a83beda69e7ec3ca0d94140893
+and explicitly authorized metadata promotion, fresh gates, PR #7 merge by merge commit,
+and annotated v0.7.0 publication at verified official main. This supersedes the dated
+candidate-only restrictions below; their original evidence remains historical.
+
+This tree contains stable **0.7.0** metadata and the audited V0.7 functionality, including
+accepted H03 semantic identity/explicit relationship bindings, original provenance and
+D02 context corrections. There is no runtime change from the approved candidate.
+See [stable release gate](v07-stable-release-gate.md) for verification and retained risks.
+Historical RC1 evidence remains in [candidate record](v07-release-candidate.md).
+
+Stable promotion local gate: exit 0, **506 passed / 18 deselected**, no Windows skips
+or failures; Ruff, lock/frozen compatibility, H01/H02/provenance/H03, build/install,
+four planning commands, independent COMPLETE collection and actual case/pack/full
+execution passed. Documentation/roles/history and scoped inventory checks passed.
+Stable CI must certify the new promotion HEAD; prior RC1 CI is historical evidence.
+
+Authoritative publication evidence is the [PR #7 handoff](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/7),
+its exact-promotion-HEAD checks and the annotated
+[v0.7.0 tag](https://github.com/sebasrodriguezjj-dev/AutoQA/tree/v0.7.0).
+The release transaction records promotion HEAD, CI run/job/actual checkout, official
+merge commit/tree and tag object/peeled target there after each verified step. Verify
+those live refs before relying on publication; metadata alone does not establish it.
+This avoids self-referential SHAs or another context-reconciliation PR. Earlier stable
+tags, original specialist worktrees and dirty copies are preserved.
+
+V0.7 delivers bounded supplied-requirement planning, reviewed mappings, explicit gaps,
+explained risk and manual proposals; it remains read-only except explicit V0.7 import/
+planning disposition. Accepted proposals never approve scenarios/suites or execution.
+Coverage remains SUPPLIED_REQUIREMENTS_ONLY and execution coverage NOT_ASSESSED.
+AGENTS and all four role profiles remain enduring instructions on integrated main.
+
+Next proposed milestone: **V0.8 — Maintenance, Diagnosis and Reliability**, subject to
+separate Product Owner authorization. No implementation is authorized here. ADR 0004's
+future professional workflow vision/allocation remains unchanged. Stop after verified
+stable publication; the owner will request the final independent release audit: "Audita".
+
+Trusted local filesystem/operator, single-writer storage, unsigned records, no OS
+sandbox/universal secret or PII redaction, manual retention, limited browser/platform
+validation, unroot-caused historical V0.5 evidence incident and unverified automatic
+agent-profile loading remain. Fingerprints protect recorded meaning, not authenticated
+identity or complete application behavior. No new browser/client/live-AI claim.
+
+---
+
+# Historical V0.7 candidate handoff (superseded by stable promotion)
+
+Last verification: **2026-11-24, America/Costa_Rica**. This is a dated handoff, not live
+GitHub. Verify current refs/PRs/checks before trusting it; enduring rules are in AGENTS.
+
+## H03 audit remediation handoff (2026-11-24)
+
+The owner authorized correction of independently identified H03 on existing PR #7,
+audited at 8b6f71eea1c726607159e5e77ff7d1e0a9923e0e. D02, earlier provenance work,
+compatibility and future ADR 0004 documentation were accepted, not reopened.
+Six corrected synthetic reproductions failed before production edits; the legacy
+validation-insensitive element ID behavior was independently exercised and confirmed.
+Semantic hashes now bind current workflow/page/element meaning to the plan; explicit
+reviewed requirement bindings prevent reused IDs from transferring reviewed support.
+Planning disposition and relationship review remain distinct. See
+[ADR 0005](decisions/0005-reviewed-semantic-observation-bindings.md) and
+[candidate H03 evidence](v07-release-candidate.md#h03-evidence-identity-drift-remediation).
+The affected V0.7 slice passed 201 tests. The complete Windows release script passed
+(exit 0): 506 tests passed / 18 deselected, Ruff/lock/frozen/build/install and genuine
+independent case/pack/full execution passed. Final links/roles/history/inventory checks
+passed. Exact final-head CI is recorded in the live PR after post-commit verification. Historical
+verification below predates H03. Stable V0.6, main, all worktrees, historical contracts
+and frozen archives are preserved. No merge, stable promotion or V0.8 work authorized.
+
+## Current authorized objective and release state
+
+The owner authorized V0.7 Intelligent QA Planning and Coverage Gap Analysis plus D02,
+then authorized resuming interrupted work and recording expanded future product vision.
+Development branch: **feat/v07-development**. Candidate: **0.7.0rc1**, with completed
+local acceptance below. Deliver one verified development PR and stop for independent
+audit ("Audita al dev"). No merge, stable V0.7 tag, V0.8 or unrelated product work.
+Starting/current verified main: **baa776d2253831f08dc7d630cf0e67d0a22d4b8f** (PR #6
+merged after approved foundation PR #5). Fresh recovery query found no open PR or
+published V0.7 branch before this task's publication. Final branch HEAD/PR/CI are
+recorded in its live GitHub review and external handoff, without self-referential SHA.
+
+The single [V0.7 development PR #7](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/7)
+targets main from feat/v07-development and must remain **open and unmerged** for audit.
+Its [checks view](https://github.com/sebasrodriguezjj-dev/AutoQA/pull/7/checks) is the
+canonical final-head verification link. Final run/job IDs and the inspected synthetic
+merge checkout are recorded in the PR after post-commit CI completes. Do not substitute
+its initial publication commit or an earlier/pending check for the current PR HEAD.
+
+Stable product remains **v0.6.0**, target bbd54ad0821cb6962c09d8a1149a0f40b936764b,
+annotated tag object bea83dc984687dcde97416a8fa57bd2849f8aa0f. No tag/main/history
+rewrite, visibility change or worktree deletion. Domain 0.3, API 0.5, management 0.6,
+legacy signatures/receipts/readers and standalone runtime remain compatible.
+
+## Delivered V0.7 behavior and boundaries
+
+Strict additive schema 0.7 DTOs; bounded explicit JSON source/requirement/evidence/mapping
+input; deterministic snapshots/proposals; explained seven-factor risk; confirmed,
+proposed, missing, unsupported, insufficient, stale and rejected/excluded mapping states.
+Read-only intelligent-plan/coverage-report; explicit requirements-import and plan-review
+write only new V0.7 sidecars under existing project-bound plan/review intent. Accepted
+planning proposals remain MANUAL_REVIEW and cannot approve cases or suites, change
+receipts/signatures, generate executable code or authorize execution. Coverage is only
+the supplied partial inventory; no percentages and execution_coverage=NOT_ASSESSED.
+
+Actual workflow/evidence provenance is retained. Only OBSERVED supports declared
+observation references/risk; source/inferred/unknown/missing provenance cannot be inflated.
+Conflicting categories fail; provenance drift changes plan ID and makes review stale.
+See [operator guide](v07-intelligent-planning.md), [contract](v07-interface-agreement.md),
+[candidate evidence](v07-release-candidate.md) and [ADR 0003](decisions/0003-additive-requirement-planning.md).
+
+## Recovery and integration evidence
+
+Recovered initial HEAD **538f20fe35a23657949db60b97ce6149a2698ca9**, with 13 modified
+tracked files and five untracked candidate/docs/example files. All preserved in checkpoint
+0d8d6e6; no active cherry-pick or verification process required restart/cleanup. No new
+team was spawned. Exact binary diff checks prove each original patch integrated once:
+
+| Original specialist/repro commit | Lead integration |
+| --- | --- |
+| Backend 0865d1c5b27bfb822f0832b67dda604f58951ba7 | 0338095 |
+| Framework 054ec1804b988bd57bd1de44e1a0dc4452b83f9e | d45a800 |
+| QA 0afa31031bf5eefbc5511ff85810913c0de50282 | 001e5d3 |
+| Provenance repro d6133f4ee906e71afbcb69a9cd8491d233db4268 | 538f20f |
+| Ambiguity repro 8a1fd2d8445dd08ca7e165b8d0273bf1e93a63d3 | ef97669 |
+| Backend correction c23de59d8978415d34a23e414dd017986757ad6c | 9dcc88d |
+
+Recovered Framework adapter/test and QA fixture/provenance changes were uncommitted in
+specialist worktrees. Exact saved patches were reviewed, applied and tested, then committed
+as **dd128091a13534c0b6fb9f6dd431032453f90e00**. Final owned files match preserved
+specialist commits/working copies; none lost. Original three foundation worktrees and
+three V0.7 worktrees remain. Framework retains its two original uncommitted files;
+QA retains its original uncommitted test edits. They were not discarded or rewritten.
+Lead working changes after the corrected runtime commit were documentation only.
+
+D02 was the first commit, d03c74d: enduring instructions in AGENTS/roles/workflow/gates,
+product purpose in vision, owner direction in roadmap, dated facts here and authoritative
+live state in GitHub. [ADR 0002](decisions/0002-enduring-instructions-and-dated-state.md).
+One Lead/three real specialists used explicit common context from 45188e3. Native tools
+were exercised; automatic TOML role loading is unverified, profiles read explicitly.
+CLI 0.114.0 has multi_agent=false. A thread-limit issue was handled by reassigning an
+existing session to QA, not adding orchestration or claiming new automatic discovery.
+
+## Actual final local verification
+
+Corrected runtime complete gate **exit 0**, Windows/Python 3.14.3:
+**485 passed / 18 deselected in 215.74s**, no unexpected failures or skips. Ruff
+lint/format 73 files, lock 37 packages with root-version-only change, frozen archive/member/
+CLI/import/approval compatibility and V0.6 H01/H02 passed. Wheel/sdist and isolated
+installed import/distribution/CLI assert 0.7.0rc1. All four new installed commands pass
+read-only/import/review/stale-refusal checks. Standalone framework has AutoQA absent,
+validates and reconciles complete collection; genuine owned-loopback single/pack/full
+each pass with one invocation/two operations. UI independent export/collection and API
+healthy/defect/restored execution remain in regression. No browser logic changed;
+no new browser/client/live-AI benchmark is claimed.
+
+Focused provenance: 39 passed / 141 deselected in 5.54s. Complete V0.7 slice: 180 passed
+in 13.29s. Initial gate 444 passed / 18 deselected in 210.88s and its package results are
+**pre-correction history**, not final certification. Independent 7-failure provenance
+and separate ambiguity repros remain, with before/after logs. All evidence lives in
+ignored `.test-work`: v07-provenance-before.log, v07-provenance-after.log,
+v07-provenance-recovered.log, v07-full-release.log (initial), v07-final-release.log
+(corrected complete gate), v07-example-final.log; exact recovery patches are retained.
+Fresh package directory: release-gate-o299otnx. Corrected synthetic plan artifact:
+v07-planning-example-ginusuav/plan.json (5 requirements, 2 confirmed UI/API mappings,
+2 missing, 1 unsupported, 1 uncertain, 25 manual proposals; executed coverage NOT_ASSESSED).
+
+Documentation links/roles/D02/history checks and scoped inventory passed: all current
+relative destinations, four TOML profiles and exact historical architecture/state
+suffixes; 160 tracked files plus frozen ZIP members had no conventional credential or
+private-output findings. This is not universal PII/secret detection or history forensics.
+The final exact-HEAD hosted result and inspected logs are required post-commit before
+delivery; run/job IDs, tested checkout and final HEAD are recorded in the PR/handoff.
+No earlier/pending check substitutes for it. Root is committed before publication.
+
+## Future owner-approved requirements and residual risks
+
+Expanded private/local-first/code-first/supervised/evidence-driven V1.0 requirements are
+recorded in [product vision](product-vision.md), [roadmap](roadmap.md) and
+[ADR 0004](decisions/0004-owner-approved-professional-workflow-vision.md): local Application
+Setup/guided projects/Developer Mode, separate application/automation repositories,
+manual/AI-assisted IDE development and safe reviewed reconciliation, Test Data Manager,
+five truthful dashboards and three provider-verified VS Code Agent Skills. Documentation
+only: approximate V0.8 foundations, V0.9 interfaces/managers/skills/dashboards, V1.0
+integrated validation. Exact future scope needs separate authorization; V0.7 is unchanged.
+
+No current reproduced local mandatory blocker remains after the provenance repair.
+Planning is not unrestricted document/NLP ingestion, semantic correctness certification,
+automatic executable case compilation or complete application coverage. Declared review
+and mappings remain human assertions; feasibility is recorded case metadata, not a new
+compiler certification. Trusted-local/single-writer/unsigned-record, sandbox, privacy,
+manual retention and platform limits remain. Historical V0.5 intermittent API/evidence/
+JUnit incident is still unroot-caused. Provider-specific skill compatibility is deferred
+and unverified. No V0.8 code, manager/UI/skills runtime or stable release is implemented.
+
+## Historical foundation and reconciliation handoff
+
+The following original dated handoff is retained intact as historical evidence.
+Its temporary PR/authorization descriptions are superseded by the active section above.
+
+---
+
+# Permanent project state and engineering handoff
+
 Last verification: **2026-11-24, America/Costa_Rica**. This is a dated handoff, not live
 GitHub state. Before work the Lead must fetch and inspect actual repository, branch,
 PR/head/base and associated exact-head check state. Update this file at every development

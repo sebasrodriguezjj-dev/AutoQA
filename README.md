@@ -1,10 +1,34 @@
-# AutoQA Agent 0.6.0
+# AutoQA Agent 0.7.0
 
 A private professional QA engineering tool supporting its owner's QA Automation Engineering services. The source repository may be public; client workspaces and evidence remain private. It is a local Python CLI, with no SaaS or subscription offering. AutoQA explores an authorized application, records visible UI evidence, proposes reviewable scenarios, generates approved Playwright tests, executes them with Pytest, and renders actual results as HTML or JSON. It works offline; optional AI produces review-only recommendations.
 
 The retained V0.2 foundation includes passive functional control discovery, browser-checked semantic locators, typed behavior contracts, positive/negative/boundary cases, functional Python templates, pre-execution Ruff and collection checks, richer diagnostics and reports from execution snapshots. Unknown behavior stays pending review. Legacy discovery remains unauthenticated; V0.5 standalone application-authentication support is described below. Remote repository access and autonomous maintenance remain unsupported. See [V0.2 functional testing](docs/v0.2-functional-testing.md) for the exact contract schema, independent-demo benchmark and external validation limitations.
 
 V0.3 adds versioned domain contracts, storage/reporting boundaries, project-bound discovery and planning services, approval receipts, shared generation/execution services and an in-process application engine. New suites require receipts matching the reviewed scenario at generation and execution. Historical generated suites retain legacy checks. See [final delivery](docs/v03-final-delivery.md), [audit](docs/v03-release-audit.md) and [release verification](docs/v03-release-finalization.md).
+
+## V0.7.0 intelligent planning
+
+V0.7 adds bounded supplied-requirement JSON, explicit reviewed requirement-to-case
+mappings, missing/uncertain/unsupported/stale coverage findings, explained risk and
+manual positive/negative/boundary/regression/error-handling proposals. Analysis is
+read-only; import and planning disposition are explicit. Accepting a proposal never
+approves a scenario or suite, changes a receipt or authorizes execution. Coverage is
+limited to the supplied inventory and executed coverage is NOT_ASSESSED.
+
+```powershell
+uv sync --locked
+uv run autoqa intelligent-plan --requirements examples/v07_requirements.json --project projects/owned
+uv run autoqa coverage-report --requirements examples/v07_requirements.json --project projects/owned
+uv run autoqa requirements-import examples/v07_requirements.json --project projects/owned
+# Use actual PLAN-* and PROP-* IDs from current analysis.
+uv run autoqa plan-review PLAN_ID --accept PROP_ID --project projects/owned
+```
+
+This is **0.7.0**, promoted from the independently approved RC1. Earlier stable tags
+remain preserved. See the [V0.7 stable release gate](docs/v07-stable-release-gate.md),
+[planning guide](docs/v07-intelligent-planning.md), [candidate evidence](docs/v07-release-candidate.md)
+and [dated project state](docs/project-state.md). Owner authorization controls merges,
+releases and future roadmap changes; no V0.8 maintenance is included.
 
 ## V0.6.0 stable release scope
 

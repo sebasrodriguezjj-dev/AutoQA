@@ -89,6 +89,10 @@ def test_cli_signatures_and_help(command):
         "analyze-framework",
         "suite-propose",
         "suite-approve",
+        "requirements-import",
+        "intelligent-plan",
+        "coverage-report",
+        "plan-review",
     }
     actual = []
     for param in commands[command].params:

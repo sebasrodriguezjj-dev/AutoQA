@@ -1,5 +1,66 @@
 # Architecture
 
+## V0.7 additive requirements planning
+
+V0.7 keeps the synchronous local engine and all legacy producers/readers. New
+[planning_contracts.py](../src/autoqa/planning_contracts.py) supplies strict additive
+schema 0.7 DTOs; it does not alter domain 0.3, API 0.5 or management 0.6.
+[qa_planning.py](../src/autoqa/qa_planning.py) validates bounded JSON and computes
+canonical deterministic snapshots, explicit coverage findings, explained risk and
+manual-review proposals without IO/network/provider calls.
+
+[intelligent_planning_service.py](../src/autoqa/intelligent_planning_service.py) reads
+bounded confined current cases/receipts/discovery/suite data, adapting existing
+case_signature, verify_approval_binding and export_inventory over one read snapshot.
+Typed context preserves actual workflow/evidence provenance; only OBSERVED supports
+declared observation references, ambiguous evidence categories fail, and provenance
+participates in the canonical plan digest.
+[ADR 0005](decisions/0005-reviewed-semantic-observation-bindings.md) adds versioned
+semantic observation fingerprints and explicit independently reviewed requirement
+bindings. Same-ID semantic drift invalidates planning disposition; accepting a plan
+cannot refresh a stale requirement relationship. Only hash maps enter context, with
+volatile metadata excluded and conflicting observations rejected.
+
+It reuses current project-bound plan/review intent and LocalProjectStorage for two
+new sidecars. Read-only analysis does not persist or append events. Explicit import
+writes requirements-v07.json; explicit accepted/rejected planning review writes
+planning-review-v07.json bound to the exact current plan. Neither grants scenario or
+membership approval, mutates existing contracts/receipts or compiles executable tests.
+
+ApplicationEngine adds intelligent_plan/import_requirements/review_plan/coverage_report;
+the four additive CLI adapters delegate there. Existing PlanningService, plan/plan-api,
+suite, generation and execution interfaces remain unchanged. Exported UI/API runtime
+behavior is retained. The installed-package gate now also checks real planning CLI
+JSON, read-only behavior, import, review and stale-review refusal before independent
+framework validation/collection/case/pack/full execution.
+
+See [operator guide](v07-intelligent-planning.md), [shared interface](v07-interface-agreement.md),
+[ADR 0003](decisions/0003-additive-requirement-planning.md) and version-specific candidate
+evidence for exact bounds and verification. No web service, frontend, model-provider
+dependency, arbitrary document parser or client-source execution is introduced.
+
+## Approved future architecture concerns (not implemented in V0.7)
+
+The owner-approved [professional workflow vision](product-vision.md) introduces future
+local application/setup and per-project guided/Developer Mode interfaces, separate
+Application/Automation Repository roles, reviewed manual-code reconciliation, Test Data
+Manager, evidence-truthful dashboards and provider-specific VS Code skills management.
+[ADR 0004](decisions/0004-owner-approved-professional-workflow-vision.md) records the scope.
+Application source remains read-only by default, automation stays independently runnable,
+secrets stay outside tracked code and manual-result imports need traceable provenance.
+These are future design constraints, not implemented adapters/services in the module map.
+No local UI, repository manager, data manager, skill installer, duplicate coding chat or
+manual-code trust bypass is added to V0.7. Concrete designs need separate authorization.
+
+## Retained V0.6 architecture and earlier history
+
+The previous architecture record is retained below. Its current-version statements
+refer to its V0.6 baseline; the additive map above describes the V0.7 changes.
+
+---
+
+# Architecture
+
 ## Current V0.6.0 map
 
 This section describes the implemented local Python CLI at stable `v0.6.0`

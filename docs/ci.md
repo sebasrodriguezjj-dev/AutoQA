@@ -87,3 +87,13 @@ workflow is dispatchable in GitHub once present on the default branch.
 Actions retain immutable revisions recorded in [action revisions](action-revisions.json),
 read-only contents permissions and checkout without persisted credentials. Hosted manual
 client execution remains unverified; PR code verification is reported separately.
+
+## V0.7 installed planning acceptance
+
+The reusable package phase also exercises all four new commands from the isolated
+installed wheel: read-only intelligent plan/coverage, explicit requirements import,
+snapshot-bound planning acceptance and nonzero stale-review refusal. It checks unchanged
+existing case/receipt/suite files and NOT_ASSESSED execution coverage. Existing independent
+UI collection and owned API case/pack/full execution gates remain; no browser/provider/
+client target is added. Every failed assertion/command remains fatal. The exact-head
+PR result and actual synthetic merge checkout are recorded in the delivery handoff.
