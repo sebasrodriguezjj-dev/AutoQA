@@ -61,9 +61,16 @@ def source_revision(path):
     import hashlib
 
     root = checked_root(path)
-    files, total = [], 0
+    files, total, entries = [], 0, 0
     ignored = {".git", ".venv", "__pycache__", ".pytest_cache", ".ruff_cache", "artifacts"}
-    for directory, folders, names in os.walk(root, followlinks=False):
+
+    def failed_walk(_):
+        raise ValueError("Incomplete source inventory")
+
+    for directory, folders, names in os.walk(root, followlinks=False, onerror=failed_walk):
+        entries += len(folders) + len(names)
+        if entries > 2000:
+            raise ValueError("Source entry inventory exceeds bound")
         for name in sorted([*folders, *names]):
             candidate = Path(directory) / name
             if candidate.is_symlink() or candidate.is_junction():

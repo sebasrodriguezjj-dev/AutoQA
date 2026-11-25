@@ -2,11 +2,20 @@
 
 import hashlib
 import json
+import re
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, JsonValue, StringConstraints, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    JsonValue,
+    StringConstraints,
+    field_validator,
+    model_validator,
+)
 
-from autoqa.domain import ArtifactReference
+from autoqa.domain import ArtifactReference, artifact_reference
 from autoqa.planning_contracts import Contract as SafeTextContract
 
 Text = Annotated[str, StringConstraints(min_length=1, max_length=2000)]
@@ -115,6 +124,13 @@ class LocatorSpec(Contract):
     value: Text
     name: str = Field(default="", max_length=200)
     count: Literal[1] = 1
+
+    @field_validator("count", mode="before")
+    @classmethod
+    def exact_count(cls, value):
+        if type(value) is not int or value != 1:
+            raise ValueError("Locator must have one observed match")
+        return value
 
 
 class MaintenanceChange(Contract):
@@ -235,6 +251,55 @@ class TestDataDefinition(Contract):
     values: list[dict[str, JsonValue]] = Field(default_factory=list, max_length=100)
     reference: str | None = Field(default=None, max_length=500)
     fingerprint: Digest | None = None
+
+    @model_validator(mode="after")
+    def safe_definition(self):
+        if len(set(self.environments)) != len(self.environments):
+            raise ValueError("Duplicate data environment")
+        if self.kind == "credential":
+            if (
+                self.sensitivity != "SECRET_REFERENCE"
+                or self.values
+                or self.fingerprint is not None
+                or not self.reference
+                or not re.fullmatch(r"[A-Z][A-Z0-9_]{0,79}", self.reference)
+            ):
+                raise ValueError("Credential data requires only an environment-variable name")
+        else:
+            if self.sensitivity != "SYNTHETIC":
+                raise ValueError("Only synthetic noncredential data is supported")
+            if self.kind == "value":
+                if not self.values or self.reference is not None:
+                    raise ValueError("Synthetic value data requires inline rows only")
+            elif not self.reference or self.values:
+                raise ValueError("File data requires a relative reference only")
+            else:
+                artifact_reference(self.reference)
+
+        def check(value, depth=0):
+            if depth > 4:
+                raise ValueError("Test data nesting exceeds bound")
+            if isinstance(value, dict):
+                if len(value) > 30 or any(
+                    len(k) > 80
+                    or re.search(
+                        r"password|secret|token|credential|authorization|api[_-]?key", k, re.I
+                    )
+                    for k in value
+                ):
+                    raise ValueError("Sensitive or oversized test-data fields")
+                for item in value.values():
+                    check(item, depth + 1)
+            elif isinstance(value, list):
+                if len(value) > 100:
+                    raise ValueError("Oversized test data")
+                for item in value:
+                    check(item, depth + 1)
+            elif isinstance(value, str) and len(value) > 500:
+                raise ValueError("Oversized test-data value")
+
+        check(self.values)
+        return self
 
 
 class TestDataInventory(Contract):

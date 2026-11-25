@@ -408,6 +408,17 @@ def execute(root, *, collect_only=False, selection=None):
     )
     result = {
         "execution_run": execution_run.model_dump(),
+        "evidence_policy": "summary_only" if protected else "standard",
+        "diagnostic_snapshot": [
+            {
+                "id": case.id,
+                "kind": case.kind,
+                "signature": manifest["cases"].get(case.id),
+                "operation_count": manifest.get("operation_counts", {}).get(case.id),
+                "review_status": case.review_status,
+            }
+            for case in selected_cases
+        ],
         "schema_version": "0.6",
         "project_id": plan.project_id,
         "suite_id": plan.suite_id,
