@@ -12,14 +12,15 @@ scope, stable release, candidate, active branch/PR, authorization and verificati
 belong in dated [project state](project-state.md) and version-specific delivery records.
 Verify live GitHub before relying on status. A roadmap milestone is not automatic
 permission to implement, merge or release. V0.7 delivered scope and stable publication are recorded in project-state;
-V0.8 remains the next milestone after V0.7, without authorizing its implementation.
+The active milestone's explicit authorization is recorded in dated project-state;
+the sequence itself grants no implementation or release permission.
 
 ## Owner-defined milestone sequence
 
 | Milestone | Intended objective | Status and authorization boundary |
 | --- | --- | --- |
 | V0.7 | Intelligent QA Planning and coverage-gap analysis. | Delivered planning scope; stable publication evidence is recorded in project-state. |
-| V0.8 | Maintenance, diagnosis, reliability, reviewed repairs, safe manual-code reconciliation and test-data foundations. | Owner-approved future direction; exact implementation requires separate authorization, with no automatic repair/self-healing claim. |
+| V0.8 | Maintenance, diagnosis, reliability, reviewed repairs, safe manual-code reconciliation and test-data foundations. | Bounded development authorized as recorded in project-state; no automatic repair/self-healing claim or stable-release authorization. |
 | V0.9 | QA Operations, local UI, project/developer setup, repository management, test-data UI, VS Code skills, dashboards, history and CI integrations. | Approximate owner-approved allocation; current CLI/artifacts are the baseline, not delivery of these future interfaces. |
 | V1.0 | Integrated professional workflow validation for a supervised end-to-end QA Engineering agent. | Owner-approved validation objective; no arbitrary client certification or SaaS conversion. |
 
@@ -119,4 +120,5 @@ FastAPI, React, MCP and cloud identity are possible future interface concerns, n
 The backlog above is not an automatically approved milestone scope. Preserve the
 original version-specific recommendations and acceptance evidence in their release
 documents; evaluate future work against the owner-defined milestones and explicit
-authorization. No V0.7 feature is included in this foundation delivery.
+authorization. The original multi-agent foundation delivery preceded V0.7 and included
+no V0.7 features; that historical boundary does not describe the later stable V0.7 release.

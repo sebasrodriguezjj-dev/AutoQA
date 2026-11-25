@@ -1,3 +1,21 @@
+# V0.8 active development authorization (2026-11-25, America/Costa_Rica)
+
+Owner approved V0.8 Maintenance, Diagnosis and Reliability after independent final
+V0.7 audit. Verified stable main/tag target 2243611658accb05afc39593ff6d21fd1e4ba369,
+annotated object 4395f8a1b9ab2c8bf870bd17052337b730e08328 and tree
+3b48f64a2f9a66b6f1b04269935f5cb91c635c88. PR #7 is merged; no open PR at fresh preflight.
+Active branch feat/v08-development. Deliver one verified 0.8.0rc1 PR only after
+supported A-J acceptance and mandatory gates; no merge/stable tag/V0.9 authorization.
+No AI Software Factory. Original worktrees and dirty copies remain preserved.
+
+Read [V0.8 interface/briefing](v08-interface-agreement.md),
+[ADR 0006 threat model](decisions/0006-bounded-maintenance-and-untrusted-source.md)
+and [durable checkpoint](v08-checkpoint.md). Roles and permanent instructions remain
+enduring; dated earlier release/candidate restrictions below are historical and do
+not override this newly explicit scope. ADR 0004/0005 and all historical contracts stay.
+
+---
+
 # Permanent project state and engineering handoff
 
 ## V0.7.0 stable release handoff — 2026-11-25 (America/Costa_Rica)

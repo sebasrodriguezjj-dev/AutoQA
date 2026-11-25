@@ -16,3 +16,5 @@ V0.3–V0.6 architecture/release documents, not retroactively reclassified as ne
 [ADR 0004](0004-owner-approved-professional-workflow-vision.md) records owner-approved future professional workflow requirements without expanding V0.7.
 
 [ADR 0005](0005-reviewed-semantic-observation-bindings.md) records reproduced H03 remediation and separate semantic observation relationship review.
+
+[ADR 0006](0006-bounded-maintenance-and-untrusted-source.md) records the authorized V0.8 maintenance/reconciliation trust model.
