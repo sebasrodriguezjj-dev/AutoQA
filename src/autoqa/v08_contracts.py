@@ -90,6 +90,13 @@ class DiagnosticFinding(Contract):
     maintenance_appropriate: bool = False
     root_cause_confirmed: Literal[False] = False
 
+    @field_validator("root_cause_confirmed", mode="before")
+    @classmethod
+    def exact_false(cls, value):
+        if value is not False:
+            raise ValueError("Root cause remains unconfirmed")
+        return value
+
 
 class DiagnosticReport(Contract):
     schema_version: Literal["0.8"] = "0.8"
@@ -230,6 +237,13 @@ class ImpactFinding(Contract):
     page_objects: list[ArtifactReference] = Field(default_factory=list, max_length=100)
     rationale: Text
     verified_runtime_impact: Literal[False] = False
+
+    @field_validator("verified_runtime_impact", mode="before")
+    @classmethod
+    def potential_only(cls, value):
+        if value is not False:
+            raise ValueError("Static impact remains unverified")
+        return value
 
 
 class ImpactReport(Contract):

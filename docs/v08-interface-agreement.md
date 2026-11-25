@@ -15,7 +15,7 @@ framework integrity, network/privacy restrictions and frozen evidence are unchan
 Strict additive schema 0.8 DTOs define diagnostic evidence/hypotheses/reports, source
 revisions, maintenance proposal/decision, reconciliation, application inventory/impact,
 test-data inventory and validation results. See source for exact field names/bounds.
-One JSON input is at most 1 MB; source inventory at most 1000 files / 5 MB, each file
+One JSON input is at most 1 MB; source inventory at most 2000 entries / 1000 files / 5 MB, each file
 at most 1 MB; structured CLI output is limited to 2 MB. Duplicate keys/nonfinite values,
 links/junctions/traversal and conflicting identities fail with payload-free errors.
 No changes to older schemas. No dependencies added.
@@ -26,6 +26,14 @@ exclude timestamps/artifact paths where semantically irrelevant and domain-separ
 digests. Revision binds the exact supplied root identity plus file paths/content hashes;
 changing roots cannot substitute a different repository. Root paths are hash-only.
 V0.7 semantic projections and OBSERVED-only reviewed bindings remain intact.
+
+Shared amendment 09c96ab: enforce actual integer locator match count, credential-only
+environment references and bounded synthetic data shape; fail closed on source walk
+errors/entry limits. New standalone results add evidence_policy and diagnostic_snapshot
+with selected supported case ID/kind/signature/operation count/review status only.
+They do not copy expected results, data or source into protected evidence. Older
+results remain readable; missing historical content stays disclosed, never filled from
+latest project cases. No old result/schema is rewritten.
 
 ## Frozen service surface and narrow supported scope
 

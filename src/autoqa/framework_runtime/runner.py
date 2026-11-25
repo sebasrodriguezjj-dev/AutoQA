@@ -418,6 +418,7 @@ def execute(root, *, collect_only=False, selection=None):
                 "review_status": case.review_status,
             }
             for case in selected_cases
+            if case.id in manifest["cases"]
         ],
         "schema_version": "0.6",
         "project_id": plan.project_id,
