@@ -1,4 +1,4 @@
-# AutoQA Agent 0.7.0
+# AutoQA Agent 0.8.0rc1
 
 A private professional QA engineering tool supporting its owner's QA Automation Engineering services. The source repository may be public; client workspaces and evidence remain private. It is a local Python CLI, with no SaaS or subscription offering. AutoQA explores an authorized application, records visible UI evidence, proposes reviewable scenarios, generates approved Playwright tests, executes them with Pytest, and renders actual results as HTML or JSON. It works offline; optional AI produces review-only recommendations.
 
@@ -6,7 +6,20 @@ The retained V0.2 foundation includes passive functional control discovery, brow
 
 V0.3 adds versioned domain contracts, storage/reporting boundaries, project-bound discovery and planning services, approval receipts, shared generation/execution services and an in-process application engine. New suites require receipts matching the reviewed scenario at generation and execution. Historical generated suites retain legacy checks. See [final delivery](docs/v03-final-delivery.md), [audit](docs/v03-release-audit.md) and [release verification](docs/v03-release-finalization.md).
 
-## V0.7.0 intelligent planning
+## V0.8 release candidate: maintenance, diagnosis and reliability
+
+The bounded candidate adds historical recorded-run diagnosis, potential-only impact over
+supplied application inventories, reusable synthetic data aliases and separately reviewed
+locator-only maintenance/manual reconciliation. It never executes inspected source or
+refreshes hashes to trust arbitrary edited Python. Apply creates a pending revision;
+existing scenario and suite review precede fresh trusted export. See the
+[V0.8 guide](docs/v08-maintenance-guide.md), [architecture/threat model](docs/v08-interface-agreement.md),
+[candidate evidence](docs/v08-release-candidate.md) and [dated state](docs/project-state.md).
+Stable v0.7.0 remains unchanged. This candidate is for independent audit, not stable
+promotion or V0.9 implementation. No UI/repository manager, autonomous self-healing,
+universal root cause, sandbox or complete coverage claim.
+
+## V0.7.0 stable planning baseline
 
 V0.7 adds bounded supplied-requirement JSON, explicit reviewed requirement-to-case
 mappings, missing/uncertain/unsupported/stale coverage findings, explained risk and
@@ -24,7 +37,7 @@ uv run autoqa requirements-import examples/v07_requirements.json --project proje
 uv run autoqa plan-review PLAN_ID --accept PROP_ID --project projects/owned
 ```
 
-This is **0.7.0**, promoted from the independently approved RC1. Earlier stable tags
+The retained **0.7.0** stable baseline was promoted from the independently approved RC1. Earlier stable tags
 remain preserved. See the [V0.7 stable release gate](docs/v07-stable-release-gate.md),
 [planning guide](docs/v07-intelligent-planning.md), [candidate evidence](docs/v07-release-candidate.md)
 and [dated project state](docs/project-state.md). Owner authorization controls merges,

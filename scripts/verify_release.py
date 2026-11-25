@@ -14,6 +14,7 @@ import zipfile
 from contextlib import contextmanager
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import parse_qs, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -43,9 +44,11 @@ def owned_endpoint():
             pass
 
         def do_GET(self):
-            self.send_response(200 if self.path == "/health" else 404)
+            parsed = urlsplit(self.path)
+            self.send_response(200 if parsed.path == "/health" else 404)
             self.end_headers()
-            self.wfile.write(b'{"healthy": true}')
+            sample = parse_qs(parsed.query).get("sample", [""])[0]
+            self.wfile.write(json.dumps({"healthy": True, "sample": sample}).encode())
 
     server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -160,6 +163,176 @@ def planning_smoke(python, output, project, manifest):
     )
 
 
+def maintenance_smoke(python, output, project, export):
+    """Exercise actual installed V0.8 workflows, preserving existing package checks."""
+
+    def cli(*args, selected=project, structured=True):
+        result = subprocess.run(
+            [str(python), "-m", "autoqa", *map(str, args), "--project", str(selected)],
+            cwd=output,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=True,
+            timeout=60,
+        )
+        return json.loads(result.stdout) if structured else result.stdout
+
+    def write(name, value):
+        path = output / name
+        path.write_text(json.dumps(value), encoding="utf-8")
+        return path
+
+    def snapshot(root):
+        return {
+            p.relative_to(root).as_posix(): p.read_bytes()
+            for p in root.rglob("*")
+            if p.is_file() and ".venv" not in p.relative_to(root).parts
+        }
+
+    first_run = next((export / "artifacts").glob("*/results.json"))
+    before = snapshot(project)
+    diagnosis = cli("diagnose-run", first_run)
+    assert any(f["category"] == "HEALTHY_RECORDED_EXECUTION" for f in diagnosis["findings"])
+    obj = {
+        "id": "API-HEALTH",
+        "kind": "api_contract",
+        "source_location": "api.json",
+        "semantics": {"path": "/health"},
+        "case_ids": ["TC-API-PACKAGE"],
+    }
+    old = write("impact-before.json", {"project_id": project.name, "objects": [obj]})
+    new = write(
+        "impact-after.json",
+        {"project_id": project.name, "objects": [obj | {"semantics": {"path": "/v2/health"}}]},
+    )
+    impact = cli("impact-review", old, new)
+    assert impact["findings"][0]["potential_case_ids"] == ["TC-API-PACKAGE"]
+    assert impact["findings"][0]["verified_runtime_impact"] is False
+    assert snapshot(project) == before
+    data = write(
+        "data-v08.json",
+        {
+            "project_id": project.name,
+            "definitions": [
+                {
+                    "alias": "datasets.health",
+                    "kind": "value",
+                    "environments": ["local"],
+                    "sensitivity": "SYNTHETIC",
+                    "values": [{"sample": "owned-alias-consumed"}],
+                }
+            ],
+        },
+    )
+    cli("test-data", "inspect", "--input", data)
+    cli("test-data", "import", data)
+    cli("test-data", "inspect")
+    assert cli("test-data", "validate", "datasets.health", "--environment", "local")["valid"]
+    pending = cli(
+        "test-data",
+        "bind",
+        "datasets.health",
+        "TC-API-PACKAGE",
+        "--environment",
+        "local",
+        "--authorized",
+    )
+    assert pending["review_status"] == "pending"
+    assert pending["contract"]["data"]["rows"] == [{"sample": "owned-alias-consumed"}]
+    cli("plan", "--approve", "TC-API-PACKAGE", structured=False)
+    suite = write("suite-v08.json", cli("suite-propose"))
+    cli("suite-approve", suite, structured=False)
+    fresh = output / "data-framework"
+    cli("build-framework", fresh, "--approved", structured=False)
+    run("uv", "sync", cwd=fresh)
+    independent = fresh / ".venv" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+    run(
+        independent,
+        "-c",
+        "import importlib.util; assert importlib.util.find_spec('autoqa') is None",
+        cwd=fresh,
+    )
+    run(independent, "-m", "qa_runtime.runner", "run", "--all", cwd=fresh)
+    consumed = json.loads(
+        next((fresh / "artifacts").glob("*/results.json")).read_text(encoding="utf-8")
+    )
+    assert consumed["exit_code"] == 0 and consumed["counts"] == {"PASSED": 1}
+    # The API assertion checks the echoed alias value; this is actual data consumption.
+    assert len(consumed["steps"]) == 2
+
+    setup = subprocess.run(
+        [
+            str(python),
+            str(ROOT / "examples/validate_v08_maintenance.py"),
+            str(output / "ui-maintenance"),
+        ],
+        cwd=output,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=True,
+        timeout=90,
+    )
+    fixture = json.loads(setup.stdout)
+    ui = Path(fixture["project"])
+    source, manual = Path(fixture["source"]), Path(fixture["manual_source"])
+    originals = snapshot(source), snapshot(manual)
+    reconciliation = cli("reconcile-source", source, manual, selected=ui)
+    assert any(f["supported"] for f in reconciliation["findings"])
+    proposal = cli(
+        "maintenance",
+        "propose",
+        source,
+        fixture["case_id"],
+        fixture["element_id"],
+        fixture["locator"],
+        "--manual-source",
+        manual,
+        selected=ui,
+    )
+    proposal_file = write("maintenance-proposal.json", proposal)
+    case_before = (ui / "test-cases/test-matrix.json").read_bytes()
+    decision = cli(
+        "maintenance",
+        "review",
+        source,
+        proposal_file,
+        "--decision",
+        "accepted",
+        "--manual-source",
+        manual,
+        selected=ui,
+    )
+    assert decision["decision"] == "accepted"
+    assert (ui / "test-cases/test-matrix.json").read_bytes() == case_before
+    revised = cli(
+        "maintenance",
+        "apply",
+        source,
+        proposal_file,
+        "--authorized",
+        "--manual-source",
+        manual,
+        selected=ui,
+    )
+    assert (
+        revised["review_status"] == "pending"
+        and revised["expected"] == proposal["original_behavior"]
+    )
+    assert (snapshot(source), snapshot(manual)) == originals
+    cli("plan", "--approve", fixture["case_id"], selected=ui, structured=False)
+    ui_suite = write("ui-suite-v08.json", cli("suite-propose", selected=ui))
+    cli("suite-approve", ui_suite, selected=ui, structured=False)
+    trusted = output / "ui-repaired-fresh"
+    cli("build-framework", trusted, "--approved", selected=ui, structured=False)
+    run(python, "-m", "autoqa", "validate-framework", trusted, cwd=output)
+    print(
+        "Installed V0.8 diagnosis/impact/data consumption/reconciliation/review/apply/fresh export gates passed",
+        flush=True,
+    )
+
+
 def package():
     version = metadata()
     work = ROOT / ".test-work"
@@ -220,8 +393,9 @@ def package():
             {
                 "id": "TC-API-PACKAGE",
                 "title": "Synthetic package smoke",
-                "request": {"path": "/health"},
-                "expect": {"status": 200},
+                "request": {"path": "/health", "query": {"sample": "${sample}"}},
+                "expect": {"status": 200, "json_values": {"healthy": True, "sample": "${sample}"}},
+                "data": {"name": "original", "rows": [{"sample": "baseline"}]},
                 "environments": [{"name": "local", "origin": origin, "allow_localhost": True}],
                 "environment": "local",
             }
@@ -296,6 +470,7 @@ def package():
             assert len(result["steps"]) == 2
             assert result["accounting"]["selected"] == result["accounting"]["passed"] == 1
         assert {r["selection_mode"] for r in results} == {"case", "pack", "all"}
+        maintenance_smoke(python, output, project, export)
         print(
             "Package/install/approved export/standalone/single/pack/full gates passed:",
             output,
