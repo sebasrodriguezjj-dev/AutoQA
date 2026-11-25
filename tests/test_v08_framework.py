@@ -362,11 +362,21 @@ def test_owned_chromium_maintenance_manual_reconciliation_and_defect_preservatio
         assert old_checked.value == "amount-old"
         source, case = prepare(project, tmp_path, url)
         engine = FrameworkService(project, auth(project, "generate", "execute"))
-        healthy = engine.run(source)
+
+        def run_record(destination):
+            before_runs = set((destination / "artifacts").glob("*/results.json"))
+            code = engine.run(destination)
+            created = set((destination / "artifacts").glob("*/results.json")) - before_runs
+            assert len(created) == 1
+            result = json.loads(next(iter(created)).read_text(encoding="utf-8"))
+            assert result["exit_code"] == code
+            return result
+
+        healthy = run_record(source)
         assert healthy["exit_code"] == 0 and healthy["counts"] == {"PASSED": 1}
         Handler.identifier = "amount-new"
         checked = probe("amount-new", "Approved result")
-        changed = engine.run(source)
+        changed = run_record(source)
         assert changed["exit_code"] != 0 and changed["counts"].get("FAILED") == 1
         discovery = project.discovery()
         discovery.pages[0].elements[0].locators = [checked]
@@ -384,11 +394,11 @@ def test_owned_chromium_maintenance_manual_reconciliation_and_defect_preservatio
         approve_suite(project, propose_suite(project), auth(project, "review"))
         fresh = tmp_path / "repaired"
         engine.build(fresh)
-        repaired = engine.run(fresh)
+        repaired = run_record(fresh)
         assert repaired["exit_code"] == 0 and repaired["counts"] == {"PASSED": 1}
         Handler.defect = True
         probe("amount-new", "Wrong result")
-        broken = engine.run(fresh)
+        broken = run_record(fresh)
         assert broken["exit_code"] != 0 and broken["counts"].get("FAILED") == 1
         assert project.cases()[0].contract == case.contract
         assert project.cases()[0].expected == case.expected
