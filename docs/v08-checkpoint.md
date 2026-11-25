@@ -24,3 +24,26 @@ Last verified tree: stable 3b48f64a2f9a66b6f1b04269935f5cb91c635c88.
 Exact next action: dispatch the three assigned specialists on the committed common
 briefing, implement Lead adapters, review returned commits once, integrate and verify.
 Owner boundary: one candidate PR, no merge/tag/stable V0.8/V0.9/unrelated product work.
+
+
+## Batch B/C checkpoint after shared boundary review
+
+Lead HEAD before this checkpoint: b922be7. Shared briefing947bc39; amendments09c96ab
+(safe run snapshot/data bounds),41ed7d1 (strict conservative flags),c6dc572 (reject
+remote/device/ADS paths). Lead adapters550884b; QA source-only0e97613 integrated once
+as b922be7. Source/private byte inventories and legacy V0.7 semantic protections remain.
+
+Active isolated worktrees: v08-backend/codex/v08-backend; v08-framework/codex/v08-framework;
+v08-qa/codex/v08-qa under C:/Users/sebas/Desktop/AutoQA-worktrees. Backend and Framework
+source commits still pending, QA service acceptance draft waiting for those dependencies.
+Do not cherry-pick duplicate shared/CLI dependency commits from specialist branches.
+Only integrate each specialist's owned source/test diff once.
+
+Verified Lead checks: 39 shared independent security and CLI tests passed in7.08s;
+log .test-work/v08-shared-integrated.log. QA preserved failing shared-boundary repro
+logs in its own ignored .test-work directory; details in independent-review.md.
+Current known implementation gaps: complete service/real A-J acceptance not integrated;
+installed V0.8 gate and final candidate metadata remain pending. No candidate-ready claim.
+Exact next action: inspect/integrate verified Backend/Framework owned commits; supply
+SHAs to QA for independent service acceptance; extend installed gate and run actual
+owned browser workflow; only then prepare0.8.0rc1 and complete final gates/publication.
