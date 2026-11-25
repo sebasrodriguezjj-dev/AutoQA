@@ -30,6 +30,28 @@ See [ADR 0002](decisions/0002-enduring-instructions-and-dated-state.md).
 V0.6 architecture, approvals, schemas and security remain the compatibility baseline.
 The historical V0.5 intermittent incident remains unroot-caused.
 
+## Interrupted V0.7 recovery checkpoint
+
+Recovered Lead HEAD `538f20f` on feat/v07-development, with 13 modified tracked files
+and five untracked candidate/docs/example files; no staged changes or active cherry-pick.
+All were preserved. Main still baa776d; stable v0.6.0 unchanged; no remote V0.7 branch
+or open PR at refresh. Existing six specialist worktrees remain available.
+
+Initial pre-correction full gate logged 444 passed / 18 deselected in210.88s plus
+successful package/install/independent execution. It does NOT certify the corrected
+candidate. Provenance repro log records7failed /81deselected in4.89s. Additional
+ambiguous-category regression is committed as8a1fd2d. Backend correction c23de59 is
+committed but not yet integrated at this checkpoint. Framework adapter/test changes
+and QA positive-fixture/provenance tests are uncommitted in their own worktrees;
+exact patches are preserved under ignored .test-work/v07-recovered-*.patch.
+
+Next: integrate only missing commits/patches, run focused provenance and V0.7 tests,
+then one complete final release gate after the code is stable. No completed team is
+recreated. Logs: .test-work/v07-provenance-before.log and v07-full-release.log.
+The owner also approved additional future V1.0 requirements for documentation only;
+record them without expanding V0.7 runtime scope. Final current handoff supersedes
+this recovery checkpoint once verification/publication completes.
+
 ## Historical foundation and reconciliation handoff
 
 The following original dated handoff is retained intact as historical evidence.

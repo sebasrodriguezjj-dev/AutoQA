@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "autoqa-agent"
-version = "0.6.0"
+version = "0.7.0rc1"
 description = "Private, evidence-driven QA automation CLI"
 requires-python = ">=3.14,<3.15"
 dependencies = [

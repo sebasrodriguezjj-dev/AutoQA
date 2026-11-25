@@ -8,8 +8,8 @@ credentials or test evidence public.
 
 This is the permanent product direction, adopted from the owner's foundation
 instruction on 2026-11-23 (America/Costa_Rica). It describes the intended complete
-workflow; it does not claim that every stage is already automated. The implemented
-baseline is V0.6.0, released at `bbd54ad0821cb6962c09d8a1149a0f40b936764b`.
+workflow; it does not claim that every stage is already automated. Version-specific delivered capabilities are recorded below; stable release and
+candidate status belong in the dated project-state handoff.
 Current GitHub observations and the next authorized objective belong in
 [project state](project-state.md); verify them before relying on this snapshot.
 
@@ -68,14 +68,22 @@ Planning and coverage-gap analysis; V0.8 maintenance, diagnosis, reliability and
 reviewed repairs; V0.9 QA Operations, dashboards, history and CI integrations;
 V1.0 a professionally validated supervised end-to-end QA agent.
 
-These are proposed development milestones, not implemented capabilities, release
-promises or authorization to begin. Future roadmap changes require explicit owner
-authorization. The original foundation delivery left its setup PR unmerged for audit;
-after independent approval, PR #5 merged at `57a133626cc9c1b09ddf3039c6521e65ac5fdcc7`.
-That governance integration did not implement or authorize V0.7. See current
-[project state](project-state.md) for the active authorized engineering handoff.
-Existing deferred ideas must be evaluated against
-this direction rather than silently promoted into a version's scope.
+Milestones describe intended outcomes, not automatic development/release authority or
+proof that every capability is implemented. Future roadmap changes require explicit
+owner authorization. Consult [project state](project-state.md) and version-specific
+acceptance records for the current delivered subset and active authorized objective.
+Existing deferred ideas must be evaluated against the enduring product direction.
+
+## V0.7 planning capability
+
+The additive requirements planner accepts bounded supplied JSON, relates explicitly
+reviewed requirements to current receipt-bound cases, distinguishes confirmed/proposed/
+missing/unsupported/unknown/stale mappings, ranks manual proposals with explainable
+risk and supports snapshot-bound planning disposition. It does not prove semantic
+correctness of a human mapping or complete application coverage. Analysis is read-only;
+only explicit import/review writes new sidecars. Accepted proposals do not approve cases
+or suite membership. Execution coverage is NOT_ASSESSED; no percentages are fabricated.
+See [planning guide](v07-intelligent-planning.md) for the exact workflow and boundaries.
 
 ## Operating limits that must remain visible
 

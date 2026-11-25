@@ -1,0 +1,11 @@
+{
+  "schema_version": "0.7",
+  "inventory_scope": "SUPPLIED_REQUIREMENTS_ONLY",
+  "sources": [{"id": "SRC-OWNED", "reference": "Synthetic application specification, reviewed by fixture owner", "description": "Illustrative supplied requirements; replace with authorized engagement references"}],
+  "evidence": [{"id": "EVD-SPEC", "source_id": "SRC-OWNED", "description": "Explicit requirement text, not an executed result"}],
+  "requirements": [
+    {"id": "REQ-HEALTH", "title": "Owned API health contract", "description": "A synthetic health response follows the owner-supplied healthy contract", "source_id": "SRC-OWNED", "review_status": "approved", "kind": "API", "expected_behavior": "The supplied synthetic healthy response is recognized", "priority": "High", "business_criticality": 4, "user_impact": 3, "evidence_ids": ["EVD-SPEC"], "design_hints": [{"kind": "negative", "condition": "Review how a response that violates the supplied healthy contract should be reported", "expected_behavior": null}]},
+    {"id": "REQ-SEARCH", "title": "Owned UI search result", "description": "A synthetic search flow needs an explicit approved result baseline", "source_id": "SRC-OWNED", "review_status": "pending", "kind": "UI", "priority": "Medium", "evidence_ids": ["EVD-SPEC"], "design_hints": [{"kind": "boundary", "condition": "Identify applicable input boundaries with the requirement owner before choosing values", "expected_behavior": null}]}
+  ],
+  "mappings": []
+}

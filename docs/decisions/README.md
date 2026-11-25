@@ -10,3 +10,5 @@ foundation governance decision. Historical technical rationale remains in the li
 V0.3–V0.6 architecture/release documents, not retroactively reclassified as new ADRs.
 
 [ADR 0002](0002-enduring-instructions-and-dated-state.md) separates enduring instructions from dated state (D02).
+
+[ADR 0003](0003-additive-requirement-planning.md) records additive V0.7 planning and conservative mapping evidence.

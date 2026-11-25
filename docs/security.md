@@ -71,3 +71,29 @@ reviewed metadata are not universally redacted; never put secrets or client PII 
 No OS sandbox, multi-user identity, signed approval, concurrent writers or complete
 cross-platform browser guarantee is added. The historical V0.5 intermittent incident
 remains independently unroot-caused. See [current audit](v06-release-candidate.md).
+
+## V0.7 declarative requirements planning
+
+Planning parses only bounded explicit schema0.7 JSON and bounded current project
+inventory, without importing/executing source, installing inspected dependencies,
+fetching source references, calling a provider or issuing application requests. Text
+and code-like strings are untrusted data, not instructions. Duplicate keys/IDs,
+nonfinite numbers, unknown supplied relationships, invalid/oversized content and links
+fail conservatively. Generic service errors avoid echoing rejected client payloads.
+Conventional credential patterns/control characters are rejected; free text/tags may
+still contain arbitrary PII/secrets, so operator review remains necessary.
+
+Analysis/coverage preserves project bytes and mtimes and creates no execution evidence.
+Existing receipt checks are reused over bounded read snapshots; context records receipt
+validity, not authenticated reviewer identity. Missing/stale/unsupported mappings remain
+explicit and no percentage or execution coverage is inferred. Declared approved source
+requirements and mappings are operator claims, not independently verified business facts.
+
+Explicit import/review writes only new V0.7 sidecars through the existing confined
+storage. Planning accepted/rejected disposition is bound to the exact current snapshot;
+changed input/receipt validity/inventory/suite context cannot silently retain acceptance.
+It never changes existing case signatures, approvals, receipts, suite membership or
+executable code. No plan action grants mutation or execution authority. These records
+are unsigned local data, not a second scenario-approval system or an identity boundary.
+Trusted filesystem/single-writer assumptions and concurrent check/use limitations remain.
+See [planning guide](v07-intelligent-planning.md) and [ADR 0003](decisions/0003-additive-requirement-planning.md).

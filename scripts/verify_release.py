@@ -58,6 +58,108 @@ def owned_endpoint():
         thread.join(timeout=2)
 
 
+def planning_smoke(python, output, project, manifest):
+    """Exercise installed V0.7 adapters without changing reviewed executable cases."""
+
+    def snapshot():
+        return {
+            p.relative_to(project).as_posix(): p.read_bytes()
+            for p in project.rglob("*")
+            if p.is_file()
+        }
+
+    def cli(*args):
+        result = subprocess.run(
+            [str(python), "-m", "autoqa", *map(str, args), "--project", str(project)],
+            cwd=output,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=True,
+            timeout=30,
+        )
+        return json.loads(result.stdout)
+
+    source = {
+        "id": "SRC-PACKAGE",
+        "reference": "Reviewed synthetic fixture",
+        "description": "Owned package acceptance",
+    }
+    specification = {
+        "sources": [source],
+        "requirements": [
+            {
+                "id": "REQ-HEALTH",
+                "title": "Healthy synthetic API",
+                "description": "Reviewed fixture health contract",
+                "source_id": source["id"],
+                "review_status": "approved",
+                "kind": "API",
+                "expected_behavior": "The reviewed synthetic healthy response matches",
+            },
+            {
+                "id": "REQ-MISSING",
+                "title": "Unknown owned UI flow",
+                "description": "No scenario or verified expected behavior supplied",
+                "source_id": source["id"],
+                "kind": "UI",
+            },
+        ],
+        "mappings": [
+            {
+                "requirement_id": "REQ-HEALTH",
+                "case_id": "TC-API-PACKAGE",
+                "case_signature": manifest["cases"]["TC-API-PACKAGE"],
+                "review_status": "approved",
+                "rationale": "Explicit fixture-owner mapping",
+            }
+        ],
+    }
+    spec = output / "requirements-v07.json"
+    spec.write_text(json.dumps(specification), encoding="utf-8")
+    before = snapshot()
+    plan = cli("intelligent-plan", "--requirements", spec)
+    coverage = cli("coverage-report", "--requirements", spec)
+    assert snapshot() == before, "Analysis and coverage must not write project files"
+    assert plan["execution_coverage"] == coverage["execution_coverage"] == "NOT_ASSESSED"
+    assert plan["coverage_scope"] == "SUPPLIED_REQUIREMENTS_ONLY"
+    assert plan["summary"]["confirmed_mapped_requirements"] == 1
+    assert plan["summary"]["missing_requirements"] == 1
+    cli("requirements-import", spec)
+    stored = cli("intelligent-plan")
+    assert stored["id"] == plan["id"], "Explicit import does not invent a different plan"
+    proposal = stored["proposals"][0]["id"]
+    reviewed = cli("plan-review", stored["id"], "--accept", proposal)
+    assert (
+        next(p for p in reviewed["proposals"] if p["id"] == proposal)["review_status"] == "accepted"
+    )
+    assert reviewed["summary"] == stored["summary"], "Planning disposition is not test approval"
+    assert all(snapshot()[name] == data for name, data in before.items())
+    after_review = snapshot()
+    rejected = subprocess.run(
+        [
+            str(python),
+            "-m",
+            "autoqa",
+            "plan-review",
+            "PLAN-" + "0" * 64,
+            "--accept",
+            proposal,
+            "--project",
+            str(project),
+        ],
+        cwd=output,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert rejected.returncode != 0 and snapshot() == after_review
+    print(
+        "Installed V0.7 planning/read-only coverage/import/snapshot-bound review gates passed",
+        flush=True,
+    )
+
+
 def package():
     version = metadata()
     work = ROOT / ".test-work"
@@ -171,6 +273,7 @@ def package():
             == tomllib.loads((export / "pyproject.toml").read_text())["project"]["version"]
             == version
         )
+        planning_smoke(python, output, project, manifest)
         run("uv", "sync", cwd=export)
         independent = export / ".venv" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
         run(
