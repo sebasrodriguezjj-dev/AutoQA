@@ -23,6 +23,14 @@ run outcomes and reconciliation defects cannot establish a healthy run or confir
 application defect. Imported records are unauthenticated claims. No root-cause guarantee.
 Existing legacy diagnose/report commands retain their original behavior.
 
+New independent runs additionally record bounded historical expected invocation scope
+from the reviewed manifest and actual selection before execution. Diagnosis reconciles
+every expected row, operation and aggregate against that historical evidence. Losing
+rows/operations cannot leave an unqualified healthy conclusion for remaining passes.
+Older records without this scope remain readable with explicit uncertainty; current
+project/case/test-data changes never reconstruct missing historical evidence. This
+metadata contains identities/counts/hashes only and remains unsigned, not authenticated.
+
 Impact accepts explicitly supplied schema 0.8 ApplicationInventory JSON snapshots, not
 arbitrary application source or automatic Git operations. Each object declares ID, kind
 (route/control/component/api_contract/validation/workflow), relative source_location,
@@ -95,6 +103,19 @@ automation source. Existing scenario approval and separate suite membership revi
 mandatory; use `plan --approve`, `suite-propose`/`suite-approve`, then `build-framework
 NEW_DESTINATION --approved`. Old receipts cannot authorize the revised case. Never
 overwrite manually owned automation; generated output uses fresh trusted templates.
+
+Maintained cases carry a typed maintenance_revision reference bound by renewed scenario
+receipts. A private active index and revision ledger preserve the exact accepted
+proposal and expanded operation delta. Missing metadata, changed evidence/data/config,
+changed baseline/manual source, decision changes or collateral operations fail before
+review writes, compilation or managed execution. Ordinary scenario and suite receipt
+renewal remains required and is not itself drift. Keep the unchanged baseline/manual
+directories available: their absolute paths are retained only inside the private local
+ledger, never in exports/CLI reports. Do not publish this project output.
+Full case-content/context binding is conservative; unrelated changes or multiple
+affected cases can require a new proposal or manual handling. Existing independent
+exports remain immutable and cannot observe later source revocation. See
+[ADR 0007](decisions/0007-maintenance-and-historical-invocation-integrity.md).
 
 The supported manual subset is exactly one generated Page Object locator-property
 literal substitution with all remaining AST and other repository content unchanged,

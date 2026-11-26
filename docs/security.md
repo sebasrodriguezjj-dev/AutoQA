@@ -11,6 +11,14 @@ never makes arbitrary manual Python trusted. Recorded run summaries suppress raw
 sensitive text and distinguish evidence gaps from application defects. Credential data
 aliases retain environment-variable names only; analysis never resolves secret values.
 See the dated checkpoint for actual verified scope and remaining implementation work.
+H04's private revision ledger retains local baseline/manual paths only for later
+bounded source identity revalidation; paths never enter exports, CLI output or
+diagnostic scope. The typed case reference, independent active index, accepted decision
+and exact expanded compiler delta must agree before renewed review or managed output.
+Missing historical invocation scope remains uncertainty; expected rows are not inferred
+from potentially incomplete results. These unsigned local integrity controls and their
+conservative maintenance limits are described in
+[ADR 0007](decisions/0007-maintenance-and-historical-invocation-integrity.md).
 
 V0.2 adds optional declarative contracts for reviewed functional actions. Initial discovery remains passive. Action locators must have checked uniqueness, selections must use observed options, sensitive fields/dangerous controls are rejected, and unknown expectations remain manual. Search clicks are limited to observed search controls; other button clicks require explicit local-only permission. All network writes remain blocked. Imported data is quoted into fixed templates, not evaluated as code. No AI Python is accepted.
 

@@ -19,6 +19,12 @@ One JSON input is at most 1 MB; source inventory at most 2000 entries / 1000 fil
 at most 1 MB; structured CLI output is limited to 2 MB. Duplicate keys/nonfinite values,
 links/junctions/traversal and conflicting identities fail with payload-free errors.
 No changes to older schemas. No dependencies added.
+H04/H05 audit amendment: optional maintenance_revision is omitted on historical cases;
+new maintained cases bind a strict private active index/ledger and exact trusted
+operation delta at renewed review/compiler/managed-execution boundaries. New runtime
+diagnostic_scope records expected historical invocation identity/cardinality separately
+from the unchanged diagnostic_snapshot. See
+[ADR 0007](decisions/0007-maintenance-and-historical-invocation-integrity.md).
 
 Canonical JSON sorts dictionary keys, not meaningful operation/row/step sequence.
 Services sort explicitly unordered collections (IDs, source paths, reference sets),

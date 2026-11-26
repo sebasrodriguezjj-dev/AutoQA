@@ -2,6 +2,21 @@
 
 ## H04/H05 recovery — 2026-11-25
 
+Verified increment at Lead0828b816fcd42fe27dcfffe1c3cf95b37162ba14:
+H046625430 integrated; H05 source49e5f9 integrated once as0828b81. H05 worktree now
+clean, owned five files including explicitly assigned legacy-uncertainty test updates.
+H05 final specialist batch55passed24.61s including actual independent three-row API
+healthy/assertion-defect and nonparameterized owned Chromium. Lead compatibility118
+passed27.00s, .test-work/h04-h05-compatibility.log/exit0. Installed-wheel correction
+coverage passed exit0, .test-work/h04-h05-installed-first.log, fresh release-gate-6jkbjy_m:
+real aliased three-row requests/assertions, missing first/middle/final and missing-operation
+diagnosis refusal; exact repaired export and unauthorized third-locator approval/export
+refusal; original/manual source immutability. Existing case/pack/all independent execution
+and V0.7 installed workflows also passed. QA independently executing combined final source
+with identity/index/ledger/context negatives and genuine owned Chromium. Final integrated
+full gate, new exact-HEAD CI and external audit remain pending. Earlier paragraphs below
+retain recovery-time facts, not current completion claims.
+
 This section supersedes the historical publication-next instructions below.
 Audit AUTOQA-AUDIT-20261125-02 / AUD-DEV-20261125-02: FAIL, both HIGH findings open.
 Remote PR #8 remains open at a265ebfbd32ea2f4cebc9fde784e7ca324a8012e;
