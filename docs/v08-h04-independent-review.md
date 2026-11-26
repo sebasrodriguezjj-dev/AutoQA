@@ -74,3 +74,67 @@ record healthy/controlled locator failure/exact repaired pass/genuine applicatio
 and reject the third locator before scenario approval. It will run only after the
 Lead supplies the production fix and the static boundary regressions pass. Current
 pre-fix failures remain release blockers; no H04 resolution is claimed by this checkpoint.
+
+## Post-correction independent verification — 2026-11-25
+
+This dated section supersedes the pending-correction status above without replacing
+the fail-before evidence. Source audit AUTOQA-AUDIT-20261125-02 and handoff
+AUD-DEV-20261125-02 remain the authority; external re-audit is still pending.
+
+QA executor: the narrowly resumed QA & Security specialist, native Windows/Python3.14.3.
+Recovered QA worktree remained at90c7dbe until Lead supplied the production commits.
+H04 Lead6625430994d14176ab1bc9521285443a4da157bc was applied locally asa239fba;
+H05 specialist49e5f9aa4a232d486e13a1aeb79fb5e0ccdd190a asd2491d7. Only the
+checkpoint document conflicted; it had no QA edits and was resolved to the exact Lead
+snapshot. Production files were not edited by QA. Lead independently reviews these
+source/test/log results and owns final integration, comprehensive gates and publication.
+
+Read-only source review identified two H04 gaps before the final supplied correction:
+the accepted disposition was not revalidated, and a missing typed case reference could
+disable revision checking. Lead added accepted-decision checks and an independent active
+revision index. The private baseline/manual-path retention and conservative whole-context
+limits are now explicit in ADR0007; paths never enter exported snapshots or diagnosis.
+
+QA added fourteen controlled post-apply mutations: removed/null reference, missing/changed
+active index, missing/changed revision ledger, missing/rejected decision, changed baseline,
+persisted config drift with the same cached Project, changed data, missing/ambiguous
+locators and contradictory same-ID elements. Each mutation uses one fixture and checks
+all seven boundaries (scenario review, membership review, direct compilation, fresh
+build, legacy generation, legacy execution and source-backed framework execution).
+All98 rejection checks preserve project/source bytes and mtimes after each call, create
+no output and cannot reach the fatal subprocess probe. Another test verifies accepted
+manual source remains unchanged through apply/export and later manual drift is rejected.
+
+Actual combined command `uv run pytest tests/test_v08_h04.py tests/test_v08_h05.py -q -s`
+completed **50 passed in221.95s**, exit0. Log and exit record:
+`.test-work/h04-h05-independent-after.log` and `.exit` in this QA worktree.
+No test was skipped, deselected or weakened in that command.
+
+Genuine owned Chromium H04 execution produced healthy0/PASSED1, locator-change1/FAILED1,
+exact reviewed repair0/PASSED1, and genuine application assertion defect1/FAILED1.
+Three locators were actually observed with count1; amount-other was rejected before
+scenario approval. The repaired Page Object contains amount-new, never amount-other;
+original assertions/expectations, manually inspected source and historical export remain
+unchanged. This is measured Windows Chromium evidence, not Linux/browser certification.
+
+The same combined run independently exercised H05's actual AutoQA-absent three-row API
+execution and controlled missing-first/middle/final, duplicate/unexpected/mixed identity,
+operation, plan, aggregate/accounting/schema, malformed scope and legacy-uncertainty
+cases. Actual captured API assertion failures retain symptoms and hypotheses without
+claiming root cause. Historical diagnosis remains deterministic after current project/
+data changes. An actual AutoQA-absent nonparameterized Chromium execution retains exact
+case identity/None cardinality/three operations and healthy diagnosis; legacy copies
+remain explicitly uncertain. Source review found no new blocking gap in these corrected
+boundaries; records remain unsigned and cannot authenticate arbitrary imported claims.
+
+Native security confirmation `uv run pytest tests/test_v08_security.py -q` completed
+**83 passed in4.63s**, exit0, including actual Windows linked-ancestor/junction checks
+and lexical prohibited-path rejection before access. No unauthorized remote share was
+contacted. Evidence: `.test-work/h04-h05-independent-security.log` and `.exit`.
+
+QG07/QG08 have focused independent pass-after evidence; QG09 still requires the Lead's
+complete final integrated release gate and hosted exact-HEAD checks. QG10 executor scope
+is recorded above; Lead log review is separate. QG11 external independent re-audit and
+QG12 owner promotion authorization remain pending. QA did not push, merge, tag or approve
+stable promotion. Historical V0.5 incident remains unroot-caused; trusted local operator/
+filesystem, single writer, no OS sandbox and manual evidence privacy/retention remain.

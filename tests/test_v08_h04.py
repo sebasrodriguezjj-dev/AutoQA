@@ -441,3 +441,134 @@ def test_direct_blueprint_compilation_cannot_bypass_exact_maintenance_binding(pr
         "Direct compiler accepted unreviewed replacement"
     )
     pytest.fail("Direct compiler did not reject meaningful post-apply locator drift")
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        "missing-reference",
+        "null-reference",
+        "missing-index",
+        "changed-index",
+        "missing-ledger",
+        "changed-ledger",
+        "missing-decision",
+        "rejected-decision",
+        "changed-source",
+        "stored-config",
+        "data",
+        "missing-locator",
+        "ambiguous-locator",
+        "contradictory-element",
+    ],
+)
+def test_lost_or_changed_maintenance_identity_rejects_every_managed_boundary(
+    project, tmp_path, monkeypatch, change
+):
+    from autoqa import testing
+    from autoqa.framework import compile_blueprint
+    from autoqa.v08_contracts import digest
+    from autoqa.v08_revision import ACTIVE, revision_path
+
+    source, original, proposal = applied_repair(project, tmp_path)
+    revised = project.cases()[0]
+    assert revised.maintenance_revision is not None
+    ledger_path = revision_path(revised.maintenance_revision)
+    decision_path = "maintenance/v08/decision-" + digest(proposal.id) + ".json"
+    if change in {"missing-reference", "null-reference"}:
+        cases = project.storage.read_json("test-cases/test-matrix.json")
+        if change == "missing-reference":
+            cases[0].pop("maintenance_revision")
+        else:
+            cases[0]["maintenance_revision"] = None
+        project.storage.write_json("test-cases/test-matrix.json", cases)
+    elif change in {"missing-index", "missing-ledger", "missing-decision"}:
+        relative = {
+            "missing-index": ACTIVE,
+            "missing-ledger": ledger_path,
+            "missing-decision": decision_path,
+        }[change]
+        path = project.storage.path(relative)
+        # Preserve the owned fixture input rather than discard it.
+        path.rename(path.with_suffix(".preserved"))
+    elif change == "changed-index":
+        project.storage.write_json(ACTIVE, {"cases": {original.id: "0" * 64}})
+    elif change == "changed-ledger":
+        ledger = project.storage.read_json(ledger_path)
+        ledger["context"] = "0" * 64
+        project.storage.write_json(ledger_path, ledger)
+    elif change == "rejected-decision":
+        decision = project.storage.read_json(decision_path)
+        decision["decision"] = "rejected"
+        project.storage.write_json(decision_path, decision)
+    elif change == "changed-source":
+        (source / "README.md").write_text("Owned changed baseline", encoding="utf-8")
+    elif change == "stored-config":
+        # The same Project instance retains its old config: persisted drift still counts.
+        stored = project.storage.read_config()
+        stored["navigation_timeout_ms"] += 1
+        project.storage.write_config(stored)
+        assert project.config.navigation_timeout_ms != stored["navigation_timeout_ms"]
+    elif change == "data":
+        project.storage.write_json("test-cases/test-data-v08.json", {"changed": "synthetic"})
+    else:
+        discovery = project.storage.read_json("discovery/workflow-map.json")
+        element = discovery["pages"][0]["elements"][0]
+        if change == "missing-locator":
+            element["locators"] = []
+        elif change == "ambiguous-locator":
+            element["locators"][0]["count"] = 2
+        else:
+            contradictory = json.loads(json.dumps(element))
+            contradictory["locators"][0]["value"] = "amount-other"
+            discovery["pages"][0]["elements"].append(contradictory)
+        project.storage.write_json("discovery/workflow-map.json", discovery)
+
+    before, source_before = snapshot(project.root), snapshot(source)
+    output = tmp_path / "must-not-export"
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("Rejected maintenance reached subprocess execution")
+
+    monkeypatch.setattr(testing.subprocess, "run", forbidden)
+    for action in (
+        lambda: reapprove(project, original),
+        lambda: membership(project),
+        lambda: compile_blueprint(project),
+        lambda: FrameworkService(project, auth(project, "generate")).build(output),
+        lambda: testing.generate(project, authorization=auth(project, "generate")),
+        lambda: testing.run(project, authorization=auth(project, "execute")),
+        lambda: FrameworkService(project, auth(project, "execute")).run(source),
+    ):
+        with pytest.raises(ValueError):
+            action()
+        assert snapshot(project.root) == before
+        assert snapshot(source) == source_before
+        assert not output.exists()
+
+
+def test_applied_manual_revision_stays_immutable_and_later_drift_rejects(project, tmp_path):
+    from test_v08_framework import manual_copy
+
+    source, original = prepare(project, tmp_path)
+    locator = drift(project)
+    manual, page = manual_copy(source, tmp_path)
+    service = MaintenanceService(project, auth(project, "review", "maintain"))
+    proposal = service.propose(source, original.id, "EL-AMOUNT", locator, manual)
+    service.review(source, proposal, "accepted", manual)
+    before_apply = snapshot(manual)
+    service.apply(source, proposal, manual)
+    assert snapshot(manual) == before_apply
+    reapprove(project, original)
+    membership(project)
+    original_source = snapshot(source)
+    FrameworkService(project, auth(project, "generate")).build(tmp_path / "valid-manual-repair")
+    assert snapshot(manual) == before_apply
+    assert snapshot(source) == original_source
+    page.write_text(page.read_text(encoding="utf-8") + "\n# Later owned edit\n", encoding="utf-8")
+    before, manual_before = snapshot(project.root), snapshot(manual)
+    with pytest.raises(ValueError):
+        reapprove(project, original)
+    assert snapshot(project.root) == before
+    assert snapshot(manual) == manual_before
+    assert snapshot(source) == original_source
