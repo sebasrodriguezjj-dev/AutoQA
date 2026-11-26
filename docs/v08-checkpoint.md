@@ -1,5 +1,32 @@
 # V0.8 durable engineering checkpoint
 
+## H04/H05 recovery — 2026-11-25
+
+This section supersedes the historical publication-next instructions below.
+Audit AUTOQA-AUDIT-20261125-02 / AUD-DEV-20261125-02: FAIL, both HIGH findings open.
+Remote PR #8 remains open at a265ebfbd32ea2f4cebc9fde784e7ca324a8012e;
+main 2243611658accb05afc39593ff6d21fd1e4ba369 and annotated v0.7.0 object
+4395f8a1b9ab2c8bf870bd17052337b730e08328 unchanged after fetch/live PR verification.
+Lead recovered clean, no implementation fix integrated. H04 QA commits bc6d873 and
+90c7dbe integrated exactly once as 33aa938 and c41667d. Existing worktrees preserved.
+H05 retains dirty runner.py/v08_diagnosis.py and new v08_invocations.py/test_v08_h05.py
+in ../AutoQA-worktrees/v08-h05; a narrowly scoped replacement specialist owns those
+four files. Lead owns H04 production/shared interfaces, integration and publication.
+No original specialist session was available; the original team was not recreated.
+
+Recovered logs (not freshly rerun): H04 mandatory 5 failed; shared/unrelated 3 failed,
+1 passed; managed bypasses 2 failed. See v08-h04-independent-review.md. H05 before
+8 failed/1 passed; after-first 1 failed/8 passed (missing operation still permits
+health). Logs remain ignored in each worktree's .test-work. Earlier CI run45694044977
+is successful only for the audited candidate, not remediation. Chromium after-fix,
+installed corrections, complete regression and exact-new-HEAD CI remain pending.
+
+Next action: finish durable typed H04 binding and compiler/approval/execution checks;
+finish/review recovered H05; integrate once, run focused independent negative and real
+UI/API acceptance, then final release gate and update existing PR #8. QG07–10 pending;
+QG11 external re-audit and QG12 owner promotion authorization remain pending.
+No merge/tag/stable promotion/V0.9/Factory/UI scope is authorized.
+
 Date: 2026-11-25, America/Costa_Rica. Branch: feat/v08-development.
 Stable baseline main: 2243611658accb05afc39593ff6d21fd1e4ba369.
 Stable tag object/target/tree verified; no open GitHub PR at preflight; Lead clean and
