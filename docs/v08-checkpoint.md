@@ -1,3 +1,16 @@
+# V0.8.0 stable promotion checkpoint — 2026-11-25
+
+Owner authorization/audit05 permits metadata-only stable promotion, PR8 merge and
+annotated tag. Preflight approved candidate11ccaf8/base2243611 verified; old worktrees
+and dirty copies preserved. Four necessary version references promoted; parsed dependency
+lock unchanged. Full stable gate passed exit0: .test-work/v080-stable-release.log/.exit;729passed/21deselected575.61s.
+Read actual completion before publishing. Next: record fresh results, docs/inventory,
+commit/push existing branch, exact-new-HEAD CI/logs/tree, expected-head/base merge,
+official integrated-tree checks, annotated tag verification, final PR handoff and STOP.
+See [stable gate](v08-stable-release-gate.md). No V0.9 implementation.
+
+---
+
 # V0.8 durable engineering checkpoint
 
 ## H04/H05 recovery — 2026-11-25

@@ -1,3 +1,28 @@
+# V0.8.0 owner-authorized stable promotion — 2026-11-25
+
+Audit AUTOQA-AUDIT-20261125-05 / AUD-DEV-20261125-05 accepted H04/H05 and QG01–11.
+Owner explicitly authorized QG12: metadata promotion, mandatory gates, PR8 merge commit
+and annotated v0.8.0 publication. V0.9, UI and Factory remain unauthorized.
+Approved candidate11ccaf85883ab7c1546e1c5c98ea89e887cb7e32. Only version metadata,
+matching framework assertion and release/context documentation change.
+Fresh full stable gate PASS, exit0:729passed/21browser deselected575.61s, no skips/failures,
+native Windows/Python3.14.3. Ruff92files, locked37packages, frozen/H01-H05/native sharing/
+security, wheel/sdist, isolated site-packages/import/distribution/CLI0.8.0, installed
+V0.7/V0.8, AutoQA-absent COMPLETE collection and real case/pack/all plus three-row alias
+requests/assertions passed. Log .test-work/v080-stable-release.log/.exit0; package root
+release-gate-fv8jddh8. No timeout/skip/assertion changes. Links203, roles4, inventory192
+files/16ZIPmembers passed, no conventional credential/private-output findings (not DLP).
+Parsed dependency lock unchanged except root version; historical/protected files intact.
+Final documentation recording follows verified runtime; new exact-HEAD CI remains required.
+
+Authoritative official merge/tag and exact-HEAD CI are recorded after observation in PR8;
+this release uses the existing canonical publication approach, without follow-up PR.
+See [stable gate](v08-stable-release-gate.md) for fresh results and canonical PR/tag
+publication evidence. Earlier candidate restrictions/results below are historical,
+not a prohibition on this newly authorized release. No runtime changes are authorized.
+
+---
+
 # V0.8 H04/H05 remediation handoff — 2026-11-25 (America/Costa_Rica)
 
 Audit AUTOQA-AUDIT-20261125-02 / AUD-DEV-20261125-02 reported FAIL at a265ebf;
