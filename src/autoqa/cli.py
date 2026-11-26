@@ -11,11 +11,13 @@ from rich.table import Table
 from autoqa import __version__
 from autoqa.authorization import AuthorizationContext
 from autoqa.core import initialize, select_project
+from autoqa.v08_cli import register as register_v08
 
 app = typer.Typer(
     no_args_is_help=True, help=f"AutoQA Agent {__version__}: evidence-driven QA automation."
 )
 console = Console()
+register_v08(app)
 
 
 def handled(function):

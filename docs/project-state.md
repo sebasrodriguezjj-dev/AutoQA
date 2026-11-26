@@ -1,3 +1,141 @@
+# V0.8.0 owner-authorized stable promotion — 2026-11-25
+
+Audit AUTOQA-AUDIT-20261125-05 / AUD-DEV-20261125-05 accepted H04/H05 and QG01–11.
+Owner explicitly authorized QG12: metadata promotion, mandatory gates, PR8 merge commit
+and annotated v0.8.0 publication. V0.9, UI and Factory remain unauthorized.
+Approved candidate11ccaf85883ab7c1546e1c5c98ea89e887cb7e32. Only version metadata,
+matching framework assertion and release/context documentation change.
+Fresh full stable gate PASS, exit0:729passed/21browser deselected575.61s, no skips/failures,
+native Windows/Python3.14.3. Ruff92files, locked37packages, frozen/H01-H05/native sharing/
+security, wheel/sdist, isolated site-packages/import/distribution/CLI0.8.0, installed
+V0.7/V0.8, AutoQA-absent COMPLETE collection and real case/pack/all plus three-row alias
+requests/assertions passed. Log .test-work/v080-stable-release.log/.exit0; package root
+release-gate-fv8jddh8. No timeout/skip/assertion changes. Links203, roles4, inventory192
+files/16ZIPmembers passed, no conventional credential/private-output findings (not DLP).
+Parsed dependency lock unchanged except root version; historical/protected files intact.
+Final documentation recording follows verified runtime; new exact-HEAD CI remains required.
+
+Authoritative official merge/tag and exact-HEAD CI are recorded after observation in PR8;
+this release uses the existing canonical publication approach, without follow-up PR.
+See [stable gate](v08-stable-release-gate.md) for fresh results and canonical PR/tag
+publication evidence. Earlier candidate restrictions/results below are historical,
+not a prohibition on this newly authorized release. No runtime changes are authorized.
+
+---
+
+# V0.8 H04/H05 remediation handoff — 2026-11-25 (America/Costa_Rica)
+
+Audit AUTOQA-AUDIT-20261125-02 / AUD-DEV-20261125-02 reported FAIL at a265ebf;
+H04/H05 remain subject to external re-audit. Owner authorized these corrections and
+candidate publication only on existing feat/v08-development / PR #8. No merge,
+stable promotion/tag, V0.9, UI prototype or Factory execution is authorized.
+
+Recovered original H04 QA commits and dirty H05 implementation rather than restarting.
+Lead H046625430, H05 source49e5f9 -> Lead0828b81, independent QA2299e88 -> Leadb497d70.
+All old worktrees and dirty historical copies remain. Final implementation/test tree
+873d3053a0415b9cc490d95093eadd6488c2d866 at b497d70ece5b1de615937546628666e2901cbc81.
+H04 now enforces typed revision/index/ledger and exact approved compiler operations
+through reviews/generation/execution. H05 records and reconciles historical expected
+invocations; legacy metadata gaps remain uncertainty. See
+[ADR0007](decisions/0007-maintenance-and-historical-invocation-integrity.md),
+[independent evidence](v08-h04-independent-review.md) and
+[development audit handoff](v08-remediation-handoff.md).
+
+Focused independent combined50passed221.95s includes genuine Windows Chromium repair/
+defect and independent parameterized/nonparameterized execution. Native security83
+passed4.63s, actual junction/ancestor checks; Lead reviewed source and actual logs.
+Compatibility118passed27.00s and focused installed-wheel correction phase exit0.
+Complete final integrated release script passed exit0:729passed/21browser deselected
+495.71s, no skips/failures, Ruff92files, locked37packages, frozen compatibility/H01-H03,
+build/isolated installed workflows and genuine independent COMPLETE collection/case/
+pack/all/three-row alias execution. Log .test-work/h04-h05-final-release.log and .exit0;
+fresh package root release-gate-tstpskxn. Final handoff changes only documentation,
+with links/role/inventory/historical-preservation checks. Exact publication HEAD and
+hosted run/job/actual checkout/parents/tree are recorded in PR8's publication section
+after observed verification; read that live record before treating publication as current.
+Earlier run45694044977 certifies only audited a265ebf and cannot certify remediation.
+QG11 external independent re-audit and QG12 owner promotion authorization remain pending.
+Baseline main/v0.7.0 target2243611658accb05afc39593ff6d21fd1e4ba369, annotated tag
+4395f8a1b9ab2c8bf870bd17052337b730e08328 and all older tags remain unchanged.
+Private baseline/manual ledger paths, conservative context binding, unsigned records,
+trusted single writer/no OS sandbox, limited platforms and manual privacy/retention
+remain explicit. The V0.5 incident remains unroot-caused. Stop after corrected candidate
+publication for targeted independent re-audit; do not infer approval from local QA.
+
+---
+
+# V0.8 candidate delivery handoff — 2026-11-25 (America/Costa_Rica)
+
+Owner-authorized0.8.0rc1 on feat/v08-development delivers the bounded diagnosis,
+locator repair/manual reconciliation, potential-only impact and reusable test-data
+foundations. Original specialist work was recovered and integrated once; actual native
+delegation was demonstrated, role TOMLs explicitly read, automatic loading unverified.
+See [candidate evidence](v08-release-candidate.md), [guide](v08-maintenance-guide.md),
+[ADR0006 threat model](decisions/0006-bounded-maintenance-and-untrusted-source.md),
+[independent review](v08-independent-review.md) and [recovery checkpoint](v08-checkpoint.md).
+
+Corrected complete native Windows gate: exit0,681passed/19deselected in414.36s; Ruff88,
+locked37packages, frozen/H01/H02/H03, wheel/sdist/isolated installed0.8.0rc1, all new
+installed workflows, AutoQA-absent collection/case/pack/full and actual alias consumption
+passed. Affected153 and Framework23 tests passed, the latter including actual owned
+Chromium healthyPASS/locatorFAIL/repairedPASS/genuine-defectFAIL with assertions preserved.
+Old full-run CLI inventory failures remain recorded; all legacy signatures/options
+and frozen fixtures were retained, explicit new names added, compatibility57passed.
+
+Publication is ONE development PR from this branch into unchanged stable main. Its live
+GitHub handoff is authoritative for final HEAD/PR URL, exact-head CI/run/job/actual
+checkout/tree after post-commit verification; consult it before trusting current status.
+Local checks do not substitute for hosted CI. No merge/tag/stable0.8/V0.9 permission.
+Stable main/v0.7.0 target2243611658accb05afc39593ff6d21fd1e4ba369, annotated object
+4395f8a1b9ab2c8bf870bd17052337b730e08328 and all earlier tags remain preserved.
+All historical and V0.8 worktrees/dirty copies remain, no reset/clean/force-push/deletion.
+
+Supported limits: locator-only declarative repairs and narrow Page Object literal
+reconciliation, provided static inventory impact, synthetic API rows and existing bearer/
+cookie environment references. Unsupported Python/repairs/data stay manual. Imported
+records are unauthenticated hypotheses, never confirmed root cause or application
+coverage. Review/apply/scenario/suite approval remain separate. Trusted local filesystem/
+operator, single writer, unsigned records, no OS sandbox/universal PII/secret redaction,
+manual retention and limited platforms remain; historical V0.5 incident is unroot-caused.
+ADR0004 future vision and ADR0005 protections preserved. No new dependencies/providers,
+UI/repository manager/skills/dashboards/self-healing/AI Software Factory. Stop after
+verified candidate publication for owner-triggered independent audit: "Audita al dev".
+
+---
+
+# V0.8 resumed candidate verification — 2026-11-25
+
+This dated handoff supersedes earlier in-progress checkpoint text below. Existing
+feat/v08-development recovered at78298c8; no work discarded or team recreated.
+Backend/Framework source and independent QA checkpoints are integrated exactly once;
+see [recovery checkpoint](v08-checkpoint.md) and [candidate evidence](v08-release-candidate.md).
+Supported A-J acceptance passed:153 integrated affected tests and23 Framework tests
+including actual Chromium healthy/failure/repaired-pass/preserved-defect execution.
+Package metadata is now0.8.0rc1; full final regression/build/install/installed V0.8/
+independent execution gates are in progress, not yet certified. Stable v0.7.0/main stay
+unchanged. Publication requires the actual final gate and exact-new-HEAD hosted CI.
+No merge/stable V0.8/V0.9 authorization; stop for "Audita al dev" after candidate PR.
+
+---
+
+# V0.8 active development authorization (2026-11-25, America/Costa_Rica)
+
+Owner approved V0.8 Maintenance, Diagnosis and Reliability after independent final
+V0.7 audit. Verified stable main/tag target 2243611658accb05afc39593ff6d21fd1e4ba369,
+annotated object 4395f8a1b9ab2c8bf870bd17052337b730e08328 and tree
+3b48f64a2f9a66b6f1b04269935f5cb91c635c88. PR #7 is merged; no open PR at fresh preflight.
+Active branch feat/v08-development. Deliver one verified 0.8.0rc1 PR only after
+supported A-J acceptance and mandatory gates; no merge/stable tag/V0.9 authorization.
+No AI Software Factory. Original worktrees and dirty copies remain preserved.
+
+Read [V0.8 interface/briefing](v08-interface-agreement.md),
+[ADR 0006 threat model](decisions/0006-bounded-maintenance-and-untrusted-source.md)
+and [durable checkpoint](v08-checkpoint.md). Roles and permanent instructions remain
+enduring; dated earlier release/candidate restrictions below are historical and do
+not override this newly explicit scope. ADR 0004/0005 and all historical contracts stay.
+
+---
+
 # Permanent project state and engineering handoff
 
 ## V0.7.0 stable release handoff — 2026-11-25 (America/Costa_Rica)

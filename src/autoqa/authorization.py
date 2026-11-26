@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-Operation = Literal["plan", "review", "generate", "execute", "discover"]
+Operation = Literal["plan", "review", "generate", "execute", "discover", "maintain"]
 
 
 @dataclass(frozen=True)

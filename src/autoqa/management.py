@@ -29,6 +29,9 @@ def propose(project):
 
 def approve_suite(project, suite, authorization):
     require_authorization(authorization, project.root, "review")
+    from autoqa.v08_revision import verify_revisions
+
+    verify_revisions(project)
     current = {c.id: c for c in project.cases()}
     if suite.project_id != project.root.name or {c.id for c in suite.cases} != current.keys():
         raise ValueError("Suite must describe the current project's entire inventory")

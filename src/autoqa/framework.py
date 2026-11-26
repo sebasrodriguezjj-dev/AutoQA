@@ -231,6 +231,9 @@ class _PageLocators(ast.NodeTransformer):
 
 
 def compile_blueprint(project):
+    from autoqa.v08_revision import verify_revisions
+
+    verify_revisions(project)
     cases = [c for c in project.cases() if c.review_status == "approved"]
     if not cases:
         raise ValueError("No approved scenarios; review and approve before building")
@@ -459,6 +462,9 @@ class FrameworkService:
 
     def run(self, destination: Path, selection=None):
         require_authorization(self.authorization, self.project.root, "execute")
+        from autoqa.v08_revision import verify_revisions
+
+        verify_revisions(self.project)
         manifest = validate(destination)
         current = {case.id: case for case in self.project.cases()}
         for case_id, signature in manifest["cases"].items():

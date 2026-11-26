@@ -1,0 +1,186 @@
+# AutoQA 0.8.0rc1 candidate evidence
+
+## H04/H05 audit remediation — 2026-11-25
+
+This section supersedes the earlier candidate's readiness claims below. Audit
+AUTOQA-AUDIT-20261125-02 / handoff AUD-DEV-20261125-02 found two HIGH blockers at
+a265ebf. Corrections are implemented, not externally audit-approved. Existing PR #8
+remains the sole candidate PR; metadata stays0.8.0rc1, no merge/stable release/tag.
+See [structured development handoff](v08-remediation-handoff.md) for root causes,
+changed files, original fail-before, integration map and residual limits, and
+[independent regression evidence](v08-h04-independent-review.md).
+
+Final integrated `uv sync --locked` and complete release script passed exit0, native
+Windows/Python3.14.3:729passed/21browser deselected495.71s, no skips/failures. Ruff92files,
+locked37packages, frozen/H01-H03, wheel/sdist/isolated installed0.8.0rc1, V0.7/V0.8
+workflows, independent COMPLETE collection/case/pack/all and real three-row alias
+requests/assertions passed. Log .test-work/h04-h05-final-release.log and .exit0, fresh
+release-gate-tstpskxn. Final exact publication HEAD and hosted CI/run/job/checkout/
+parents/tree are recorded in PR8's publication section after observation; earlier-head
+success is never substituted. Final handoff-only edits retain identical src/tests/scripts.
+Independent focused QA50passed221.95s (two genuine browser tests), native Windows
+security83passed4.63s, Lead compatibility118passed27.00s and installed correction phase
+exit0 already passed. Installed gate now exercises actual three-row alias consumption,
+missing rows/operations diagnosis refusal and approved-locator drift rejection.
+Prior candidate CI run45694044977 remains historical evidence for a265ebf only.
+QG07/QG08 have internal independent evidence; QG09 local comprehensive gate passed and
+requires exact-final-HEAD hosted success as recorded in PR8. QG10 Windows/browser executor
+and Lead reviewer are distinct. QG11 external re-audit and QG12 owner promotion
+authorization are explicitly pending; this delivery does not close the external audit.
+
+Date: 2026-11-25 (America/Costa_Rica). Stable baseline/tag target
+2243611658accb05afc39593ff6d21fd1e4ba369; annotated v0.7.0 object
+4395f8a1b9ab2c8bf870bd17052337b730e08328; tree
+3b48f64a2f9a66b6f1b04269935f5cb91c635c88. Owner authorized one candidate PR on
+feat/v08-development, not merge/tag/stable V0.8/V0.9 or unrelated functionality.
+
+## Recovery, organization and integrated work
+
+Recovered Lead clean at 78298c8fe8e4b9e165b95f1a0e62fea97c0f1d17; ancestor-link
+commit actually existed and formatting/lint had completed. The preceding backend
+log recorded 71 passed in11.49s but preceded that correction and did not certify it.
+No pending Git operation or old test process; remote main/tag unchanged, no V0.8 branch
+or open PR. All original worktrees/dirty copies and all three V0.8 worktrees preserved.
+No reset/clean/history rewrite or recreated specialist team.
+
+Original Backend and Framework sessions could not resume after usage-limit errors.
+Lead finished only outstanding QA defects and the real-browser harness. One existing
+QA session resumed narrowly to finish independent acceptance/review. Role TOMLs were
+explicitly read; native delegation was demonstrated, automatic role loading was not.
+The shared briefing947bc39/ADR0006 froze ownership/contracts before specialist coding.
+
+| Specialist source commit | Lead integration | Outcome |
+| --- | --- | --- |
+| Backend cac4b7ec11ca7e225cb0c0adfe45c0b13724ab22 | cb0763c | Diagnosis, impact, test data; original32 focused passes |
+| Framework b334fa09219fce7999c0af391462d756da145fb4 | b2ab887 | Locator proposals/review/apply, reconciliation, tests and installed fixture helper |
+| QA 0e976136a7e844233c5dfa5a3c1eac0bd28d0444 | b922be7 | Initial independent shared security;39 combined security/CLI passes |
+| QA a1df4707d1d73158ac90d4d419b8cf7d129cbdca | 747f6b3 | Remote/device/project path and ancestor-first regressions;83 passes |
+| QA 818346c22722368339fa1c5672fe0c208952b4a1 | 4af7585 | Actual independent API/data/diagnosis, stale/tamper and source acceptance/review |
+
+Duplicate shared/CLI dependency cherry-picks in specialist branches were not integrated
+again. Lead corrections are separately committed: 78298c8 ancestor-first probing,
+eae44d8 incomplete diagnosis/stored data binding and 80fd1df consistent failure versus
+incomplete outcome. Browser harness6544172 reads actual results after integer exit codes;
+it did not weaken expected outcomes or change runtime to obtain a pass.
+
+## Security findings, reproduction and correction
+
+Independent logs retain genuine failures before correction: strict bool locator count,
+credential field inconsistency, unbounded/partial traversal, numeric false flags,
+UNC/device/ADS/URL paths, project preselection, and child probing before ancestor links.
+Eight ancestor regressions failed before78298c8; corrected Lead security suite:
+**83 passed in4.38s**, including actual owned native Windows junction checks and
+no unauthorized remote access. Guards run lexically before filesystem access and
+ancestors before children. QA found data import's premature candidate.exists probe;
+it now uses checked_path first. Stored inspection checks current metadata bindings.
+
+Recorded-run regressions reproduced orphan operation/pass contradictions, nonzero
+process/all-pass contradictions and missing failure-operation evidence. These now
+remain integrity/incomplete findings, never healthy/root-cause evidence. Conversely,
+a consistent captured failed assertion with exit1 remains an assertion symptom with
+uncertain application/automation hypotheses; it is not falsely recast as corrupted
+evidence. The latter regression failed before80fd1df and all32 backend tests pass after.
+Actual before/after logs remain in Lead/QA ignored `.test-work` directories; details in
+[independent review](v08-independent-review.md). No real client data is published.
+
+## A-J supported acceptance
+
+Corrected integrated Backend/security/CLI/independent acceptance: **153 passed in122.95s**,
+log `.test-work/v08-final-affected.log`. Earlier independent116-pass/one enum-spelling
+failure and its corrected focused rerun remain historical, not claimed all-green.
+Framework complete suite: **23 passed in184.31s** including actual owned Chromium;
+log `.test-work/v08-framework-recovered.log`, actual run record
+`.test-work/v08-browser-acceptance.json`.
+
+| Criterion | Actual supported outcome |
+| --- | --- |
+| A diagnosis | Actual AutoQA-absent API healthy/controlled-defect results; historical safe snapshots/operations, suppressed raw errors and no latest-case fallback; unknown root cause |
+| B reviewed maintenance | Unique observed locator proposal; review leaves source/case unchanged; separate authorized apply creates pending revision; renewed scenario/suite approval, fresh validated export and actual pass |
+| C defect preservation | Real Chromium sequence: healthy exit0/PASS, locator change exit1/FAIL, repaired exit0/PASS, genuine defect exit1/FAIL; assertions/expectations unchanged |
+| D manual reconciliation | Exactly supported Page Object locator literal edit; remaining AST identical and explicit identity mapping; arbitrary executable changes/imports remain unsupported/manual, no manifest refresh |
+| E stale review | Case/evidence/source/root/data/membership/manual revision/decision tampering rejected; old receipts cannot authorize pending revisions |
+| F application impact | Explicit typed before/after local inventory snapshots; potential affected/unrelated/unknown scope, no runtime or reviewed-mapping claim |
+| G test data | Reusable synthetic alias materialized into reviewed API request/assertions and consumed by actual independent execution; missing credentials fail before HTTP; unsafe/changed files and roots fail |
+| H adversarial | Duplicate/oversized/malformed/nonfinite input, links/junctions/traversal/device/remote paths, source injection, read-only bytes/mtimes, output suppression and separate authorization verified |
+| I compatibility | Existing immutable frozen/H01/H02/H03/legacy receipt/network/privacy contracts retained; complete regression remains mandatory below |
+| J determinism | Unordered identities/dictionary/source listing and irrelevant timestamps stable; meaningful operation/data/source changes stale the relevant review |
+
+These acceptance runs exercised the final functional implementation before metadata
+promotion to0.8.0rc1; browser runtime/maintenance logic is unchanged by metadata/docs/
+gate recording. Final complete candidate gates must certify the actual published tree.
+
+## Mandatory final gates and delivery
+
+Use `uv sync --locked`, `uv run python scripts/verify_release.py --phase all` and
+`git diff --check`. The extended reusable package gate exercises genuine installed
+V0.8 diagnosis/impact/data inspect/import/validate/bind/reconciliation/propose/review/
+apply and renewed trusted export. A synthetic alias is echoed and asserted by actual
+AutoQA-absent API execution. Existing installed V0.7 and independent case/pack/full
+checks are retained. Installed UI setup exercises declarative staging/export, not a
+hosted browser benchmark. Actual Chromium acceptance is the separately recorded local run.
+Final outcomes, exact HEAD, hosted run/job/actual merge checkout/tree are recorded after
+observed verification in the one PR handoff. Earlier checks cannot substitute for them.
+
+The extended installed-package stage separately returned **exit0** at0.8.0rc1:
+`.test-work/v08-installed-workflows.log`, fresh output
+`.test-work/release-gate-si7zdlhm`. All listed V0.8 commands, observed data consumption,
+fresh reviewed export and retained V0.7/independent gates passed. The first full
+regression found the legacy test's exact additive CLI inventory missing the five new
+authorized command/group names. Only those explicit expected names were added; every
+legacy signature/option/behavior assertion and frozen archive hash remains unchanged.
+The complete compatibility slice then passed **57 tests in3.07s**. The original failed
+full run is retained and is not certified; a corrected complete final gate remains
+mandatory before publication.
+
+### Final corrected local gate
+
+The complete reusable script returned **exit0**, native Windows/Python3.14.3,
+against implementation commit c85c4735b1fba209c9ff350895d89efdd9f73fe4 (tree
+add40d0317ab16a834c6bd74ceeff16a3d0b5ee1): **681 passed /19 deselected in414.36s**,
+no skips or failures. The first attempted full run ended **9 failed /672 passed /
+19 deselected in440.39s**, solely the explicit CLI inventory expectation already fixed;
+that log remains historical. No failing assertion was removed or frozen file changed.
+
+| Mandatory gate | Observed final result |
+| --- | --- |
+| uv sync --locked / metadata | Passed; import/distribution/root lock/package0.8.0rc1 |
+| Ruff lint/format | Passed,88 source/test/script files |
+| Full non-browser regression |681 passed;19 browser cases deselected; live AI excluded |
+| Frozen/legacy/H01/H02/H03 | Passed; archive/member hashes, signatures, receipts, scope accounting and semantic observation protections preserved |
+| Lock |37 packages; parsed resolution identical to stable after normalizing only root version |
+| Build/archive/isolated install | Wheel/sdist/private-output inventory and site-packages version/CLI passed |
+| Installed V0.7 | Four planning/import/disposition commands and stale refusal retained and passed |
+| Installed V0.8 | Diagnosis, impact, data inspect/import/validate/bind, reconciliation, propose/review/apply and renewed fresh trusted export passed |
+| Independent exports | AutoQA absent, validation/COMPLETE collection, genuine case/pack/full each exit0/one passed invocation/two operations |
+| Reusable data consumption | Fresh AutoQA-absent API export actually sends and asserts the aliased synthetic value; exit0 |
+| Actual owned Chromium | Separate23-test Framework run passed; healthy0/locator-failure1/repaired0/preserved-defect1; assertions/manual source unchanged |
+| Docs/roles/history/inventory | Relative destinations resolve, four profiles parse; historical context/ADR004/005 and protected sources unchanged;184 files plus ZIP members with no conventional credential/private-output findings |
+
+Final complete log: `.test-work/v08-final-release-corrected.log`; durable exit file:
+`.test-work/v08-final-release-corrected.exit` contains0. Fresh package evidence:
+`.test-work/release-gate-n0quoh_8`. Full initial failure and successful isolated-package
+investigation logs remain. Final result recording changes documentation only; final
+published HEAD, exact hosted run/job, actual checkout and tested-tree comparison are
+recorded in the official development PR handoff after observed post-commit verification.
+No earlier-head CI or separate main/tag CI is substituted or claimed. Stable main and
+all release tags remain unchanged; leave the candidate PR unmerged for independent audit.
+
+## Supported limits and deferred capabilities
+
+See [guide](v08-maintenance-guide.md), [frozen interface](v08-interface-agreement.md),
+[ADR0006](decisions/0006-bounded-maintenance-and-untrusted-source.md) and retained
+ADR0004/0005. Impact compares supplied static inventories; no automatic repo fetch/parser
+or complete impact proof. Maintenance supports canonical unique functional locators,
+not general synchronization/patches/collection locators/arbitrary Pytest. Data supports
+synthetic API rows and existing bearer/cookie env references; basic-auth alias binding
+and raw-file executable fixtures are unsupported. Old independent snapshots cannot
+observe later revocation. Whole-context binding can conservatively require extra review.
+
+Trusted local operator/filesystem, single writer, unsigned records, no OS sandbox or
+hostile-path-race guarantee, no universal PII/secret redaction, manual retention and
+limited platform/browser validation remain. Imported records are unauthenticated;
+fingerprints protect recorded meaning, not complete behavior or identity. Automatic
+profile loading remains unverified; historical V0.5 incident remains unroot-caused.
+No new dependencies/model provider, optional AI behavior, UI/repository manager/VS Code
+skills/dashboard/self-healing/V0.9 or unrelated product. Stop after candidate PR/CI
+verification for independent audit: "Audita al dev". No merge or stable tag.

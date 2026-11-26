@@ -1,5 +1,21 @@
 # Architecture
 
+## V0.8 bounded maintenance foundations
+
+The active owner-authorized design is [V0.8 interface agreement](v08-interface-agreement.md)
+and [ADR 0006](decisions/0006-bounded-maintenance-and-untrusted-source.md).
+Strict additive contracts and bounded IO separate untrusted source/evidence from
+diagnosis/impact hypotheses and reviewed declarative maintenance. New services and
+ApplicationEngine/JSON CLI adapters preserve existing schemas, receipts, integrity,
+network/privacy controls and trusted independent compiler/runtime. Runner projections
+retain privacy-safe historical case and expected invocation identities, not source
+imports or new execution permission. The optional maintenance case reference and
+private active index/typed ledger enforce the exact reviewed compiler delta through
+renewed reviews and managed execution. See
+[ADR 0007](decisions/0007-maintenance-and-historical-invocation-integrity.md).
+See dated project-state/checkpoint for actual implementation
+and verified acceptance; a design declaration alone is not delivered functionality.
+
 ## V0.7 additive requirements planning
 
 V0.7 keeps the synchronous local engine and all legacy producers/readers. New

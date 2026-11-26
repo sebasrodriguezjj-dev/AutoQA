@@ -93,6 +93,11 @@ def test_cli_signatures_and_help(command):
         "intelligent-plan",
         "coverage-report",
         "plan-review",
+        "diagnose-run",
+        "impact-review",
+        "reconcile-source",
+        "test-data",
+        "maintenance",
     }
     actual = []
     for param in commands[command].params:

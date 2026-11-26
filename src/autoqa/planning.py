@@ -290,6 +290,9 @@ def approve(
     project: Project, ids: list[str], *, authorization: AuthorizationContext | None = None
 ) -> list[TestCase]:
     require_authorization(authorization, project.root, "review")
+    from autoqa.v08_revision import verify_revisions
+
+    verify_revisions(project)
     cases = project.cases()
     unknown = set(ids) - {case.id for case in cases}
     if unknown:

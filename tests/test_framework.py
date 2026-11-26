@@ -109,7 +109,7 @@ def test_framework_export_integrity_and_cli(reviewed_project, tmp_path):
     destination = tmp_path / "export"
     result = ApplicationEngine(project, context(project, "generate")).build_framework(destination)
     manifest = validate(destination)
-    assert manifest["version"] == __version__ == "0.7.0"
+    assert manifest["version"] == __version__ == "0.8.0"
     metadata = tomllib.loads((destination / "pyproject.toml").read_text())
     assert metadata["project"]["version"] == __version__
     assert result["cases"] == list(manifest["cases"])

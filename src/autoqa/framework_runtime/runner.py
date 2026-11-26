@@ -2,6 +2,7 @@
 
 import argparse
 import ast
+import hashlib
 import html
 import json
 import os
@@ -183,6 +184,40 @@ def execute(root, *, collect_only=False, selection=None):
     if not collect_only and config.application_url:
         Scope(base, config)
     run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8]
+    # Capture reviewed expected identity before collection/execution. Never infer
+    # cardinality from JUnit or the subsequently received invocation records.
+    plan_projection = plan.model_dump()
+    plan_projection["case_ids"] = sorted(plan_projection["case_ids"])
+    plan_projection["pack_ids"] = sorted(plan_projection["pack_ids"])
+    plan_projection["selection"]["values"] = sorted(plan_projection["selection"]["values"])
+    parameter_counts = {
+        case_id: manifest.get("parameters", {}).get(case_id) for case_id in plan.case_ids
+    }
+    diagnostic_scope = {
+        "schema_version": "0.8",
+        "run_id": run_id,
+        "project_id": plan.project_id,
+        "selected_case_ids": list(plan.case_ids),
+        "parameter_counts": parameter_counts,
+        "expected_invocation_ids": {
+            case_id: [case_id] if rows is None else [f"{case_id}--row-{i}" for i in range(rows)]
+            for case_id, rows in parameter_counts.items()
+        },
+        "case_signatures": {
+            case_id: manifest["cases"][case_id]
+            for case_id in plan.case_ids
+            if case_id in manifest["cases"]
+        },
+        "plan_digest": hashlib.sha256(
+            json.dumps(
+                plan_projection,
+                sort_keys=True,
+                ensure_ascii=False,
+                allow_nan=False,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest(),
+    }
     output = safe_path(root, "artifacts/" + run_id)
     output.mkdir(parents=True)
     keep = {
@@ -408,6 +443,19 @@ def execute(root, *, collect_only=False, selection=None):
     )
     result = {
         "execution_run": execution_run.model_dump(),
+        "evidence_policy": "summary_only" if protected else "standard",
+        "diagnostic_snapshot": [
+            {
+                "id": case.id,
+                "kind": case.kind,
+                "signature": manifest["cases"].get(case.id),
+                "operation_count": manifest.get("operation_counts", {}).get(case.id),
+                "review_status": case.review_status,
+            }
+            for case in selected_cases
+            if case.id in manifest["cases"]
+        ],
+        "diagnostic_scope": diagnostic_scope,
         "schema_version": "0.6",
         "project_id": plan.project_id,
         "suite_id": plan.suite_id,

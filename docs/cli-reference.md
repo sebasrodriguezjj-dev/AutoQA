@@ -1,5 +1,31 @@
 # CLI reference
 
+## V0.8 bounded maintenance candidate
+
+All new commands emit deterministic bounded JSON; invalid/unavailable/stale input or
+missing authorization exits1 with a generic error. Existing commands retain their
+original signatures/output/exit behavior. See [V0.8 guide](v08-maintenance-guide.md)
+for typed input examples, supported subset and limits.
+
+```text
+diagnose-run RUN_FILE --project PATH
+impact-review BEFORE_FILE AFTER_FILE --project PATH
+reconcile-source BASELINE CURRENT --project PATH
+test-data inspect [--input FILE] --project PATH
+test-data import FILE [--root DIRECTORY ...] --project PATH
+test-data validate ALIAS --environment NAME --project PATH
+test-data bind ALIAS CASE_ID --environment NAME --authorized --project PATH
+maintenance propose SOURCE CASE_ID ELEMENT_ID LOCATOR_JSON [--manual-source DIRECTORY] --project PATH
+maintenance review SOURCE PROPOSAL_JSON --decision accepted|rejected [--manual-source DIRECTORY] --project PATH
+maintenance apply SOURCE PROPOSAL_JSON --authorized [--manual-source DIRECTORY] --project PATH
+```
+
+Inspect/diagnose/impact/reconcile/propose/validate do not write project/client artifacts
+or resolve credentials. Explicit import/review writes only its local sidecar. Bind/apply
+requires separate maintenance intent and produces a pending case; existing scenario and
+suite approvals plus fresh trusted export remain mandatory. No command trusts arbitrary
+edited Python or grants execution permission from analysis or proposal acceptance.
+
 Use `uv run autoqa COMMAND --help` for exact options. All project commands accept `--project PATH`. Run from a project directory or use the registry's active project when invoking from the QA repository root.
 
 | Command | Notes |

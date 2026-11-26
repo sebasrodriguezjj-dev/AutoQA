@@ -210,6 +210,10 @@ class TestCase(BaseModel):
     evidence_refs: list[str] = Field(default_factory=list)
     workflow_id: str | None = None
     contract: dict | None = None
+    # Absent on historical cases: preserve their serialized content and signatures.
+    maintenance_revision: str | None = Field(
+        default=None, pattern=r"^[a-f0-9]{64}$", exclude_if=lambda value: value is None
+    )
 
     @model_validator(mode="after")
     def api_contract(self):

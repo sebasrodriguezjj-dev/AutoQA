@@ -1,5 +1,25 @@
 # Security boundaries
 
+V0.8's authorized maintenance foundations use the explicit
+[ADR 0006 threat model](decisions/0006-bounded-maintenance-and-untrusted-source.md) and
+[interface agreement](v08-interface-agreement.md). External automation/application
+source remains read-only data during analysis; no imports, collection, dependency
+installation or execution of inspected code. Review and maintain intent are separate,
+and neither replaces renewed scenario receipts or suite membership. Supported changes
+must become declarative pending revisions and fresh trusted exports; a hash refresh
+never makes arbitrary manual Python trusted. Recorded run summaries suppress raw
+sensitive text and distinguish evidence gaps from application defects. Credential data
+aliases retain environment-variable names only; analysis never resolves secret values.
+See the dated checkpoint for actual verified scope and remaining implementation work.
+H04's private revision ledger retains local baseline/manual paths only for later
+bounded source identity revalidation; paths never enter exports, CLI output or
+diagnostic scope. The typed case reference, independent active index, accepted decision
+and exact expanded compiler delta must agree before renewed review or managed output.
+Missing historical invocation scope remains uncertainty; expected rows are not inferred
+from potentially incomplete results. These unsigned local integrity controls and their
+conservative maintenance limits are described in
+[ADR 0007](decisions/0007-maintenance-and-historical-invocation-integrity.md).
+
 V0.2 adds optional declarative contracts for reviewed functional actions. Initial discovery remains passive. Action locators must have checked uniqueness, selections must use observed options, sensitive fields/dangerous controls are rejected, and unknown expectations remain manual. Search clicks are limited to observed search controls; other button clicks require explicit local-only permission. All network writes remain blocked. Imported data is quoted into fixed templates, not evaluated as code. No AI Python is accepted.
 
 Additional configuration can narrow scope using excluded_paths and permitted-request spacing. The external practice-site attempt honored its published path exclusions and retained the same-origin policy; separate API requests were blocked. Scope observations are recorded without full request URLs or query strings. Do not remove these restrictions just to make an acceptance demonstration pass.
