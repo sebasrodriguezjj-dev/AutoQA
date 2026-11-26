@@ -21,7 +21,18 @@ health). Logs remain ignored in each worktree's .test-work. Earlier CI run456940
 is successful only for the audited candidate, not remediation. Chromium after-fix,
 installed corrections, complete regression and exact-new-HEAD CI remain pending.
 
-Next action: finish durable typed H04 binding and compiler/approval/execution checks;
+H04 implementation increment: optional historical-compatible case reference, strict
+private active index and ledger, exact expanded per-case operation delta, accepted
+decision/source/manual/context revalidation at scenario/suite/compiler/legacy/source-
+backed execution boundaries. Initial affected run33passed/2browser deselected184.26s;
+post-index smoke2passed16.74s. Logs Lead .test-work/h04-binding-first.log and
+h04-index-smoke.log (exit0). Independent final-source negative/browser review pending;
+the source also includes a persisted-config drift check added after that smoke.
+Installed-wheel gate now requires three actual aliased API rows and incomplete-row/
+operation diagnosis refusal plus post-apply/post-review locator drift rejection.
+These package checks have not run yet. Private baseline paths remain local-only,
+explicitly documented in ADR0007; conservative full-content binding is not general
+multi-case maintenance. Next action: independent H04 verification on committed source;
 finish/review recovered H05; integrate once, run focused independent negative and real
 UI/API acceptance, then final release gate and update existing PR #8. QG07–10 pending;
 QG11 external re-audit and QG12 owner promotion authorization remain pending.

@@ -148,9 +148,10 @@ def test_separate_apply_creates_pending_revision_without_behavior_or_approval_by
     source_before = snapshot(source)
     revised = service.apply(source, proposal)
     assert revised.review_status == "pending"
-    assert revised.model_dump(exclude={"description", "review_status"}) == case.model_dump(
-        exclude={"description", "review_status"}
-    )
+    assert revised.maintenance_revision is not None
+    assert revised.model_dump(
+        exclude={"description", "review_status", "maintenance_revision"}
+    ) == case.model_dump(exclude={"description", "review_status"})
     assert case_signature(revised) != case_signature(case)
     assert project.storage.read_json("test-cases/approval-receipts.json") == receipts
     assert project.storage.read_json("test-cases/management.json") == suite

@@ -289,6 +289,13 @@ class MaintenanceService:
             before = original.model_dump(exclude={"review_status", "description"})
             if revised.model_dump(exclude={"review_status", "description"}) != before:
                 raise ValueError("Maintenance cannot change reviewed behavior")
+            from autoqa.v08_revision import create_revision, persist_revision
+
+            _, _, _, blueprint = managed_baseline(source)
+            record = create_revision(
+                self.project, source, blueprint, current, original, revised, manual_source
+            )
+            persist_revision(self.project, record, revised)
             save_cases(
                 self.project,
                 [revised if c.id == revised.id else c for c in cases],

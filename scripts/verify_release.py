@@ -220,7 +220,7 @@ def maintenance_smoke(python, output, project, export):
                     "kind": "value",
                     "environments": ["local"],
                     "sensitivity": "SYNTHETIC",
-                    "values": [{"sample": "owned-alias-consumed"}],
+                    "values": [{"sample": f"owned-alias-consumed-{i}"} for i in range(3)],
                 }
             ],
         },
@@ -239,7 +239,9 @@ def maintenance_smoke(python, output, project, export):
         "--authorized",
     )
     assert pending["review_status"] == "pending"
-    assert pending["contract"]["data"]["rows"] == [{"sample": "owned-alias-consumed"}]
+    assert pending["contract"]["data"]["rows"] == [
+        {"sample": f"owned-alias-consumed-{i}"} for i in range(3)
+    ]
     cli("plan", "--approve", "TC-API-PACKAGE", structured=False)
     suite = write("suite-v08.json", cli("suite-propose"))
     cli("suite-approve", suite, structured=False)
@@ -257,9 +259,33 @@ def maintenance_smoke(python, output, project, export):
     consumed = json.loads(
         next((fresh / "artifacts").glob("*/results.json")).read_text(encoding="utf-8")
     )
-    assert consumed["exit_code"] == 0 and consumed["counts"] == {"PASSED": 1}
+    assert consumed["exit_code"] == 0 and consumed["counts"] == {"PASSED": 3}
     # The API assertion checks the echoed alias value; this is actual data consumption.
-    assert len(consumed["steps"]) == 2
+    assert len(consumed["steps"]) == 6
+    # Installed H05: historical evidence, not the current project's mutable cases,
+    # establishes complete scope. Remove matching operations and conceal trivial counts.
+    complete = write("h05-installed-complete.json", consumed)
+    assert any(
+        f["category"] == "HEALTHY_RECORDED_EXECUTION"
+        for f in cli("diagnose-run", complete)["findings"]
+    )
+    for index in range(3):
+        altered = json.loads(json.dumps(consumed))
+        missing = f"TC-API-PACKAGE--row-{index}"
+        altered["records"] = [r for r in altered["records"] if r["id"] != missing]
+        altered["steps"] = [s for s in altered["steps"] if s["test_id"] != missing]
+        altered["counts"] = {"PASSED": 2}
+        path = write(f"h05-installed-missing-{index}.json", altered)
+        assert not any(
+            f["category"] == "HEALTHY_RECORDED_EXECUTION"
+            for f in cli("diagnose-run", path)["findings"]
+        )
+    altered = json.loads(json.dumps(consumed))
+    altered["steps"].pop()
+    path = write("h05-installed-missing-operation.json", altered)
+    assert not any(
+        f["category"] == "HEALTHY_RECORDED_EXECUTION" for f in cli("diagnose-run", path)["findings"]
+    )
 
     setup = subprocess.run(
         [
@@ -321,12 +347,66 @@ def maintenance_smoke(python, output, project, export):
         and revised["expected"] == proposal["original_behavior"]
     )
     assert (snapshot(source), snapshot(manual)) == originals
+    assert revised["maintenance_revision"]
+    discovery_path = ui / "discovery/workflow-map.json"
+    reviewed_discovery = discovery_path.read_bytes()
+    changed = json.loads(reviewed_discovery)
+    element = next(
+        e for page in changed["pages"] for e in page["elements"] if e["id"] == fixture["element_id"]
+    )
+    element["locators"] = [{"strategy": "test_id", "value": "amount-other", "name": "", "count": 1}]
+    discovery_path.write_text(json.dumps(changed), encoding="utf-8")
+    before_rejection = snapshot(ui)
+    rejected = subprocess.run(
+        [
+            str(python),
+            "-m",
+            "autoqa",
+            "plan",
+            "--approve",
+            fixture["case_id"],
+            "--project",
+            str(ui),
+        ],
+        cwd=output,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert rejected.returncode != 0 and snapshot(ui) == before_rejection
+    assert (snapshot(source), snapshot(manual)) == originals
+    discovery_path.write_bytes(reviewed_discovery)
     cli("plan", "--approve", fixture["case_id"], selected=ui, structured=False)
     ui_suite = write("ui-suite-v08.json", cli("suite-propose", selected=ui))
     cli("suite-approve", ui_suite, selected=ui, structured=False)
     trusted = output / "ui-repaired-fresh"
     cli("build-framework", trusted, "--approved", selected=ui, structured=False)
     run(python, "-m", "autoqa", "validate-framework", trusted, cwd=output)
+    page_source = "\n".join(p.read_text(encoding="utf-8") for p in (trusted / "pages").glob("*.py"))
+    assert "amount-new" in page_source and "amount-other" not in page_source
+    discovery_path.write_text(json.dumps(changed), encoding="utf-8")
+    before_rejection = snapshot(ui)
+    rejected_destination = output / "h04-unreviewed-export"
+    rejected = subprocess.run(
+        [
+            str(python),
+            "-m",
+            "autoqa",
+            "build-framework",
+            str(rejected_destination),
+            "--approved",
+            "--project",
+            str(ui),
+        ],
+        cwd=output,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert rejected.returncode != 0 and not rejected_destination.exists()
+    assert snapshot(ui) == before_rejection
+    assert (snapshot(source), snapshot(manual)) == originals
+    discovery_path.write_bytes(reviewed_discovery)
     print(
         "Installed V0.8 diagnosis/impact/data consumption/reconciliation/review/apply/fresh export gates passed",
         flush=True,

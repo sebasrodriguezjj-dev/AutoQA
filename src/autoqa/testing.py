@@ -142,6 +142,9 @@ def digest(text: str) -> str:
 
 def generate(project: Project, *, authorization: AuthorizationContext | None = None) -> list[str]:
     require_authorization(authorization, project.root, "generate")
+    from autoqa.v08_revision import verify_revisions
+
+    verify_revisions(project)
     cases = [c for c in project.cases() if c.review_status == "approved" and c.feasible]
     if not cases:
         raise ValueError(
@@ -254,6 +257,9 @@ def parse_junit(path: Path) -> list[dict]:
 
 def run(project: Project, *, authorization: AuthorizationContext | None = None) -> dict:
     require_authorization(authorization, project.root, "execute")
+    from autoqa.v08_revision import verify_revisions
+
+    verify_revisions(project)
     root = project.root / "automation"
     manifest = load_json(root / "manifest.json")
     if set(manifest["files"]) != {"conftest.py", "test_observed.py"}:
