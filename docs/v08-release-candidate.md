@@ -1,5 +1,33 @@
 # AutoQA 0.8.0rc1 candidate evidence
 
+## H04/H05 audit remediation — 2026-11-25
+
+This section supersedes the earlier candidate's readiness claims below. Audit
+AUTOQA-AUDIT-20261125-02 / handoff AUD-DEV-20261125-02 found two HIGH blockers at
+a265ebf. Corrections are implemented, not externally audit-approved. Existing PR #8
+remains the sole candidate PR; metadata stays0.8.0rc1, no merge/stable release/tag.
+See [structured development handoff](v08-remediation-handoff.md) for root causes,
+changed files, original fail-before, integration map and residual limits, and
+[independent regression evidence](v08-h04-independent-review.md).
+
+Final integrated `uv sync --locked` and complete release script passed exit0, native
+Windows/Python3.14.3:729passed/21browser deselected495.71s, no skips/failures. Ruff92files,
+locked37packages, frozen/H01-H03, wheel/sdist/isolated installed0.8.0rc1, V0.7/V0.8
+workflows, independent COMPLETE collection/case/pack/all and real three-row alias
+requests/assertions passed. Log .test-work/h04-h05-final-release.log and .exit0, fresh
+release-gate-tstpskxn. Final exact publication HEAD and hosted CI/run/job/checkout/
+parents/tree are recorded in PR8's publication section after observation; earlier-head
+success is never substituted. Final handoff-only edits retain identical src/tests/scripts.
+Independent focused QA50passed221.95s (two genuine browser tests), native Windows
+security83passed4.63s, Lead compatibility118passed27.00s and installed correction phase
+exit0 already passed. Installed gate now exercises actual three-row alias consumption,
+missing rows/operations diagnosis refusal and approved-locator drift rejection.
+Prior candidate CI run45694044977 remains historical evidence for a265ebf only.
+QG07/QG08 have internal independent evidence; QG09 local comprehensive gate passed and
+requires exact-final-HEAD hosted success as recorded in PR8. QG10 Windows/browser executor
+and Lead reviewer are distinct. QG11 external re-audit and QG12 owner promotion
+authorization are explicitly pending; this delivery does not close the external audit.
+
 Date: 2026-11-25 (America/Costa_Rica). Stable baseline/tag target
 2243611658accb05afc39593ff6d21fd1e4ba369; annotated v0.7.0 object
 4395f8a1b9ab2c8bf870bd17052337b730e08328; tree

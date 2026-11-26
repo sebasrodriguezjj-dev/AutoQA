@@ -2,6 +2,27 @@
 
 ## H04/H05 recovery — 2026-11-25
 
+Current consolidated Lead b497d70ece5b1de615937546628666e2901cbc81, tree
+873d3053a0415b9cc490d95093eadd6488c2d866. QA2299e88 integrated once asb497d70;
+src/tests/scripts exactly match the independently executed QA content. Combined QA
+50passed221.95s incl two browsers; native security83passed4.63s. Lead inspected actual
+logs and original/browser JSON outcomes; role executor/reviewer scope is documented.
+Final `uv sync --locked` and `uv run python scripts/verify_release.py --phase all`
+passed: .test-work/h04-h05-final-release.log and .exit0. Native Windows/Python3.14.3:
+729passed/21browser deselected495.71s, no skips/failures; Ruff92files, locked37packages,
+frozen compatibility/H01/H02/H03, wheel/sdist0.8.0rc1, isolated installed corrections,
+AutoQA-absent COMPLETE collection and real case/pack/all plus three-row synthetic
+alias requests/assertions passed. Fresh package root release-gate-tstpskxn. No timeout,
+assertion or skip policy was changed. Source/tests/scripts have remained unchanged since
+the full gate; final handoff edits are documentation only and independently checked.
+Local documentation/inventory:198 destinations, four role TOMLs,191files/16ZIPmembers,
+no conventional credential/private-output findings (not universal DLP); historical
+architecture/context, ADR0004/0005, protected contracts and dependency lock preserved.
+Next action: commit final evidence, fetch unchanged refs, push existing branch/PR8 only,
+inspect new exact-HEAD CI/logs/checkout/parents/tree and stop. Final publication HEAD/CI
+are recorded in PR8's publication section and final delivery after actual observation;
+earlier run45694044977 is not substituted. QG11/QG12 remain pending regardless of CI.
+
 Verified increment at Lead0828b816fcd42fe27dcfffe1c3cf95b37162ba14:
 H046625430 integrated; H05 source49e5f9 integrated once as0828b81. H05 worktree now
 clean, owned five files including explicitly assigned legacy-uncertainty test updates.

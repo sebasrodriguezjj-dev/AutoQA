@@ -1,3 +1,44 @@
+# V0.8 H04/H05 remediation handoff — 2026-11-25 (America/Costa_Rica)
+
+Audit AUTOQA-AUDIT-20261125-02 / AUD-DEV-20261125-02 reported FAIL at a265ebf;
+H04/H05 remain subject to external re-audit. Owner authorized these corrections and
+candidate publication only on existing feat/v08-development / PR #8. No merge,
+stable promotion/tag, V0.9, UI prototype or Factory execution is authorized.
+
+Recovered original H04 QA commits and dirty H05 implementation rather than restarting.
+Lead H046625430, H05 source49e5f9 -> Lead0828b81, independent QA2299e88 -> Leadb497d70.
+All old worktrees and dirty historical copies remain. Final implementation/test tree
+873d3053a0415b9cc490d95093eadd6488c2d866 at b497d70ece5b1de615937546628666e2901cbc81.
+H04 now enforces typed revision/index/ledger and exact approved compiler operations
+through reviews/generation/execution. H05 records and reconciles historical expected
+invocations; legacy metadata gaps remain uncertainty. See
+[ADR0007](decisions/0007-maintenance-and-historical-invocation-integrity.md),
+[independent evidence](v08-h04-independent-review.md) and
+[development audit handoff](v08-remediation-handoff.md).
+
+Focused independent combined50passed221.95s includes genuine Windows Chromium repair/
+defect and independent parameterized/nonparameterized execution. Native security83
+passed4.63s, actual junction/ancestor checks; Lead reviewed source and actual logs.
+Compatibility118passed27.00s and focused installed-wheel correction phase exit0.
+Complete final integrated release script passed exit0:729passed/21browser deselected
+495.71s, no skips/failures, Ruff92files, locked37packages, frozen compatibility/H01-H03,
+build/isolated installed workflows and genuine independent COMPLETE collection/case/
+pack/all/three-row alias execution. Log .test-work/h04-h05-final-release.log and .exit0;
+fresh package root release-gate-tstpskxn. Final handoff changes only documentation,
+with links/role/inventory/historical-preservation checks. Exact publication HEAD and
+hosted run/job/actual checkout/parents/tree are recorded in PR8's publication section
+after observed verification; read that live record before treating publication as current.
+Earlier run45694044977 certifies only audited a265ebf and cannot certify remediation.
+QG11 external independent re-audit and QG12 owner promotion authorization remain pending.
+Baseline main/v0.7.0 target2243611658accb05afc39593ff6d21fd1e4ba369, annotated tag
+4395f8a1b9ab2c8bf870bd17052337b730e08328 and all older tags remain unchanged.
+Private baseline/manual ledger paths, conservative context binding, unsigned records,
+trusted single writer/no OS sandbox, limited platforms and manual privacy/retention
+remain explicit. The V0.5 incident remains unroot-caused. Stop after corrected candidate
+publication for targeted independent re-audit; do not infer approval from local QA.
+
+---
+
 # V0.8 candidate delivery handoff — 2026-11-25 (America/Costa_Rica)
 
 Owner-authorized0.8.0rc1 on feat/v08-development delivers the bounded diagnosis,
