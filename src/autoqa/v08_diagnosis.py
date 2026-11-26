@@ -11,6 +11,7 @@ from autoqa.v08_contracts import (
     EvidenceReference,
     digest,
 )
+from autoqa.v08_invocations import reconcile_invocations
 from autoqa.v08_io import read_json
 
 STATUSES = {"PASSED", "FAILED", "ERROR", "NOT_EXECUTED", "SKIPPED", "UNSUPPORTED", "INTERRUPTED"}
@@ -183,6 +184,7 @@ class DiagnosisService:
         ):
             raise ValueError("Invalid recorded selected scope")
         selected = {_identity(identity) for identity in selected}
+        invocation_scope = reconcile_invocations(raw, snapshots, project_id, run_id, steps)
         explicit_scope = "selected_case_ids" in raw or bool(snapshots)
         declared_invocations = {
             _identity(record.get("id")) for record in records if isinstance(record, dict)
@@ -228,6 +230,7 @@ class DiagnosisService:
             integrity = (
                 orphan or foreign or any(step["run_id"] != run_id for step in invocation_steps)
             )
+            integrity |= invocation_scope.known and bool(invocation_scope.issues)
             sequences = [step["sequence"] for step in invocation_steps]
             integrity |= sequences != list(range(1, len(invocation_steps) + 1))
             integrity |= any(type(sequence) is not int for sequence in sequences)
@@ -274,6 +277,11 @@ class DiagnosisService:
                     "INCOMPLETE_EXECUTION",
                     "Run outcome or failed-operation evidence is incomplete; recorded passes do not establish a healthy run.",
                 )
+            elif status == "PASSED" and not invocation_scope.known:
+                category, fact = (
+                    "INSUFFICIENT_EVIDENCE",
+                    "This individual invocation reports a pass, but historical expected invocation scope is unavailable; case/run completeness is unknown.",
+                )
             elif status == "PASSED":
                 category, fact = (
                     "HEALTHY_RECORDED_EXECUTION",
@@ -294,6 +302,7 @@ class DiagnosisService:
                 missing.append(
                     "The recorded process or run-level reconciliation did not establish successful completion."
                 )
+            missing.extend(invocation_scope.issues)
             next_check = "Review the original selected run and approved snapshot locally; verify the symptom independently before repair or defect attribution."
             semantic = {
                 "project_id": project_id,
@@ -304,6 +313,8 @@ class DiagnosisService:
                 "snapshot": snapshot,
                 "steps": invocation_steps,
                 "category": category,
+                "expected_scope": invocation_scope.fingerprint,
+                "scope_issues": invocation_scope.issues,
             }
             evidence = EvidenceReference(
                 id="EV-" + digest(semantic)[:32],
@@ -324,16 +335,18 @@ class DiagnosisService:
                     )
                 ]
             )
-            if category == "ASSERTION_MISMATCH" and not missing:
+            if category == "ASSERTION_MISMATCH":
                 hypotheses.extend(
                     [
                         CauseHypothesis(
                             category="APPLICATION_DEFECT_CANDIDATE",
+                            confidence="UNKNOWN" if missing else "POSSIBLE",
                             rationale="Recorded behavior may differ from the reviewed expectation; independently reproduce before confirming an application defect.",
                             next_check=next_check,
                         ),
                         CauseHypothesis(
                             category="AUTOMATION_DEFECT_CANDIDATE",
+                            confidence="UNKNOWN" if missing else "POSSIBLE",
                             rationale="The oracle, locator, fixture or environment may also explain a mismatch; do not repair by changing assertions to obtain a pass.",
                             next_check=next_check,
                         ),
@@ -368,11 +381,22 @@ class DiagnosisService:
             or raw.get("reconciliation_errors")
             or raw.get("status") == "INCOMPLETE"
             or run_incomplete
+            or (invocation_scope.known and invocation_scope.issues)
         ):
             category = (
-                "COLLECTION_FAILURE"
-                if raw.get("status") == "INCOMPLETE" or not records
-                else "EVIDENCE_INTEGRITY_FAILURE"
+                "INSUFFICIENT_EVIDENCE"
+                if not invocation_scope.known
+                and not (
+                    orphan
+                    or selected - recorded_cases
+                    or raw.get("reconciliation_errors")
+                    or run_incomplete
+                )
+                else (
+                    "COLLECTION_FAILURE"
+                    if raw.get("status") == "INCOMPLETE" or not records
+                    else "EVIDENCE_INTEGRITY_FAILURE"
+                )
             )
             projected.append(
                 DiagnosticFinding(
@@ -380,7 +404,8 @@ class DiagnosisService:
                     category=category,
                     facts=[
                         "Collection, recorded invocation scope or evidence reconciliation is incomplete."
-                    ],
+                    ]
+                    + list(invocation_scope.issues),
                     missing_evidence=[
                         "Complete current-run invocation and operation evidence is required."
                     ],

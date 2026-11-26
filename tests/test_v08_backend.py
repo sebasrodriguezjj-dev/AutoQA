@@ -351,7 +351,11 @@ def test_legacy_historical_case_snapshot_and_embedded_steps_are_supported(projec
         del step["kind"]
     report = DiagnosisService(project).analyze(write(tmp_path / "run.json", value))
     assert report.findings[0].category == "ASSERTION_MISMATCH"
-    assert not report.findings[0].missing_evidence
+    assert any(
+        "Historical expected invocation scope is unavailable" in item
+        for item in report.findings[0].missing_evidence
+    )
+    assert not any(f.category == "HEALTHY_RECORDED_EXECUTION" for f in report.findings)
 
 
 def test_missing_selected_case_is_explicitly_incomplete(project, tmp_path):
@@ -380,7 +384,11 @@ def test_diagnostic_symptoms_are_hypotheses_not_confirmed_causes(
     report = DiagnosisService(project).analyze(write(tmp_path / "run.json", value))
     assert report.findings[0].category == expected
     assert not report.findings[0].root_cause_confirmed
-    assert report.findings[0].hypotheses[0].confidence == "POSSIBLE"
+    assert report.findings[0].hypotheses[0].confidence == "UNKNOWN"
+    assert any(
+        "Historical expected invocation scope is unavailable" in item
+        for item in report.findings[0].missing_evidence
+    )
 
 
 def test_duplicate_json_and_oversized_source_fail_before_any_mutation(project, tmp_path):
